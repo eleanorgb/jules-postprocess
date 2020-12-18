@@ -19,8 +19,10 @@ import iris.coord_categorisation
 from iris.time import PartialDateTime
 from iris.cube import Cube
 from cf_units import Unit
-from landcover_types import UKESM_TYPES
-from landcover_types import HADGEM_TYPES
+#from landcover_types import UKESM_TYPES
+#from landcover_types import HADGEM_TYPES
+#from landcover_types import PERMAFROST10_TYPES
+from landcover_types import add_tile_info
 from read_mip_name import read_mip_name
 # this version of JULES is currently in karinas directory
 # sys.path.append("/home/h03/kwilliam/other_fcm/jules_py/trunk/jules")
@@ -406,16 +408,11 @@ def write_out_final_cube(mip_info, diag_dic, cube, var, out_dir, syr,
                 isimip_func.sort_and_write_pft_cube(varout, cube, outfilename,
                                                     ipft, fill_value)
         else:
-            if len(cube.shape) == 3:
-                chunksizesin = [1,cube.shape[1],cube.shape[2]]
-            elif len(cube.shape) == 4:
-                chunksizesin = [1,cube.shape[1],cube.shape[2],cube.shape[3]]
-            else:
-                sys.exit("chunksizes are undefined")
+            chunksizes = define_chunksizes(cube)
             print("cube should still have lazy data ",cube.has_lazy_data())
-            cube.data.mask[np.isnan(cube.data)] = True    #breaks lazy data
+            cube.data.mask[np.isnan(cube.data)] = True    # breaks lazy data
             iris.save(cube, outfilename, fill_value=fill_value, zlib=True,
-                      netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizesin,
+                      netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizes,
                       contiguous=False, complevel=9)
             if "ISIMIP" in MIPNAME:
                 retcode = subprocess.call("mv "+outfilename+" "+outfilename+\
@@ -502,34 +499,6 @@ def select_vegfrac(cube, var):
 
 
 
-# #############################################################################
-def add_tile_info(cube, typename):
-    """
-    sort out tile information depending on pfts available
-    """
-    cube.coord(typename).long_name = "vegtype"
-    #cube.coord(typename).var_name = "vegtype"
-    lengthoftype = len(cube.coord("vegtype").points)
-    if lengthoftype in (13, 17): # JULES-ES type
-        # below broken for use with cdo
-        tilecoord = iris.coords.AuxCoord(UKESM_TYPES[0:lengthoftype],
-                                         long_name="frac_name")
-        cube.attributes["vegtype"] = "; ".join([(str(i)+"."+x) for i, x in
-                                       enumerate(UKESM_TYPES[0:lengthoftype])])
-    elif lengthoftype in (5, 9): # JULES-GL7 type
-        tilecoord = iris.coords.AuxCoord(HADGEM_TYPES[0:lengthoftype],
-                                         long_name="frac_name")
-        cube.attributes["vegtype"] = "; ".join([(str(i)+"."+x) for i, x in
-                                       enumerate(HADGEM_TYPES[0:lengthoftype])])
-    else:
-        print("look in add_tile_info - make sure the relevant info is coded")
-        sys.exit("coordinate "+typename+" not defined for this configuration")
-
-    idxtile = [i for i, t in enumerate(cube.core_data().shape)
-                                                           if t == lengthoftype]
-    cube.add_aux_coord(tilecoord, idxtile)
-
-    return cube
 # #############################################################################
 
 
@@ -827,6 +796,29 @@ def calc_mid_depth(bottom_of_layer):
                 (bot_depth - bottom_of_layer[idim-1]) / 2.0
 
     return mid_depth
+# #############################################################################
+
+ #############################################################################
+def define_chunksizes(cube):
+    """"
+    define the chunksizes for the output file
+    """
+    all_coord_names = [ coord.name() for coord in cube.coords() ]
+    ndims = len(cube.shape)
+    if "realization" in all_coord_names:
+        ndims = ndims - 1
+    if ndims == 3:
+        chunksizes = [1, cube.shape[-2], cube.shape[-1]]
+    elif ndims == 4:
+        chunksizes = [1, cube.shape[-3], cube.shape[-2], cube.shape[-1]]
+    elif ndims == 5:  # hmm makes a big file
+        chunksizes = [1, cube.shape[-4], cube.shape[-3], cube.shape[-2],
+                      cube.shape[-1]]
+    else:
+        sys.exit("chunksizes are undefined")
+    if "realization" in all_coord_names:
+        chunksizes = np.append([1], chunksizes)
+    return chunksizes
 # #############################################################################
 
 

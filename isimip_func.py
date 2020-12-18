@@ -163,10 +163,10 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
         del cubeout.attributes["vegtype"]
     print("cube should still have lazy data ",cubeout.has_lazy_data())
     cubeout.data.mask[np.isnan(cubeout.data)] = True   #breaks lazy data
-    chunksizesin = [1, cubeout.shape[1], cubeout.shape[2]]
+    chunksizes = [1, cubeout.shape[1], cubeout.shape[2]]
     iris.save(cubeout, outfilename, fill_value=fill_value,
               zlib=True, netcdf_format='NETCDF4_CLASSIC',
-              chunksizes=chunksizesin,
+              chunksizes=chunksizes,
               contiguous=False, complevel=9)
     # dont really understand why this below happens
     retcode = subprocess.call("ncrename -h -v "+wrong_name+","+\

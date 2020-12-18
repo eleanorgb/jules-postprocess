@@ -17,7 +17,7 @@
 
 echo This is task $SLURM_ARRAY_TASK_ID
 
-module load scitools/default-current
+module load scitools/experimental-current
 
 #"CMIPland_UKESM_land-hist-altStartYear" 
 

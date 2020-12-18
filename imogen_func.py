@@ -84,8 +84,6 @@ def read_ensemble(files_in, variable_cons, time_cons):
     for key in keys:
         files_read = [f.replace("*", key) for f in files_in]
         try:
-            print("here")
-            print(files_read[0])
             cube = jules.load(files_read, variable_cons & time_cons,
                         missingdata=np.ma.masked,
                         callback=model_ensemble_callback)
@@ -131,7 +129,7 @@ def make_infilename_imogen(MIPNAME, mip_info, src_dir, jules_profname, years):
     """
     sort out filename for input file
     """
-    print(mip_info["run_name"][MIPNAME])
+    # print(mip_info["run_name"][MIPNAME])
     files_in = [src_dir+"*/*_"+mip_info["in_scenario"][MIPNAME]+\
                 mip_info["run_name"][MIPNAME]+\
                 jules_profname+"."+year+".nc" for year in years]
