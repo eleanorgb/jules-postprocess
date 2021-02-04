@@ -15,12 +15,27 @@
 # end_year_in - end year for output (if not all available files are used)
 #                set to less than 0 to read all available files
 MIPNAME,model,suite_id,src_dir,run_name,out_scenario,in_scenario,start_year,end_year
-IMOGEN5_aj257_26,IMOGEN5_vn51pf,u-aj257,/hpc/data/d00/hadea/jules_output/,.,rcp2.6_CN,rcp2.6,1850,2099
-IMOGEN5_aj257_45,IMOGEN5_vn51pf,u-aj257,/hpc/data/d00/hadea/jules_output/,.,rcp4.5_CN,rcp4.5,1850,2099
-IMOGEN5_aj257_85,IMOGEN5_vn51pf,u-aj257,/hpc/data/d00/hadea/jules_output/,.,rcp8.5_CN,rcp8.5,1850,2099
-IMOGEN5_ah181_26,IMOGEN5_vn51pf,u-ah181,/hpc/data/d00/hadea/jules_output/,.,rcp2.6_C,rcp2.6,1850,2099
-IMOGEN5_ah181_45,IMOGEN5_vn51pf,u-ah181,/hpc/data/d00/hadea/jules_output/,.,rcp4.5_C,rcp4.5,1850,2099
-IMOGEN5_ah181_85,IMOGEN5_vn51pf,u-ah181,/hpc/data/d00/hadea/jules_output/,.,rcp8.5_C,rcp8.5,1850,2099
+IMOGEN5_aj257_26_isunfrozen,IMOGEN5_vn51pf,u-aj257_isunfrozen,/hpc/data/d00/hadea/jules_output/,.,rcp2.6_CN_isunfrozen,rcp2.6,1850,2299
+IMOGEN5_aj257_45_isunfrozen,IMOGEN5_vn51pf,u-aj257_isunfrozen,/hpc/data/d00/hadea/jules_output/,.,rcp4.5_CN_isunfrozen,rcp4.5,1850,2299
+IMOGEN5_aj257_85_isunfrozen,IMOGEN5_vn51pf,u-aj257_isunfrozen,/hpc/data/d00/hadea/jules_output/,.,rcp8.5_CN_isunfrozen,rcp8.5,1850,2299
+IMOGEN5_aj257_26_ninorg_cemissions_excludeoldc,IMOGEN5_vn51pf,u-aj257_ninorg_cemissions_excludeoldc,/hpc/data/d00/hadea/jules_output/,.,rcp2.6_CN_ninorg_cemissions_excludeoldc,rcp2.6,1850,2299
+IMOGEN5_aj257_45_ninorg_cemissions_excludeoldc,IMOGEN5_vn51pf,u-aj257_ninorg_cemissions_excludeoldc,/hpc/data/d00/hadea/jules_output/,.,rcp4.5_CN_ninorg_cemissions_excludeoldc,rcp4.5,1850,2299
+IMOGEN5_aj257_85_ninorg_cemissions_excludeoldc,IMOGEN5_vn51pf,u-aj257_ninorg_cemissions_excludeoldc,/hpc/data/d00/hadea/jules_output/,.,rcp8.5_CN_ninorg_cemissions_excludeoldc,rcp8.5,1850,2299
+IMOGEN5_aj257_26_ninorg_cemissions,IMOGEN5_vn51pf,u-aj257_ninorg_cemissions,/hpc/data/d00/hadea/jules_output/,.,rcp2.6_CN_ninorg_cemissions,rcp2.6,1850,2299
+IMOGEN5_aj257_45_ninorg_cemissions,IMOGEN5_vn51pf,u-aj257_ninorg_cemissions,/hpc/data/d00/hadea/jules_output/,.,rcp4.5_CN_ninorg_cemissions,rcp4.5,1850,2299
+IMOGEN5_aj257_85_ninorg_cemissions,IMOGEN5_vn51pf,u-aj257_ninorg_cemissions,/hpc/data/d00/hadea/jules_output/,.,rcp8.5_CN_ninorg_cemissions,rcp8.5,1850,2299
+IMOGEN5_aj257_26_excludeoldc,IMOGEN5_vn51pf,u-aj257_excludeoldc,/hpc/data/d00/hadea/jules_output/,.,rcp2.6_CN_excludeoldc,rcp2.6,1850,2299
+IMOGEN5_aj257_45_excludeoldc,IMOGEN5_vn51pf,u-aj257_excludeoldc,/hpc/data/d00/hadea/jules_output/,.,rcp4.5_CN_excludeoldc,rcp4.5,1850,2299
+IMOGEN5_aj257_85_excludeoldc,IMOGEN5_vn51pf,u-aj257_excludeoldc,/hpc/data/d00/hadea/jules_output/,.,rcp8.5_CN_excludeoldc,rcp8.5,1850,2299
+IMOGEN5_aj257_26,IMOGEN5_vn51pf,u-aj257,/hpc/data/d00/hadea/jules_output/,.,rcp2.6_CN,rcp2.6,1850,2299
+IMOGEN5_aj257_45,IMOGEN5_vn51pf,u-aj257,/hpc/data/d00/hadea/jules_output/,.,rcp4.5_CN,rcp4.5,1850,2299
+IMOGEN5_aj257_85,IMOGEN5_vn51pf,u-aj257,/hpc/data/d00/hadea/jules_output/,.,rcp8.5_CN,rcp8.5,1850,2299
+IMOGEN5_ah181_26,IMOGEN5_vn51pf,u-ah181,/hpc/data/d00/hadea/jules_output/,.,rcp2.6_C,rcp2.6,1850,2299
+IMOGEN5_ah181_45,IMOGEN5_vn51pf,u-ah181,/hpc/data/d00/hadea/jules_output/,.,rcp4.5_C,rcp4.5,1850,2299
+IMOGEN5_ah181_85,IMOGEN5_vn51pf,u-ah181,/hpc/data/d00/hadea/jules_output/,.,rcp8.5_C,rcp8.5,1850,2299
+IMOGEN5_ah181_26_excludeoldc,IMOGEN5_vn51pf,u-ah181_excludeoldc,/hpc/data/d00/hadea/jules_output/,.,rcp2.6_CN_excludeoldc,rcp2.6,1850,2299
+IMOGEN5_ah181_45_excludeoldc,IMOGEN5_vn51pf,u-ah181_excludeoldc,/hpc/data/d00/hadea/jules_output/,.,rcp4.5_CN_excludeoldc,rcp4.5,1850,2299
+IMOGEN5_ah181_85_excludeoldc,IMOGEN5_vn51pf,u-ah181_excludeoldc,/hpc/data/d00/hadea/jules_output/,.,rcp8.5_CN_excludeoldc,rcp8.5,1850,2299
 IMOGEN5_variant_CN_PIndep_26,IMOGEN5_vn54pf,u-bd604_CN_PIndep,/hpc/data/d00/hadea/jules_output/,_CN_PIndep.,rcp2.6_CN_PIndep,rcp2.6,1850,2099
 IMOGEN5_variant_CN_PIndep_45,IMOGEN5_vn54pf,u-bd604_CN_PIndep,/hpc/data/d00/hadea/jules_output/,_CN_PIndep.,rcp4.5_CN_PIndep,rcp4.5,1850,2099
 IMOGEN5_variant_CN_PIndep_85,IMOGEN5_vn54pf,u-bd604_CN_PIndep,/hpc/data/d00/hadea/jules_output/,_CN_PIndep.,rcp8.5_CN_PIndep,rcp8.5,1850,2099
@@ -51,7 +66,7 @@ CMIPland_UKESM_land-hist-cruNcep,UKESM1-0-LL,u-bv489,/hpc/data/d05/hadaw/jules_o
 CMIPland_HadGEM_land-hist,HadGEM3-GC31-LL,u-bu138,/hpc/data/d05/hadaw/jules_output/,JULES-GL7.0.vn5.5.GSWP3.LS3MIP.,land-hist,S3,1850,2014
 CMIPland_HadGEM_land-noLu,HadGEM3-GC31-LL,u-bu138,/hpc/data/d05/hadaw/jules_output/,JULES-GL7.0.vn5.5.GSWP3.LS3MIP.,land-noLu,S2,1850,2014
 CMIPland_HadGEM_land-hist-cruNcep,HadGEM3-GC31-LL,u-bv414,/hpc/data/d05/hadaw/jules_output/,JULES-GL7.0.vn5.5.CRUNCEP.LS3MIP.,land-hist-cruNcep,S3,1850,2014
-ISIMIP2b_GFDL-ESM2M_C20C,JULES-ES-55,ALL_u-bk886_isimip_0p5deg_origsoil_dailytrif/GFDL-ESM2M,/hpc/data/d01/hadcam/jules_output/,gfdl-esm2m_,historical,c20c,1861,1864
+ISIMIP2b_GFDL-ESM2M_C20C,JULES-ES-55,ALL_u-bk886_isimip_0p5deg_origsoil_dailytrif/GFDL-ESM2M,/hpc/data/d01/hadcam/jules_output/,gfdl-esm2m_,historical,c20c,1861,2005
 ISIMIP2b_HADGEM2-ES_C20C,JULES-ES-55,ALL_u-bk886_isimip_0p5deg_origsoil_dailytrif/HADGEM2-ES,/hpc/data/d01/hadcam/jules_output/,hadgem2-es_,historical,c20c,1861,2005
 ISIMIP2b_IPSL-CM5A-LR_C20C,JULES-ES-55,ALL_u-bk886_isimip_0p5deg_origsoil_dailytrif/IPSL-CM5A-LR,/hpc/data/d01/hadcam/jules_output/,ipsl-cm5a-lr_,historical,c20c,1861,2005
 ISIMIP2b_MIROC5_C20C,JULES-ES-55,ALL_u-bk886_isimip_0p5deg_origsoil_dailytrif/MIROC5,/hpc/data/d01/hadcam/jules_output/,miroc5_,historical,c20c,1861,2005

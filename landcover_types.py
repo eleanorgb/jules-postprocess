@@ -48,3 +48,80 @@ def add_tile_info(cube, typename):
     cube.add_aux_coord(tilecoord, idxtile)
 
     return cube
+# #############################################################################
+
+
+# #############################################################################
+def select_vegfrac(cube, var):
+    """
+    make mapping of vegtypes that are defined by the output requirements
+    """
+    lengthoftype = len(cube.coord("vegtype").points)
+    print(lengthoftype)
+    if lengthoftype == 17:  # JULES-ES type
+        vegtype_mapping = {"BdlDcd": "BdlDcd",
+                           "treeFracBdlDcd": "BdlDcd",
+                           "treeFracBdlEvg": ["BdlEvgTemp", "BdlEvgTrop"],
+                           "treeFracNdlDcd": "NdlDcd",
+                           "treeFracNdlEvg": "NdlEvg",
+                           "NdlDcd": "NdlDcd",
+                           "NdlEvg": "NdlEvg",
+                           "BdlEvg": ["BdlEvgTemp", "BdlEvgTrop"],
+                           "grassFracC3": "c3grass",
+                           "cropFracC3": "c3crop",
+                           "pastureFracC3": "c3pasture",
+                           "grassFracC4": "c4grass",
+                           "cropFracC4": "c4crop",
+                           "pastureFracC4": "c4pasture",
+                           "treeFrac": ["BdlDcd", "BdlEvgTemp", "BdlEvgTrop",
+                                        "NdlDcd", "NdlEvg"],
+                           "c3PftFrac": ["c3grass", "c3pasture", "c3crop"],
+                           "c4PftFrac": ["c4grass", "c4pasture", "c4crop"],
+                           "shrubFrac": ["shrubDcd", "shrubEvg"],
+                           "baresoilFrac": "soil",
+                           "residualFrac": ["urban", "lake", "ice"]
+                           }
+    elif lengthoftype == 9:  # JULES_GL7 type
+        vegtype_mapping = {"treeFrac": ["evgTree", "dcdTree"],
+                           "c3PftFrac": "c3",
+                           "c4PftFrac": "c4",
+                           "shrubFrac": "shrub",
+                           "baresoilFrac": "soil",
+                           "residualFrac": ["urban", "lake", "ice"]
+                           }
+    elif lengthoftype == 14:  # ADDED c3arctic removed pasture and crop
+        vegtype_mapping = {"BdlDcd": "BdlDcd",
+                           "treeFracBdlDcd": "BdlDcd",
+                           "treeFracBdlEvg": ["BdlEvgTemp", "BdlEvgTrop"],
+                           "treeFracNdlDcd": "NdlDcd",
+                           "treeFracNdlEvg": "NdlEvg",
+                           "NdlDcd": "NdlDcd",
+                           "NdlEvg": "NdlEvg",
+                           "BdlEvg": ["BdlEvgTemp", "BdlEvgTrop"],
+                           "grassFracC3": "c3grass",
+                           "arcticFracC3": "c3arctic",
+                           "grassFracC4": "c4grass",
+                           "treeFrac": ["BdlDcd", "BdlEvgTemp", "BdlEvgTrop",
+                                        "NdlDcd", "NdlEvg"],
+                           "c3PftFrac": ["c3grass", "c3arctic"],
+                           "c4PftFrac": ["c4grass"],
+                           "shrubFrac": ["shrubDcd", "shrubEvg"],
+                           "baresoilFrac": "soil",
+                           "residualFrac": ["urban", "lake", "ice"]
+                           }
+    else:
+        sys.exit("output not setup for this number of pfts")
+    try:
+        print(cube.coord("frac_name"))
+        print(var)
+        print(vegtype_mapping[var])
+        cube = cube.extract(iris.Constraint(frac_name=vegtype_mapping[var]))
+        if len(cube.coord("vegtype").points) > 1:
+            cube = cube.collapsed("vegtype", iris.analysis.SUM)
+    except:
+        print("vegetation type not recognised")
+        print("need to add it to vegtype_mapping dictionary")
+        raise
+    return cube
+# #############################################################################
+

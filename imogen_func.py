@@ -87,7 +87,6 @@ def read_ensemble(files_in, variable_cons, time_cons):
             cube = jules.load(files_read, variable_cons & time_cons,
                         missingdata=np.ma.masked,
                         callback=model_ensemble_callback)
-            print(cube)
             for ijk, icube in enumerate(cube):
                 if ijk >0:
                     cube[ijk].coord('time').convert_units \
@@ -115,7 +114,7 @@ def make_outfilename_imogen(mip_info, out_dir, outprofile,
     """
     sort out filename for outputfile
     """
-    MIPNAME = read_mip_name()
+    MIPNAME, L_TMP, L_TMP = read_mip_name()
     outfilename = out_dir+"/"+mip_info["model"][MIPNAME]+"_"+\
               mip_info["out_scenario"][MIPNAME]+"_"+var+"_"+\
               outprofile+"_"+str(syr)+"_"+str(eyr)+".nc"

@@ -28,7 +28,7 @@ def make_outfilename_cmip(mip_info, out_dir, outprofile, var, syr, eyr):
     """
     make outfilename as required by mip convert
     """
-    MIPNAME = read_mip_name()
+    MIPNAME, L_TMP, L_TMP = read_mip_name()
     if "day" in outprofile:
         out_dir_time = out_dir + "/lnd"
     elif "yr" in outprofile:

@@ -31,7 +31,7 @@ def define_years_daily_isimip2b():
     """
     break into 10 year batches
     """
-    MIPNAME = read_mip_name()
+    MIPNAME, L_TMP, L_TMP = read_mip_name()
     if "C20C" in MIPNAME:
         syrall = np.arange(1861, 2011, 10)
         eyrall = syrall + 9
@@ -55,7 +55,7 @@ def make_outfilename_isimip(mip_info, out_dir, outprofile,
     <soc-scenario>_<co2sens-scenarios>_<variable>_<region>_
     <timestep>_<start-year>_<end-year>.nc4
     """
-    MIPNAME = read_mip_name()
+    MIPNAME, L_TMP, L_TMP = read_mip_name()
     if mip_info["in_scenario"][MIPNAME] in "c20c":
         soc = "histsoc_co2"
     elif mip_info["in_scenario"][MIPNAME] in "rcp2p6":
@@ -128,20 +128,38 @@ def sort_isimip_cube(cube, outprofile):
     cube.coord("longitude").var_name = "lon"
     cube.coord("latitude").points=np.flip(cube.coord("latitude").points,axis=0)
     #which coordinate is latitude
+
+    for coord in cube.coords():
+        if coord.name()=="vegtype":
+            coord.bounds=None
     for ilat,coord in enumerate(cube.coords()):
         if coord.name()=="latitude":
             lat_coord_idx=ilat
     cube.data = np.flip(cube.core_data(), axis=lat_coord_idx)
     cube.data = cube.core_data().astype("float32")
     cube.attributes['missing_value'] = 1e+20
+    for key in list(cube.attributes.keys()):
+        if key=="coordinates":
+            del cube.attributes[key]
     cube.cell_methods = None
     cube = iris.util.squeeze(cube)
+
+    # depth coordinate 
+    for coord in cube.coords():
+        if coord.name()=="depth":
+            coord.long_name = "Depth of vertical layer center below land"
+        if coord.name()=="vegtype":
+            if len(cube.coord("vegtype").points) == 1:
+                cube.remove_coord("vegtype")
+    if cube.units=="kg/m2":
+        cube.units = "kg m-2"
+
     return cube
 # #############################################################################
 
 
 # #############################################################################
-def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
+def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value, L_TESTING=False):
     """
     for each pft sort out the cube
     """
@@ -157,25 +175,32 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
                                 cubeout.coord("frac_name").points[0]
     wrong_name = wrong_name.lower()
     # remove some stuff
-    cubeout.remove_coord("frac_name")
-    cubeout.remove_coord("vegtype")
+    for coord in cubeout.coords():
+        if coord.name()=="frac_name":
+            cubeout.remove_coord("frac_name")
+        if coord.name()=="vegtype":
+            if len(cubeout.coord("vegtype").points) == 1:
+                cubeout.remove_coord("vegtype")
     if "vegtype" in list(cubeout.attributes.keys()):
         del cubeout.attributes["vegtype"]
+    # remove some stuff
+
     print("cube should still have lazy data ",cubeout.has_lazy_data())
     cubeout.data.mask[np.isnan(cubeout.data)] = True   #breaks lazy data
     chunksizes = [1, cubeout.shape[1], cubeout.shape[2]]
-    iris.save(cubeout, outfilename, fill_value=fill_value,
-              zlib=True, netcdf_format='NETCDF4_CLASSIC',
-              chunksizes=chunksizes,
-              contiguous=False, complevel=9)
-    # dont really understand why this below happens
-    retcode = subprocess.call("ncrename -h -v "+wrong_name+","+\
+    if not L_TESTING:
+        iris.save(cubeout, outfilename, fill_value=fill_value,
+                  zlib=True, netcdf_format='NETCDF4_CLASSIC',
+                  chunksizes=chunksizes,
+                  contiguous=False, complevel=9)
+        # dont really understand why this below happens
+        retcode = subprocess.call("ncrename -h -v "+wrong_name+","+\
                               cubeout.var_name+" "+outfilename, shell=True)
-    if retcode != 0:
-        print("ncrename variable broken "+outfilename)
-        sys.exit("ncrename broken")
-    retcode = subprocess.call("mv "+outfilename+" "+outfilename+"4", shell=True)
-    if retcode != 0:
-        print("mv "+outfilename+" "+outfilename+"4")
-        sys.exit("mv broken")
+        if retcode != 0:
+            print("ncrename variable broken "+outfilename)
+            sys.exit("ncrename broken")
+        retcode = subprocess.call("mv "+outfilename+" "+outfilename+"4", shell=True)
+        if retcode != 0:
+            print("mv "+outfilename+" "+outfilename+"4")
+            sys.exit("mv broken")
 # #############################################################################

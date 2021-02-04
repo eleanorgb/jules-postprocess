@@ -19,9 +19,7 @@ import iris.coord_categorisation
 from iris.time import PartialDateTime
 from iris.cube import Cube
 from cf_units import Unit
-#from landcover_types import UKESM_TYPES
-#from landcover_types import HADGEM_TYPES
-#from landcover_types import PERMAFROST10_TYPES
+from landcover_types import select_vegfrac
 from landcover_types import add_tile_info
 from read_mip_name import read_mip_name
 # this version of JULES is currently in karinas directory
@@ -37,9 +35,8 @@ warnings.filterwarnings("ignore")
 # #############################################################################
 # this will change depending on the run we want to process
 # see first column in mip_info.csv for currently available simulations
-MIPNAME = read_mip_name()
-L_TESTING = True  # change this to TRUE for testing specific diagnostics
-L_BACKFILL_MISSING_FILES = True # change this to TRUE to just add missing files
+MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES = read_mip_name()
+print(MIPNAME)
 # redefine diag in main() to the specific diagnistics required for testing
 CONTACT_EMAIL = "eleanor.burke@metoffice.gov.uk"  # dont use my email!
 # #############################################################################
@@ -82,8 +79,8 @@ def main():
     print(diags)
     # ######################################################
     # select specific ones here for testing (L_TESTING=True)
-    #if L_TESTING:
-    #     diags=["tas","tsl"] #,"tsl_daily","snc","snc_daily"]
+    if L_TESTING:
+         diags=["dis","pft-pft","npp-pft_annual"] #,"tsl_daily","snc","snc_daily"]
     # select specific ones here for testing (L_TESTING=True)
     # ######################################################
 
@@ -123,6 +120,8 @@ def main():
         # currently anything _daily in varname will be in multiple files
         syrall = [mip_info["start_year"][MIPNAME]]
         eyrall = [mip_info["end_year"][MIPNAME]]
+        if L_TESTING:
+            eyrall = [int(syrall[0]) + 5]
         time_cons = None
         l_alltimes_in_one_file = True
         if "daily" in var:
@@ -137,7 +136,6 @@ def main():
                                             PartialDateTime(syr) \
                                             <= cell.point and \
                                             PartialDateTime(eyr) >= cell.point)
-
             # first call to define filenames - check file exists or not
             l_onlymakefname = True
             outfilename, varout = write_out_final_cube(mip_info, diag_dic, None,
@@ -240,7 +238,8 @@ def make_gridded_files(src_dir, mip_info, diag_dic, time_cons, var, syr, eyr):
 
    # sort out vegetation fractions when need to separate them
     if diag_dic[var][0] == "frac" and \
-                 var not in ["landCoverFrac", "pft-pft", "pft-pft_annual"]:
+                 var not in ["landCoverFrac", "pft-pft",
+                             "pft-pft_annual", "frac_annual"]:
         cube = select_vegfrac(cube, var)
 
     # need to expand grids to global (not done for imogen, maybe wont bother)
@@ -255,6 +254,7 @@ def make_gridded_files(src_dir, mip_info, diag_dic, time_cons, var, syr, eyr):
 def define_syr_eyr_daily_output():
     """
     define start and end year array for daily output
+    break into batches
     """
     if "CMIP" in MIPNAME:
         syrall, syrall =   cmip_func.define_years_daily_cmip()
@@ -406,20 +406,21 @@ def write_out_final_cube(mip_info, diag_dic, cube, var, out_dir, syr,
             # need to separate cube by pft
             for ipft in cube.coord("vegtype").points:
                 isimip_func.sort_and_write_pft_cube(varout, cube, outfilename,
-                                                    ipft, fill_value)
+                                                    ipft, fill_value, L_TESTING)
         else:
             chunksizes = define_chunksizes(cube)
             print("cube should still have lazy data ",cube.has_lazy_data())
             cube.data.mask[np.isnan(cube.data)] = True    # breaks lazy data
-            iris.save(cube, outfilename, fill_value=fill_value, zlib=True,
+            if not L_TESTING:
+                iris.save(cube, outfilename, fill_value=fill_value, zlib=True,
                       netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizes,
                       contiguous=False, complevel=9)
-            if "ISIMIP" in MIPNAME:
-                retcode = subprocess.call("mv "+outfilename+" "+outfilename+\
+                if "ISIMIP" in MIPNAME:
+                    retcode = subprocess.call("mv "+outfilename+" "+outfilename+\
                                           "4", shell=True)
-                if retcode != 0:
-                    print("mv "+outfilename+" "+outfilename+"4")
-                    sys.exit("mv broken")
+                    if retcode != 0:
+                        print("mv "+outfilename+" "+outfilename+"4")
+                        sys.exit("mv broken")
 
     return outfilename, varout
 
@@ -440,65 +441,6 @@ def expand_to_global(cube):
     cube = cube.regrid(cube_fullgrid,
                        iris.analysis.Nearest(extrapolation_mode="mask"))
     return cube
-# #############################################################################
-
-
-# #############################################################################
-def select_vegfrac(cube, var):
-    """
-    make mapping of vegtypes that are defined by the output requirements
-    """
-    lengthoftype = len(cube.coord("vegtype").points)
-    print(lengthoftype)
-    if lengthoftype == 17:  # JULES-ES type
-        vegtype_mapping = {"BdlDcd": "BdlDcd",
-                           "treeFracBdlDcd": "BdlDcd",
-                           "treeFracBdlEvg": ["BdlEvgTemp", "BdlEvgTrop"],
-                           "treeFracNdlDcd": "NdlDcd",
-                           "treeFracNdlEvg": "NdlEvg",
-                           "NdlDcd": "NdlDcd",
-                           "NdlEvg": "NdlEvg",
-                           "BdlEvg": ["BdlEvgTemp", "BdlEvgTrop"],
-                           "grassFracC3": "c3grass",
-                           "cropFracC3": "c3crop",
-                           "pastureFracC3": "c3pasture",
-                           "grassFracC4": "c4grass",
-                           "cropFracC4": "c4crop",
-                           "pastureFracC4": "c4pasture",
-                           "treeFrac": ["BdlDcd", "BdlEvgTemp", "BdlEvgTrop",
-                                        "NdlDcd", "NdlEvg"],
-                           "c3PftFrac": ["c3grass", "c3pasture", "c3crop"],
-                           "c4PftFrac": ["c4grass", "c4pasture", "c4crop"],
-                           "shrubFrac": ["shrubDcd", "shrubEvg"],
-                           "baresoilFrac": "soil",
-                           "residualFrac": ["urban", "lake", "ice"]
-                           }
-    elif lengthoftype == 9:  # JULES_GL7 type
-        vegtype_mapping = {"treeFrac": ["evgTree", "dcdTree"],
-                           "c3PftFrac": "c3",
-                           "c4PftFrac": "c4",
-                           "shrubFrac": "shrub",
-                           "baresoilFrac": "soil",
-                           "residualFrac": ["urban", "lake", "ice"]
-                           }
-    else:
-        sys.exit("output not setup for this number of pfts")
-    try:
-        print(cube.coord("frac_name"))
-        print(var)
-        print(vegtype_mapping[var])
-        cube = cube.extract(iris.Constraint(frac_name=vegtype_mapping[var]))
-        if len(cube.coord("vegtype").points) > 1:
-            cube = cube.collapsed("vegtype", iris.analysis.SUM)
-    except:
-        print("vegetation type not recognised")
-        print("need to add it to vegtype_mapping dictionary")
-        raise
-    return cube
-# #############################################################################
-
-
-
 # #############################################################################
 
 
@@ -603,7 +545,7 @@ def twsa_func(cubelist):
         raise
     water_density = 1000.0 #kg m-3
     zw_cube = zw_cube * water_density
-    zw_cube.units = Unit("kg/m2")
+    zw_cube.units = Unit("kg m-2")
 
     cubelist_minuszw = iris.cube.CubeList([])
     for cube in cubelist:
@@ -686,19 +628,20 @@ def minus_func(cubelist):
     return out_cube
 # #############################################################################
 
+
 # #############################################################################
 def sth_func(cubelist):
     """
-    get water content in a layer in kg/m2 from fraction of saturation
+    get water content in a layer in kg m-2 from fraction of saturation
     and saturated watercontent
     """
     soil_thick = cubelist[0].coord("depth").bounds[:, 1] - \
                       cubelist[0].coord("depth").bounds[:, 0]
     soil_thick = np.array(soil_thick)
-    print(len(soil_thick), cubelist[0].data.shape)
-    soil_thick = np.broadcast_to(soil_thick[0], cubelist[0].data.shape)
+    # print(len(soil_thick), cubelist[0].core_data().shape)
+    soil_thick = np.broadcast_to(soil_thick[0], cubelist[0].core_data().shape)
     out_cube = cubelist[0] * cubelist[1] * soil_thick * 1000.0
-    out_cube.units = "kg/m2"
+    out_cube.units = "kg m-2"
     return out_cube
 # #############################################################################
 
@@ -713,12 +656,12 @@ def nbp_func(cubelist):
         if cube.var_name in ["resp_s_to_atmos_gb", "WP_fast_out",
                              "WP_med_out", "WP_slow_out",
                              "npp_n_gb", "harvest_gb", "npp_gb"]:
-            if cube.units != Unit("kg/m2/s"):
+            if cube.units != Unit("kg m-2 s-1"):
                 if "360" in str(cube.units):
                     print("nbp_func: units from "+
                           str(cube.units)+" "+cube.var_name)
                     cube.data = cube.core_data() * 1.0/(86400.0*360.0)
-                    cube.units = "kg/m2/s"
+                    cube.units = "kg m-2 s-1"
                 else:
                     sys.exit("problem with units in nbp_func")
             if cubelist[0].var_name != "npp_n_gb":
@@ -730,6 +673,7 @@ def nbp_func(cubelist):
         sys.exit("check nbp function - wrong number of cubes")
 
     out_cube = minus_func(cubelist)
+    out_cube.units="kg m-2 s-1"
     return out_cube
 # #############################################################################
 
@@ -743,6 +687,25 @@ def sum_func(cubelist):
     for cube in cubelist[1:]:
         out_cube = out_cube + cube
     return out_cube
+# #############################################################################
+
+
+# #############################################################################
+def rflow_func(cube):
+    """
+    used to convert river flow (kg/m2/s) to discharge (m3/s)
+    """
+    cube_area = cube.copy()
+    if cube_area.coord("latitude").bounds is None:
+        cube_area.coord('latitude').guess_bounds()
+        cube_area.coord('longitude').guess_bounds()
+    # area of grid cells
+    area_weights = iris.analysis.cartography.area_weights(cube_area)
+    # 1000 kg/s = 1 m3/sec
+    cube.units = "m3 s-1"
+    cube = cube * 1000. * area_weights
+    return cube
+
 # #############################################################################
 
 
