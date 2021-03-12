@@ -2,7 +2,7 @@ def get_var_dict():
 #############"outVar":[0.inputVars, 1.longName, 2.scale, 3.units, 4.outprofile, 5.func]
     var_dict = {
         ##################### ilamb - MONTHLY #####################
-        #"burntarea":     ["burnt_area_gb", "Burnt area fraction", None, "%", "ilamb", "burntarea_func"], # check fire currently switched off
+        "burntarea":     ["burnt_area_gb", "Burnt area fraction", None, "%", "ilamb", "burntarea_func"], # check fire currently switched off
         "thawdepth":      ["depth_unfrozen", "Thaw Depth", None, "m", "ilamb", None],
         "evap":           ["fqw_gb", "Evapotranspiration", None, "kg m-2 s-1", "ilamb", None],
         "gpp":            ["gpp_gb", "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land", None, "kg m-2 s-1", "ilamb", None],
@@ -21,7 +21,7 @@ def get_var_dict():
         "npp":           ["npp_gb", "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land", None, "kg m-2 s-1", "ilamb", None, "Lmon"],
         ##################### gen_mon_gb - MONTHLY #####################
         "albedo":        ["albedo_land", "Albedo", None, "1", "gen_mon_gb", None],
-        "intercept":     ["ecan_gb", "Evaporation from Canopy (interception)", None, "kg m-2 s-1", "gen_mon_gb", None],
+        "intercep":     ["ecan_gb", "Evaporation from Canopy (interception)", None, "kg m-2 s-1", "gen_mon_gb", None],
         "sublim":        ["ei_gb", "Gridbox sublimation from lying snow or sea-ice", None, "kg m-2 s-1", "gen_mon_gb", None],
         "trans":         ["et_stom_gb", "Transpiration", None, "kg m-2 s-1", "gen_mon_gb", None],
         "dis":            ["rflow", "Discharge", None, "m3 s-1", "gen_mon_gb", "rflow_func"],
@@ -30,7 +30,7 @@ def get_var_dict():
         "qsb":           ["sub_surf_roff", "Subsurface Runoff", None, "kg m-2 s-1", "gen_mon_gb", None],
         "esoil":         [["esoil_gb", "et_stom_gb"], "Water Evaporation from Soil", None, "kg m-2 s-1", "gen_mon_gb", "minus_func"],# check esoil-et_stom???????? incldue sublimation
         ##################### gen_mon_pft - MONTHLY #####################
-        "intercept-pft": ["ecan", "Evaporation from Canopy (interception)", None, "kg m-2 s-1", "gen_mon_pft", None],
+        "intercep-pft": ["ecan", "Evaporation from Canopy (interception)", None, "kg m-2 s-1", "gen_mon_pft", None],
         "sublim-pft":   ["ei", "Tile sublimation from lying snow or sea-ice", None, "kg m-2 s-1", "gen_mon_pft", None],
         "trans-pft":     ["et_stom", "Transpiration", None, "kg m-2 s-1", "gen_mon_pft", None],
         "pft-pft":       ["frac", "Plant Functional Type Grid Fraction", 100., "%", "gen_mon_pft", None],
@@ -48,7 +48,7 @@ def get_var_dict():
         # "tasmax_daily":         ["t1p5m_gb_dailymax", "Daily Maximum Near-Surface Air Temperature", None, "K", "drive_day_gb", None],
         # "rsus_daily":           [["sw_down", "sw_net"], "Upward shortwave radiation", None, "W m-2", "drive_day_gb", "minus_func", "day"],
         # ##################### gen_day_gb - DAILY #####################
-        # "intercept_daily":      ["ecan_gb", "Evaporation from Canopy (interception)", None, "kg m-2 s-1", "gen_day_gb", None],
+        # "intercep_daily":      ["ecan_gb", "Evaporation from Canopy (interception)", None, "kg m-2 s-1", "gen_day_gb", None],
         # "sublim_daily":         ["ei_gb", "Gridbox sublimation from lying snow or sea-ice", None, "kg m-2 s-1", "gen_day_gb", None],
         # "trans_daily":          ["et_stom_gb", "Transpiration", None, "kg m-2 s-1", "gen_day_gb", None],
         # "hfss_daily":           ["ftl_gb", "sensible heat flux", None, "W m-2", "gen_day_gb", None, "day"], # also Eday in tables
@@ -65,7 +65,7 @@ def get_var_dict():
         # "qs_daily":             ["surf_roff", "Surface runoff", None, "kg m-2 s-1", "gen_day_gb", None],
         # "qtot_daily":           [["surf_roff", "sub_surf_roff"], "Runoff (surface + subsurface)", None, "kg m-2 s-1", "gen_day_gb", "sum_func"],
         # ##################### gen_day_pft - DAILY #####################
-        # "intercept-pft_daily":  ["ecan", "Evaporation from Canopy (interception)", None, "kg m-2 s-1", "gen_day_pft", None],
+        # "intercep-pft_daily":  ["ecan", "Evaporation from Canopy (interception)", None, "kg m-2 s-1", "gen_day_pft", None],
         # "sublim-pft_daily":     ["ei", "Tile sublimation from lying snow for land tiles", None, "kg m-2 s-1", "gen_day_pft", None],
         # "trans-pft_daily":      ["et_stom", "Transpiration", None, "kg m-2 s-1", "gen_day_pft", None], # et_stom 
         # "evap-pft_daily":       ["fqw", "Evapotranspiration", None, "kg m-2 s-1", "gen_day_pft", None],
@@ -96,7 +96,7 @@ def get_var_dict():
         #n_ann_pftlayer - ANNUAL
         "npp_nlim_annual":      ["npp_n_gb", "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land", 1.0/(86400.0*360.0), "kg m-2 s-1", "c_ann_gb", None],
         "npp_annual":           ["npp_gb", "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land", None, "kg m-2 s-1", "gen_ann_gb", None],
-        "gpp_annual":            ["gpp_gb", "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land", None, "kg m-2 s-1", "gen_ann_gb", None],
-        "npp-pft_nlim_annual":    ["npp_n", "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited", 1.0/(86400.0*360.0), "kg m-2 s-1", "n_ann_pftlayer", None]
+         "gpp_annual":            ["gpp_gb", "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land", None, "kg m-2 s-1", "gen_ann_gb", None],
+         "npp-pft_nlim_annual":    ["npp_n", "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited", 1.0/(86400.0*360.0), "kg m-2 s-1", "n_ann_pftlayer", None]
             }
     return var_dict

@@ -1,13 +1,13 @@
 #!/bin/bash -l
 
 #SBATCH --mem=200GB
-#SBATCH --time=360
+#SBATCH --time=4320
 #SBATCH --output=outinfo/isimip.%A_%a.out
 #SBATCH --error=outinfo/isimip.%A_%a.err
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --array=1-12
-#SBATCH --qos=normal
+#SBATCH --array=1-1
+#SBATCH --qos=long
 
 ##########################################################################
 # need to make sure number in array matches number of elements in mod_arr
@@ -19,12 +19,7 @@ echo This is task $SLURM_ARRAY_TASK_ID
 
 module load scitools/experimental-current
 
-declare -a mod_arr=("ISIMIP2b_GFDL-ESM2M_C20C" "ISIMIP2b_HADGEM2-ES_C20C" 
-                   "ISIMIP2b_IPSL-CM5A-LR_C20C" "ISIMIP2b_MIROC5_C20C"
-                   "ISIMIP2b_GFDL-ESM2M_RCP2P6" "ISIMIP2b_HADGEM2-ES_RCP2P6" 
-                   "ISIMIP2b_IPSL-CM5A-LR_RCP2P6" "ISIMIP2b_MIROC5_RCP2P6"
-                   "ISIMIP2b_GFDL-ESM2M_RCP6P0" "ISIMIP2b_HADGEM2-ES_RCP6P0" 
-                   "ISIMIP2b_IPSL-CM5A-LR_RCP6P0" "ISIMIP2b_MIROC5_RCP6P0")
+declare -a mod_arr=("ISIMIP3a_GSWP2-W5E5")
 # get length of an array
 arraylength=${#mod_arr[@]}
 

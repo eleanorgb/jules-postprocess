@@ -6,9 +6,16 @@ import sys
 import iris
 import iris.coords as icoords
 import numpy as np
+from read_input import parse_args
+from read_input import read_mip_info_no_rose
 sys.path.append("/home/h03/hadea/bin")
 import jules
-from read_mip_name import read_mip_name
+
+MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
+
+if not L_JULES_ROSE:
+    MIP_INFO = read_mip_info_no_rose(MIPNAME)
+
 
 imodel_dict = {'cen_bcc_mod_bcc-csm1-1'.lower():1,
               'cen_ipsl_mod_ipsl-cm5a-lr'.lower():2,
@@ -61,6 +68,8 @@ def read_ensemble(files_in, variable_cons, time_cons):
         Add our own realization coordinate if it doesn't already exist
         Also add time coordinate year and transfer time to middle of period
         """
+        # #####################################################################
+        # BEGIN add our own realization coordinate if it doesn't already exist.
         if not cube.coords('realization'):
             realization = imodel_dict[filename.split("/")[-2]]
             ensemble_coord = icoords.AuxCoord(realization,
@@ -75,8 +84,8 @@ def read_ensemble(files_in, variable_cons, time_cons):
         cube.coord("time").points = \
                 (cube.coord("time").bounds[:, 0] + \
                 cube.coord("time").bounds[:, 1])/2.0
-    # END add our own realization coordinate if it doesn't already exist.
-    # #########################################################################
+        # END add our own realization coordinate if it doesn't already exist.
+        # #####################################################################
 
 
     cubeall = iris.cube.CubeList([])
@@ -109,27 +118,26 @@ def read_ensemble(files_in, variable_cons, time_cons):
 
 
 # #############################################################################
-def make_outfilename_imogen(mip_info, out_dir, outprofile,
-                            var, syr, eyr):
+def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr):
     """
     sort out filename for outputfile
     """
-    MIPNAME, L_TMP, L_TMP = read_mip_name()
-    outfilename = out_dir+"/"+mip_info["model"][MIPNAME]+"_"+\
-              mip_info["out_scenario"][MIPNAME]+"_"+var+"_"+\
-              outprofile+"_"+str(syr)+"_"+str(eyr)+".nc"
-    print(outfilename)
+    if not L_JULES_ROSE:
+        outfilename = out_dir+"/"+MIP_INFO["model"][MIPNAME]+"_"+\
+                      MIP_INFO["out_scenario"][MIPNAME]+"_"+var+"_"+\
+                      outprofile+"_"+str(syr)+"_"+str(eyr)+".nc"
     return outfilename
 # #############################################################################
 
 
 # #############################################################################
-def make_infilename_imogen(MIPNAME, mip_info, src_dir, jules_profname, years):
+def make_infilename_imogen(src_dir, jules_profname, years):
     """
     sort out filename for input file
     """
-    # print(mip_info["run_name"][MIPNAME])
-    files_in = [src_dir+"*/*_"+mip_info["in_scenario"][MIPNAME]+\
-                mip_info["run_name"][MIPNAME]+\
-                jules_profname+"."+year+".nc" for year in years]
+    # print(MIP_INFO["run_name"][MIPNAME])
+    if not L_JULES_ROSE:
+        files_in = [src_dir+"*/*_"+MIP_INFO["in_scenario"][MIPNAME]+\
+                    MIP_INFO["run_name"][MIPNAME]+\
+                    jules_profname+"."+year+".nc" for year in years]
     return files_in

@@ -6,7 +6,13 @@ import sys
 import subprocess
 from iris.coords import DimCoord
 import numpy as np
-from read_mip_name import read_mip_name
+from read_input import parse_args
+from read_input import read_mip_info_no_rose
+
+MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
+
+if not L_JULES_ROSE:
+    MIP_INFO = read_mip_info_no_rose(MIPNAME)
 
 # #############################################################################
 def make_global_grid_n96e():
@@ -24,11 +30,10 @@ def make_global_grid_n96e():
 
 
 # #############################################################################
-def make_outfilename_cmip(mip_info, out_dir, outprofile, var, syr, eyr):
+def make_outfilename_cmip(out_dir, outprofile, var, syr, eyr):
     """
     make outfilename as required by mip convert
     """
-    MIPNAME, L_TMP, L_TMP = read_mip_name()
     if "day" in outprofile:
         out_dir_time = out_dir + "/lnd"
     elif "yr" in outprofile:
@@ -40,9 +45,10 @@ def make_outfilename_cmip(mip_info, out_dir, outprofile, var, syr, eyr):
         print("mkdir -p "+ out_dir_time)
         sys.exit("mkdir broken")
     try:
-        outfilename = out_dir_time+"/"+var+"_"+outprofile+"_"+\
-                  mip_info["model"][MIPNAME]+"_"+\
-                  mip_info["out_scenario"][MIPNAME]+"_r1i1p1f1_"+\
+        if not L_JULES_ROSE:
+            outfilename = out_dir_time+"/"+var+"_"+outprofile+"_"+\
+                  MIP_INFO["model"][MIPNAME]+"_"+\
+                  MIP_INFO["out_scenario"][MIPNAME]+"_r1i1p1f1_"+\
                   str(syr)+"01-"+str(eyr)+"12.nc"
     except:
         print("broken "+var+": check make_outfilename_cmip")

@@ -1,4 +1,8 @@
-import iris 
+'''
+define land cover types
+'''
+import sys
+import iris
 
 # land cover types - are there standard names here?
 UKESM_TYPES = ["BdlDcd", "BdlEvgTrop", "BdlEvgTemp", "NdlDcd", "NdlEvg",
@@ -6,7 +10,7 @@ UKESM_TYPES = ["BdlDcd", "BdlEvgTrop", "BdlEvgTemp", "NdlDcd", "NdlEvg",
                "c4pasture", "shrubDcd", "shrubEvg", "urban", "lake",
                "soil", "ice"]
 PERMAFROST10_TYPES = ["BdlDcd", "BdlEvgTrop", "BdlEvgTemp", "NdlDcd", "NdlEvg",
-               "c3grass", "c3arctic", "c4grass", "shrubDcd", "shrubEvg", 
+               "c3grass", "c3arctic", "c4grass", "shrubDcd", "shrubEvg",
                "urban", "lake", "soil", "ice"]
 PERMAFROST14_TYPES = ["BdlDcd", "BdlEvgTrop", "BdlEvgTemp", "NdlDcd", "NdlEvg",
                "c3grass", "c3arctic", "c3crop", "c3pasture", "c4grass",
@@ -124,4 +128,3 @@ def select_vegfrac(cube, var):
         raise
     return cube
 # #############################################################################
-

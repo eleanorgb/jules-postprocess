@@ -9,7 +9,13 @@ import iris
 from iris.coords import DimCoord
 from cf_units import Unit
 from landcover_types import UKESM_TYPES
-from read_mip_name import read_mip_name
+from read_input import parse_args
+from read_input import read_mip_info_no_rose
+
+MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
+
+if not L_JULES_ROSE:
+    MIP_INFO = read_mip_info_no_rose(MIPNAME)
 
 # #############################################################################
 def make_global_grid_0p5():
@@ -31,8 +37,7 @@ def define_years_daily_isimip2b():
     """
     break into 10 year batches
     """
-    MIPNAME, L_TMP, L_TMP = read_mip_name()
-    if "C20C" in MIPNAME:
+    if "HIST" in MIPNAME:
         syrall = np.arange(1861, 2011, 10)
         eyrall = syrall + 9
         eyrall[eyrall == 2010] = 2005
@@ -47,30 +52,37 @@ def define_years_daily_isimip2b():
 
 
 # #############################################################################
-def make_outfilename_isimip(mip_info, out_dir, outprofile,
-                            var, syr, eyr):
+def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
     """
     define outfilename for isimip
     <modelname>_<gcm>_<bias-correction>_<climate-scenario>_
     <soc-scenario>_<co2sens-scenarios>_<variable>_<region>_
     <timestep>_<start-year>_<end-year>.nc4
     """
-    MIPNAME, L_TMP, L_TMP = read_mip_name()
-    if mip_info["in_scenario"][MIPNAME] in "c20c":
-        soc = "histsoc_co2"
-    elif mip_info["in_scenario"][MIPNAME] in "rcp2p6":
-        soc = "rcp26soc_co2"
-    elif mip_info["in_scenario"][MIPNAME] in "rcp6p0":
-        soc = "rcp60soc_co2"
-    elif mip_info["in_scenario"][MIPNAME] in "rcp8p5":
-        soc = "nosoc_co2"
-    else:
-        sys.exit("no soc")
-    outfilename = out_dir+"/"+mip_info["model"][MIPNAME].lower()+"_"+\
-                   mip_info["run_name"][MIPNAME].lower()+"ewembi_"+\
-                   mip_info["out_scenario"][MIPNAME]+"_"+\
-                   soc+"_"+var+"_global_"+outprofile+"_"+\
-                   str(syr)+"_"+str(eyr)+".nc"
+    if not L_JULES_ROSE:
+        if MIP_INFO["in_scenario"][MIPNAME] in "c20c":
+            soc = "histsoc_co2"
+        elif MIP_INFO["in_scenario"][MIPNAME] in "rcp2p6":
+            soc = "rcp26soc_co2"
+        elif MIP_INFO["in_scenario"][MIPNAME] in "rcp6p0":
+            soc = "rcp60soc_co2"
+        elif MIP_INFO["in_scenario"][MIPNAME] in "rcp8p5":
+            soc = "nosoc_co2"
+        else:
+            sys.exit("no soc")
+        outfilename = out_dir+"/"+MIP_INFO["model"][MIPNAME].lower()+"_"+\
+                       MIP_INFO["run_name"][MIPNAME].lower()+"ewembi_"+\
+                       MIP_INFO["out_scenario"][MIPNAME]+"_"+\
+                       soc+"_"+var+"_global_"+outprofile+"_"+\
+                       str(syr)+"_"+str(eyr)+".nc"
+
+    if L_JULES_ROSE:
+        CONFIG_ARGS = config_parse_args(MIPNAME)
+        outfilename = out_dir+CONFIG_ARGS["OUT_INFO"]["model_out_id"].lower()+\
+                   "_"+CONFIG_ARGS["MODEL_INFO"]["driving_name"].lower()+"_"+\
+                   CONFIG_ARGS['MODEL_INFO']['soc_scenario']+"_"+\
+                   CONFIG_ARGS['MODEL_INFO']['co2_scenario']+"_"+\
+                   var+"_global_"+outprofile+"_"+str(syr)+"_"+str(eyr)+".nc"
     return outfilename
 # #############################################################################
 
@@ -144,7 +156,7 @@ def sort_isimip_cube(cube, outprofile):
     cube.cell_methods = None
     cube = iris.util.squeeze(cube)
 
-    # depth coordinate 
+    # depth coordinate
     for coord in cube.coords():
         if coord.name()=="depth":
             coord.long_name = "Depth of vertical layer center below land"
@@ -159,7 +171,7 @@ def sort_isimip_cube(cube, outprofile):
 
 
 # #############################################################################
-def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value, L_TESTING=False):
+def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
     """
     for each pft sort out the cube
     """
@@ -199,7 +211,8 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value, L_TESTI
         if retcode != 0:
             print("ncrename variable broken "+outfilename)
             sys.exit("ncrename broken")
-        retcode = subprocess.call("mv "+outfilename+" "+outfilename+"4", shell=True)
+        retcode = subprocess.call("mv "+outfilename+" "+outfilename+"4", 
+                                  shell=True)
         if retcode != 0:
             print("mv "+outfilename+" "+outfilename+"4")
             sys.exit("mv broken")

@@ -2,8 +2,8 @@
 
 #SBATCH --mem=100GB
 #SBATCH --time=360
-#SBATCH --output=cmipland_outinfo/cmipland.%A_%a.out
-#SBATCH --error=cmipland_outinfo/cmipland.%A_%a.err
+#SBATCH --output=outinfo/cmipland.%A_%a.out
+#SBATCH --error=outinfo/cmipland.%A_%a.err
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --array=1-8
@@ -32,6 +32,6 @@ arraylength=${#mod_arr[@]}
 
 # Run this task.
 echo This is SLURM task $SLURM_ARRAY_TASK_ID, mipName is ${mod_arr[$SLURM_ARRAY_TASK_ID-1]}
-python -u process_jules.py ${mod_arr[$SLURM_ARRAY_TASK_ID-1]}
+python -u process_jules.py ${mod_arr[$SLURM_ARRAY_TASK_ID-1]} --l_backfill_missing_files
 
 date

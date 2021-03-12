@@ -1,19 +1,15 @@
-# needs lots of memory - run on spice
-"""
+'''
 script to postprocess jules output
 BE CAREFUL with nitrogen on and off and npp and nlim
-"""
+sometimes needs lots of memory - run on spice
+'''
 import os
 import sys
 import warnings
 import getpass
 import subprocess
-from re import sub
 import numpy.ma as ma
 import numpy as np
-import pandas
-# import matplotlib.pyplot as plt
-# import iris.quickplot  as qplt
 import iris
 import iris.coord_categorisation
 from iris.time import PartialDateTime
@@ -21,144 +17,166 @@ from iris.cube import Cube
 from cf_units import Unit
 from landcover_types import select_vegfrac
 from landcover_types import add_tile_info
-from read_mip_name import read_mip_name
+from sel_diags_test import sel_diags_test
+from read_input import parse_args
+from read_input import config_parse_args
+from read_input import read_mip_info_no_rose
+from sort_varout_outprofile_name import sort_varout_outprofile_name
+import isimip_func
+import imogen_func
+import cmip_func
+import ISIMIP_variables
+import CMIP_variables
+import TRENDY_variables
+import IMOGEN_variables
+import IMOGENvariant_variables
 # this version of JULES is currently in karinas directory
 # sys.path.append("/home/h03/kwilliam/other_fcm/jules_py/trunk/jules")
 sys.path.append("/home/h03/hadea/bin")
 import jules
 
-
 warnings.filterwarnings("ignore")
 
-# #############################################################################
-# #############################################################################
-# #############################################################################
-# this will change depending on the run we want to process
-# see first column in mip_info.csv for currently available simulations
-MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES = read_mip_name()
-print(MIPNAME)
-# redefine diag in main() to the specific diagnistics required for testing
-CONTACT_EMAIL = "eleanor.burke@metoffice.gov.uk"  # dont use my email!
-# #############################################################################
-# #############################################################################
-# #############################################################################
-OUT_BASEDIR = "/scratch/"+getpass.getuser()+"/jules_postprocess/" #output dir
-INSTITUTION = "Met Office"
-COMMENT = ""
-
-print(MIPNAME)
-if "ISIMIP" in MIPNAME:
-    from ISIMIP_variables import get_var_dict
-    import isimip_func
-elif "CMIP" in MIPNAME:
-    from CMIP_variables import get_var_dict
-    import cmip_func
-elif "TRENDY" in MIPNAME:
-    from TRENDY_variables import get_var_dict
-elif "IMOGEN5" in MIPNAME:
-    import imogen_func
-    if "variant" in MIPNAME:
-        from IMOGEN_variant_variables import get_var_dict
-    else:
-        from IMOGEN_variables import get_var_dict
-else:
-    sys.exit("variable list not available for "+MIPNAME)
-
+# #########################################################################
+# read command line arguments
+global MIPNAME, L_TESTING, L_JULES_ROSE
+MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
+mip = MIPNAME.split('_')[0]
 
 # #############################################################################
-
+if not L_JULES_ROSE:
+    CONTACT_EMAIL = "eleanor.burke@metoffice.gov.uk"  # dont use my email!
+    OUT_BASEDIR = "/scratch/"+getpass.getuser()+"/jules_postprocess/" # out dir
+    INSTITUTION = "Met Office"
+    COMMENT = ""
 
 # #############################################################################
 def main():
     """
     this is the main code reads information and loops through all diagnostics
     """
-    # import dictionaries specific to mips - should be the same for all mips now
-    diag_dic = get_var_dict()
-    diags = get_var_dict().keys() ## all diagnostics
-    print(diags)
-    # ######################################################
-    # select specific ones here for testing (L_TESTING=True)
-    if L_TESTING:
-         diags=["dis","pft-pft","npp-pft_annual"] #,"tsl_daily","snc","snc_daily"]
-    # select specific ones here for testing (L_TESTING=True)
-    # ######################################################
+    # #########################################################################
+    # read jules info for relevant mip and define input and output directories
+    # #########################################################################
+    if L_JULES_ROSE:
+        global CONFIG_ARGS
+        CONFIG_ARGS = config_parse_args(MIPNAME)  # MIPNAME.ini
+        src_dir = CONFIG_ARGS['MODEL_INFO']['model_output_dir']
+        out_dir =  CONFIG_ARGS['MODEL_INFO']['out_dir']
+        if "CMIP" in MIPNAME:
+            out_dir = out_dir+CONFIG_ARGS["MODEL_INFO"]["suite_id"]+"_"+\
+                   CONFIG_ARGS["MODEL_INFO"]["scenario"]
 
-    # read dictionary of jules info for relevant mip
-    # may need to add information to this file
-    mip_info = pandas.read_csv("mip_info.csv", skiprows=16)
-    mip_info = mip_info.set_index("MIPNAME")
-    print("####################################################")
-    print("INFORMATION FOR MODEL RUNS TO BE PROCESSED")
-    print(mip_info.loc[MIPNAME])
-    print("outputdir = "+OUT_BASEDIR)
-    print("####################################################")
-    mip_info = mip_info.to_dict()
+    # #########################################################################
+    elif not L_JULES_ROSE:
+        global MIP_INFO
+        MIP_INFO = read_mip_info_no_rose(MIPNAME)
+        src_dir = MIP_INFO["src_dir"][MIPNAME]+MIP_INFO["suite_id"][MIPNAME]+"/"
+        out_dir = OUT_BASEDIR+MIP_INFO["suite_id"][MIPNAME]
+        if "CMIP" in MIPNAME:
+            out_dir = OUT_BASEDIR+MIP_INFO["suite_id"][MIPNAME]+"_"+\
+                   MIP_INFO["out_scenario"][MIPNAME]
 
-    # input and output directories
-    try:
-        src_dir = mip_info["src_dir"][MIPNAME]
-    except:
-        print("ADD INFORMATION for mip to file: mip_info.csv")
-        raise
-    # src_dir = "/scratch/hadea/tmp/" # temporary for testing
-    src_dir = src_dir+mip_info["suite_id"][MIPNAME]+"/"
-    out_dir = OUT_BASEDIR+mip_info["suite_id"][MIPNAME]
-    if "CMIP" in MIPNAME:
-        out_dir = OUT_BASEDIR+mip_info["suite_id"][MIPNAME]+"_"+\
-                   mip_info["out_scenario"][MIPNAME]
+    # #########################################################################
     retcode = subprocess.call("mkdir -p "+ out_dir, shell=True)
     if retcode != 0:
         print("mkdir -p "+ out_dir)
         sys.exit("mkdir broken")
-
     error = "\n"
     outfile_error = ""
+
+    # #########################################################################
+    # get diagnstics for processing
+    if "ISIMIP" in mip:
+        diag_dic = ISIMIP_variables.get_var_dict()
+    elif "CMIP" in mip:
+        diag_dic = CMIP_variables.get_var_dict()
+    elif "IMOGEN5variant" in mip:
+        diag_dic = IMOGENvariant_variables.get_var_dict()
+    elif "IMOGEN5" in mip:
+        diag_dic = IMOGEN_variables.get_var_dict()
+    elif "TRENDY" in mip:
+        diag_dic = TRENDY_variables.get_var_dict()
+    else:
+        print("neeed to define dictionary for mip")
+        sys.exit()
+
+    diags = diag_dic.keys() ## all diagnostics
+
+    # select specific ones here for testing (L_TESTING=True)
+    if L_TESTING:
+        diags = sel_diags_test()
+    print("Diagnostics:", diags)
+    # #########################################################################
+
+    # #########################################################################
+    # write out information
+    print("####################################################")
+    print("INFORMATION FOR MODEL RUNS TO BE PROCESSED")
+    print("MIPNAME", MIPNAME)
+    print("L_TESTING", L_TESTING)
+    print("L_BACKFILL_MISSING_FILES", L_BACKFILL_MISSING_FILES)
+    print("src_dir", src_dir)
+    print("out_dir", out_dir)
+    print("####################################################")
+
+    # #########################################################################
     # loop through variables
     for var in diags:
-        # determine whether we want all data for variable in one file or not
-        # currently anything _daily in varname will be in multiple files
-        syrall = [mip_info["start_year"][MIPNAME]]
-        eyrall = [mip_info["end_year"][MIPNAME]]
-        if L_TESTING:
-            eyrall = [int(syrall[0]) + 5]
-        time_cons = None
-        l_alltimes_in_one_file = True
-        if "daily" in var:
-            l_alltimes_in_one_file = False # split output files for daily data
-            syrall, eyrall = define_syr_eyr_daily_output()
+        # ######################################################################
+        # define start and end years
+        syrall, eyrall, l_alltimes_in_one_file = define_syr_eyr_output(var)
 
         for i, syr in enumerate(syrall): # loop through all years
             eyr = eyrall[i]
-            print("start year: "+str(syr)+"  end year: "+str(eyr)+" "+var)
+            print("start year: "+str(syr)+"  end year: "+str(eyr)+" for: "+var)
+
             if not l_alltimes_in_one_file:
                 time_cons = iris.Constraint(time=lambda cell: \
                                             PartialDateTime(syr) \
                                             <= cell.point and \
                                             PartialDateTime(eyr) >= cell.point)
+            else:
+                time_cons = None
+
             # first call to define filenames - check file exists or not
-            l_onlymakefname = True
-            outfilename, varout = write_out_final_cube(mip_info, diag_dic, None,
-                                                       var, out_dir, syr, eyr,
-                                                       l_onlymakefname)
+            outfilename, varout = write_out_final_cube(diag_dic, None, var,
+                                                       out_dir, syr, eyr,
+                                                       l_onlymakefname=True)
             if "ISIMIP" in MIPNAME:
                 outfilename = isimip_func.sort_outfilename_isimip(outfilename,
                                                                   var, varout)
+            print("outfilename: "+outfilename)
 
             # if file exists do nothing unless BACKFILL is false.
-            if os.path.exists(outfilename) and L_BACKFILL_MISSING_FILES == True:
+            if os.path.exists(outfilename) and bool(L_BACKFILL_MISSING_FILES):
                 print("File exists: "+outfilename)
                 continue
 
             try:
-                cube = make_gridded_files(src_dir, mip_info, diag_dic,
-                                          time_cons, var, syr, eyr)
-                l_onlymakefname = False
-                outfilename, varout = write_out_final_cube(mip_info,
-                                                           diag_dic, cube,
-                                                           var, out_dir,
-                                                           syr, eyr,
-                                                           l_onlymakefname)
+                cube = make_gridded_files(src_dir, diag_dic,
+                                                       time_cons, var, syr, eyr)
+                if L_JULES_ROSE:
+                    cube.attributes["contact"] = \
+                                        CONFIG_ARGS['OUT_INFO']['contact_email']
+                    cube.attributes["institution"] = \
+                                          CONFIG_ARGS['OUT_INFO']['institution']
+                    comment = CONFIG_ARGS['OUT_INFO']['comment']
+                    cube.attributes["comment"] = comment+"rose-suite is "+\
+                                           CONFIG_ARGS["MODEL_INFO"]["suite_id"]
+                elif not L_JULES_ROSE:
+                    cube.attributes["contact"] = \
+                                        CONTACT_EMAIL
+                    cube.attributes["institution"] = \
+                                          INSTITUTION
+                    comment = COMMENT
+                    cube.attributes["comment"] = COMMENT+"rose-suite is "+\
+                                           MIP_INFO["suite_id"][MIPNAME]
+
+                outfilename, varout = write_out_final_cube(diag_dic, cube,
+                                                          var, out_dir,
+                                                          syr, eyr,
+                                                          l_onlymakefname=False)
             except:
                 print("ERROR "+MIPNAME+": "+var)
                 error = error+" "+var+"\n"
@@ -170,23 +188,30 @@ def main():
 
     # show list of broken variables at the end and write out missing files
     print("THESE variables broke: "+error)
-    with open("outinfo/"+MIPNAME+".txt", "w") as text_file:
-        text_file.write("These files are missing:\n"+outfile_error)
+    retcode = subprocess.call("mkdir -p outinfo", shell=True)
+    with open("outinfo/"+MIPNAME+".outinfo", "w") as text_file:
+        text_file.write("These variables broke (ERROR): "+error)
+        text_file.write("These files are missing (WARNING):\n"+outfile_error)
 # #############################################################################
 
 
 # #############################################################################
-def make_gridded_files(src_dir, mip_info, diag_dic, time_cons, var, syr, eyr):
+def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
     """
     make the gridded jules data
     """
 
     # read input diagnostics
-    inputdiags = diag_dic[var][0]
+    try:
+        inputdiags = diag_dic[var][0]
+    except:
+        print("check dictionary of variable translations (see diag_dic)")
+        print(var + " is not linked to a specified jules output variable")
+        sys.exit()
     #print(inputdiags.__class__.__name__)
     jules_profname = diag_dic[var][4]
     print(var+": variable: "+str(inputdiags)+" jules_profile: "+jules_profname)
-    files_in = make_infilename(mip_info, src_dir, jules_profname, syr, eyr)
+    files_in = make_infilename(src_dir, jules_profname, syr, eyr)
     if inputdiags.__class__.__name__ == "list":
         # more than one variable read and combined together with a defined func
         cubelist = iris.cube.CubeList([])
@@ -230,12 +255,6 @@ def make_gridded_files(src_dir, mip_info, diag_dic, time_cons, var, syr, eyr):
     if diag_dic[var][1] is not None: # change variable long name
         cube.long_name = diag_dic[var][1]
 
-    # any more attributes to add?
-    cube.attributes["contact"] = CONTACT_EMAIL
-    cube.attributes["institution"] = INSTITUTION
-    cube.attributes["comment"] = COMMENT+"rose-suite is "+\
-                                                mip_info["suite_id"][MIPNAME]
-
    # sort out vegetation fractions when need to separate them
     if diag_dic[var][0] == "frac" and \
                  var not in ["landCoverFrac", "pft-pft",
@@ -251,21 +270,36 @@ def make_gridded_files(src_dir, mip_info, diag_dic, time_cons, var, syr, eyr):
 
 
 # #############################################################################
-def define_syr_eyr_daily_output():
+def define_syr_eyr_output(var):
     """
-    define start and end year array for daily output
-    break into batches
+    define start and end year array for output data
+    determine whether we want all data for variable in one file
+    currently anything _daily in varname will be in multiple files
     """
-    if "CMIP" in MIPNAME:
-        syrall, syrall =   cmip_func.define_years_daily_cmip()
-    elif "ISIMIP2" in MIPNAME:  #ejb change to 2b
-        syrall, syrall =   isimip_func.define_years_daily_isimip2b()
-    else:
-        syrall = [-1]
-        eyrall = [-1]
-        print("need to define how to split daily data")
-        sys.exit("need to define how to split daily data")
-    return syrall, eyrall
+    if L_JULES_ROSE:
+        syrall = [int(CONFIG_ARGS["MODEL_INFO"]["start_year"])]
+        eyrall = [int(CONFIG_ARGS["MODEL_INFO"]["end_year"])]
+    elif not L_JULES_ROSE:
+        syrall = [int(MIP_INFO["start_year"][MIPNAME])]
+        eyrall = [int(MIP_INFO["start_year"][MIPNAME])]
+    l_alltimes_in_one_file = True
+
+    if L_TESTING:
+        eyrall = [syrall[0] + 1]
+
+    if "daily" in var:
+        if "CMIP" in MIPNAME:
+            syrall, eyrall = cmip_func.define_years_daily_cmip()
+        elif "ISIMIP2b" in MIPNAME:
+            syrall, eyrall = isimip_func.define_years_daily_isimip2b()
+        else:
+            syrall = [-1]
+            eyrall = [-1]
+            print("need to define how to split daily data")
+            sys.exit("need to define how to split daily data")
+        l_alltimes_in_one_file = False    # split output files for daily data
+
+    return syrall, eyrall, l_alltimes_in_one_file
 
 # #############################################################################
 def add_time_middle(cube, field, filename):
@@ -282,19 +316,24 @@ def add_time_middle(cube, field, filename):
 
 
 # #############################################################################
-def make_infilename(mip_info, src_dir, jules_profname, syr, eyr):
+def make_infilename(src_dir, jules_profname, syr, eyr):
     """
     make filename of all the required infiles
     """
     # only files between start_year and end_year
-    print(MIPNAME, syr, eyr)
+    # CONFIG_ARGS = config_parse_args(MIPNAME)
     years = [str(year) for year in np.arange(syr, eyr+1)]
     if "IMOGEN" in MIPNAME:
-        files_in = imogen_func.make_infilename_imogen(MIPNAME, mip_info,
-                                                 src_dir, jules_profname, years)
+        files_in = imogen_func.make_infilename_imogen(src_dir, jules_profname,
+                                                      years)
     else:
-        files_in = [src_dir+mip_info["run_name"][MIPNAME]+\
-                    mip_info["in_scenario"][MIPNAME]+\
+        if not L_JULES_ROSE:
+            files_in = [src_dir+MIP_INFO["run_name"][MIPNAME]+\
+                    MIP_INFO["in_scenario"][MIPNAME]+\
+                    "."+jules_profname+"."+year+".nc" for year in years]
+        elif L_JULES_ROSE:
+            files_in = [src_dir+CONFIG_ARGS["MODEL_INFO"]["driving_model"]+"_"+\
+                    CONFIG_ARGS["MODEL_INFO"]["scenario"]+\
                     "."+jules_profname+"."+year+".nc" for year in years]
     print("First input file:")
     print(files_in[0])
@@ -304,35 +343,38 @@ def make_infilename(mip_info, src_dir, jules_profname, syr, eyr):
 
 
 # #############################################################################
-def make_outfilename(mip_info, out_dir, outprofile, var, syr, eyr):
+def make_outfilename(out_dir, outprofile, var, syr, eyr):
     """
     make filename of outfilename
     """
-    print(outprofile)
     if "CMIP" in MIPNAME:
-        outfilename = cmip_func.make_outfilename_cmip(mip_info,
-                                             out_dir, outprofile, var, syr, eyr)
+        outfilename = cmip_func.make_outfilename_cmip(out_dir, outprofile,
+                                                      var, syr, eyr)
     elif "TRENDY" in MIPNAME:
-        outfilename = out_dir+"/"+mip_info["model"][MIPNAME]+"_"+\
-                  mip_info["out_scenario"][MIPNAME]+"_"+var+"_"+\
+        if not L_JULES_ROSE:
+            outfilename = out_dir+"/"+MIP_INFO["model"][MIPNAME]+"_"+\
+                  MIP_INFO["out_scenario"][MIPNAME]+"_"+var+"_"+\
+                  outprofile+".nc"
+        if L_JULES_ROSE:
+            outfilename = out_dir+"/"+CONFIG_ARGS["MODEL_INFO"]["model"]+"_"+\
+                  CONFIG_ARGS["MODEL_INFO"]["scenario"]+"_"+var+"_"+\
                   outprofile+".nc"
     elif "ISIMIP" in MIPNAME:
-        outfilename = isimip_func.make_outfilename_isimip(mip_info,
-                                             out_dir, outprofile, var, syr, eyr)
+        outfilename = isimip_func.make_outfilename_isimip(out_dir, outprofile,
+                                                          var, syr, eyr)
     elif "IMOGEN" in MIPNAME:
-        outfilename = imogen_func.make_outfilename_imogen(mip_info,
-                                             out_dir, outprofile, var, syr, eyr)
+        outfilename = imogen_func.make_outfilename_imogen(out_dir, outprofile,
+                                                          var, syr, eyr)
 
     else:
         sys.exit("need outfilename for "+MIPNAME)
-    print("outfilename: "+outfilename)
     return outfilename
 # #############################################################################
 
 
 # #############################################################################
-def write_out_final_cube(mip_info, diag_dic, cube, var, out_dir, syr,
-                         eyr, l_onlymakefname):
+def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
+                         eyr, l_onlymakefname=True):
     """
     write out cube
     """
@@ -343,40 +385,8 @@ def write_out_final_cube(mip_info, diag_dic, cube, var, out_dir, syr,
             #stat(cube)
             print("after stat lazy data is realised ",cube.has_lazy_data())
 
-    varout = var
-    if "npp" in var and "_nlim" in var:
-        varout = "npp"  #npp is different in Nitrogen/non-Nitrogen cases
-        if "pft" in var:
-            varout = varout+"-pft"
-    elif "npp" in var:
-        varout = "npp_noNlimitation"
-        if "pft" in var:
-            varout = varout+"-pft"
-    if "ecoatmflux" in var and "_nlim" in var and "ISIMIP" in MIPNAME:
-        varout = "ecoatmflux"  #npp is different in Nitrogen/non-Nitrogen cases
-    elif "ecoatmflux" in var and "ISIMIP" in MIPNAME:
-        varout = "ecoatmflux_noNlimitation"  #npp different in N/non-N cases
-    if "nbp" in var and "_nlim" in var and "CMIP" in MIPNAME:
-        varout = "nbp"  # npp different in N/non-N cases
-    elif "nbp" in var and "CMIP" in MIPNAME:
-        varout = "nbp_noNlimitation"   # npp different in N/non-N cases
-    outprofile = "monthly"
-    if "daily" in var:
-        varout = sub("_daily$", "", var)
-        outprofile = "daily"
-    if "annual" in var:
-        outprofile = "annual"
-        if not "npp" in varout:
-            varout = sub("_annual$", "", var)
-        if "npp_nlim" in var:
-            varout = "npp"
-            if "pft" in var:
-                varout = varout+"-pft"
-        elif "npp" in var:
-            varout = "npp_noNlimitation"
-            if "pft" in var:
-                varout = varout+"-pft"
-
+    # sort out varout and outprofile
+    varout, outprofile = sort_varout_outprofile_name(var)
     if "CMIP" in MIPNAME:
         outprofile = diag_dic[var][6]
 
@@ -394,8 +404,7 @@ def write_out_final_cube(mip_info, diag_dic, cube, var, out_dir, syr,
         if "ISIMIP" in MIPNAME:
             cube = isimip_func.sort_isimip_cube(cube, outprofile)
 
-    outfilename = make_outfilename(mip_info, out_dir, outprofile,
-                                   varout, syr, eyr)
+    outfilename = make_outfilename(out_dir, outprofile, varout, syr, eyr)
 
     if not l_onlymakefname:
         cube.var_name = varout
@@ -406,7 +415,7 @@ def write_out_final_cube(mip_info, diag_dic, cube, var, out_dir, syr,
             # need to separate cube by pft
             for ipft in cube.coord("vegtype").points:
                 isimip_func.sort_and_write_pft_cube(varout, cube, outfilename,
-                                                    ipft, fill_value, L_TESTING)
+                                                    ipft, fill_value)
         else:
             chunksizes = define_chunksizes(cube)
             print("cube should still have lazy data ",cube.has_lazy_data())
@@ -416,8 +425,8 @@ def write_out_final_cube(mip_info, diag_dic, cube, var, out_dir, syr,
                       netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizes,
                       contiguous=False, complevel=9)
                 if "ISIMIP" in MIPNAME:
-                    retcode = subprocess.call("mv "+outfilename+" "+outfilename+\
-                                          "4", shell=True)
+                    retcode = subprocess.call("mv "+outfilename+" "+\
+                                                   outfilename+"4", shell=True)
                     if retcode != 0:
                         print("mv "+outfilename+" "+outfilename+"4")
                         sys.exit("mv broken")
@@ -702,8 +711,8 @@ def rflow_func(cube):
     # area of grid cells
     area_weights = iris.analysis.cartography.area_weights(cube_area)
     # 1000 kg/s = 1 m3/sec
-    cube.units = "m3 s-1"
     cube = cube * 1000. * area_weights
+    cube.units = "m3 s-1"
     return cube
 
 # #############################################################################
