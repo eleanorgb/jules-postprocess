@@ -7,13 +7,16 @@ import iris
 import iris.coords as icoords
 import numpy as np
 from read_input import parse_args
+from read_input import config_parse_args
 from read_input import read_mip_info_no_rose
 sys.path.append("/home/h03/hadea/bin")
 import jules
 
 MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
 
-if not L_JULES_ROSE:
+if L_JULES_ROSE:
+    CONFIG_ARGS = config_parse_args(MIPNAME)
+elif not L_JULES_ROSE:
     MIP_INFO = read_mip_info_no_rose(MIPNAME)
 
 
@@ -126,6 +129,12 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr):
         outfilename = out_dir+"/"+MIP_INFO["model"][MIPNAME]+"_"+\
                       MIP_INFO["out_scenario"][MIPNAME]+"_"+var+"_"+\
                       outprofile+"_"+str(syr)+"_"+str(eyr)+".nc"
+    else:
+        outfilename = out_dir+CONFIG_ARGS["OUT_INFO"]["model_out_id"].lower()+"_"+\
+                       CONFIG_ARGS["MODEL_INFO"]["configname"]+"_"+\
+                       CONFIG_ARGS["MODEL_INFO"]["scenario"]+"_"+\
+                       var+"_"+outprofile+"_"+str(syr)+"_"+str(eyr)+".nc"
+
     return outfilename
 # #############################################################################
 
@@ -140,4 +149,9 @@ def make_infilename_imogen(src_dir, jules_profname, years):
         files_in = [src_dir+"*/*_"+MIP_INFO["in_scenario"][MIPNAME]+\
                     MIP_INFO["run_name"][MIPNAME]+\
                     jules_profname+"."+year+".nc" for year in years]
+    else:
+        files_in = [src_dir+"*/*_"+CONFIG_ARGS["MODEL_INFO"]["scenario"].lower()+"_"+\
+                    CONFIG_ARGS["MODEL_INFO"]["configname"]+"."+\
+                    jules_profname+"."+year+".nc" for year in years]
+
     return files_in

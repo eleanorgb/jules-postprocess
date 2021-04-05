@@ -10,11 +10,14 @@ from iris.coords import DimCoord
 from cf_units import Unit
 from landcover_types import UKESM_TYPES
 from read_input import parse_args
+from read_input import config_parse_args
 from read_input import read_mip_info_no_rose
 
 MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
 
-if not L_JULES_ROSE:
+if L_JULES_ROSE:
+    CONFIG_ARGS = config_parse_args(MIPNAME)
+elif not L_JULES_ROSE:
     MIP_INFO = read_mip_info_no_rose(MIPNAME)
 
 # #############################################################################
@@ -77,7 +80,6 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
                        str(syr)+"_"+str(eyr)+".nc"
 
     if L_JULES_ROSE:
-        CONFIG_ARGS = config_parse_args(MIPNAME)
         outfilename = out_dir+CONFIG_ARGS["OUT_INFO"]["model_out_id"].lower()+\
                    "_"+CONFIG_ARGS["MODEL_INFO"]["driving_name"].lower()+"_"+\
                    CONFIG_ARGS['MODEL_INFO']['soc_scenario']+"_"+\

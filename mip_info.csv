@@ -15,6 +15,7 @@
 # end_year_in - end year for output (if not all available files are used)
 #                set to less than 0 to read all available files
 MIPNAME,model,suite_id,src_dir,run_name,out_scenario,in_scenario,start_year,end_year
+IMOGEN5_bd604_26,IMOGEN5_vn6p0,u-bd604,/hpc/data/d00/hadea/jules_output/,_CN.,rcp2p6_CN,rcp2p6,1850,2299
 IMOGEN5_aj257_26_isunfrozen,IMOGEN5_vn51pf,u-aj257_isunfrozen,/hpc/data/d00/hadea/jules_output/,.,rcp2.6_CN_isunfrozen,rcp2.6,1850,2299
 IMOGEN5_aj257_45_isunfrozen,IMOGEN5_vn51pf,u-aj257_isunfrozen,/hpc/data/d00/hadea/jules_output/,.,rcp4.5_CN_isunfrozen,rcp4.5,1850,2299
 IMOGEN5_aj257_85_isunfrozen,IMOGEN5_vn51pf,u-aj257_isunfrozen,/hpc/data/d00/hadea/jules_output/,.,rcp8.5_CN_isunfrozen,rcp8.5,1850,2299

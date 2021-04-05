@@ -25,15 +25,6 @@ from sort_varout_outprofile_name import sort_varout_outprofile_name
 import isimip_func
 import imogen_func
 import cmip_func
-import ISIMIP_variables
-import CMIP_variables
-import TRENDY_variables
-import IMOGEN_variables
-import IMOGENvariant_variables
-# this version of JULES is currently in karinas directory
-# sys.path.append("/home/h03/kwilliam/other_fcm/jules_py/trunk/jules")
-sys.path.append("/home/h03/hadea/bin")
-import jules
 
 warnings.filterwarnings("ignore")
 
@@ -41,8 +32,21 @@ warnings.filterwarnings("ignore")
 # read command line arguments
 global MIPNAME, L_TESTING, L_JULES_ROSE
 MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
-mip = MIPNAME.split('_')[0]
 
+if not L_JULES_ROSE:
+    import ISIMIP_variables
+    import CMIP_variables
+    import TRENDY_variables
+    import IMOGEN_variables
+    import IMOGENvariant_variables
+    sys.path.append("/home/h03/hadea/bin")
+    import jules
+    # this version of JULES is currently in karinas directory
+    # sys.path.append("/home/h03/kwilliam/other_fcm/jules_py/trunk/jules")
+elif L_JULES_ROSE:
+    diag_dic = suite_postprocessed_variables.get_var_dict()
+    import jules
+    
 # #############################################################################
 if not L_JULES_ROSE:
     CONTACT_EMAIL = "eleanor.burke@metoffice.gov.uk"  # dont use my email!
@@ -61,8 +65,9 @@ def main():
     if L_JULES_ROSE:
         global CONFIG_ARGS
         CONFIG_ARGS = config_parse_args(MIPNAME)  # MIPNAME.ini
-        src_dir = CONFIG_ARGS['MODEL_INFO']['model_output_dir']
-        out_dir =  CONFIG_ARGS['MODEL_INFO']['out_dir']
+        src_dir = CONFIG_ARGS['MODEL_INFO']['model_input_dir']
+        out_dir =  CONFIG_ARGS['MODEL_INFO']['output_dir']
+        mip = CONFIG_ARGS['MODEL_INFO']['mipname']
         if "CMIP" in MIPNAME:
             out_dir = out_dir+CONFIG_ARGS["MODEL_INFO"]["suite_id"]+"_"+\
                    CONFIG_ARGS["MODEL_INFO"]["scenario"]
@@ -70,6 +75,7 @@ def main():
     # #########################################################################
     elif not L_JULES_ROSE:
         global MIP_INFO
+        mip = MIPNAME.split('_')[0]
         MIP_INFO = read_mip_info_no_rose(MIPNAME)
         src_dir = MIP_INFO["src_dir"][MIPNAME]+MIP_INFO["suite_id"][MIPNAME]+"/"
         out_dir = OUT_BASEDIR+MIP_INFO["suite_id"][MIPNAME]
@@ -87,19 +93,22 @@ def main():
 
     # #########################################################################
     # get diagnstics for processing
-    if "ISIMIP" in mip:
-        diag_dic = ISIMIP_variables.get_var_dict()
-    elif "CMIP" in mip:
-        diag_dic = CMIP_variables.get_var_dict()
-    elif "IMOGEN5variant" in mip:
-        diag_dic = IMOGENvariant_variables.get_var_dict()
-    elif "IMOGEN5" in mip:
-        diag_dic = IMOGEN_variables.get_var_dict()
-    elif "TRENDY" in mip:
-        diag_dic = TRENDY_variables.get_var_dict()
-    else:
-        print("neeed to define dictionary for mip")
-        sys.exit()
+    if L_JULES_ROSE:
+        diag_dic = suite_postprocessed_variables.get_var_dict()
+    elif not L_JULES_ROSE:
+        if "ISIMIP" in mip:
+            diag_dic = ISIMIP_variables.get_var_dict()
+        elif "CMIP" in mip:
+            diag_dic = CMIP_variables.get_var_dict()
+        elif "IMOGEN5variant" in mip:
+            diag_dic = IMOGENvariant_variables.get_var_dict()
+        elif "IMOGEN5" in mip:
+            diag_dic = IMOGEN_variables.get_var_dict()
+        elif "TRENDY" in mip:
+            diag_dic = TRENDY_variables.get_var_dict()
+        else:
+            print("need to define dictionary for mip")
+            sys.exit()
 
     diags = diag_dic.keys() ## all diagnostics
 
@@ -490,7 +499,7 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
     """
     print("load cube using jules load for "+diag_in)
     variable_cons = iris.Constraint(cube_func=(lambda c: c.var_name == diag_in))
-    # print(files_in)
+
     if "IMOGEN" in MIPNAME:
         # read ensembles for imogen
         try:
