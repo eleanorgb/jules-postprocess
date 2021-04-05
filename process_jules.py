@@ -44,6 +44,7 @@ if not L_JULES_ROSE:
     # this version of JULES is currently in karinas directory
     # sys.path.append("/home/h03/kwilliam/other_fcm/jules_py/trunk/jules")
 elif L_JULES_ROSE:
+    import suite_postprocessed_variables
     diag_dic = suite_postprocessed_variables.get_var_dict()
     import jules
     
