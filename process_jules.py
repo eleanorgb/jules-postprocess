@@ -71,7 +71,7 @@ def main():
         mip = CONFIG_ARGS['MODEL_INFO']['mipname']
         if "CMIP" in MIPNAME:
             out_dir = out_dir+CONFIG_ARGS["MODEL_INFO"]["suite_id"]+"_"+\
-                   CONFIG_ARGS["MODEL_INFO"]["scenario"]
+                   CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]
 
     # #########################################################################
     elif not L_JULES_ROSE:
@@ -343,7 +343,7 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
                     "."+jules_profname+"."+year+".nc" for year in years]
         elif L_JULES_ROSE:
             files_in = [src_dir+CONFIG_ARGS["MODEL_INFO"]["driving_model"]+"_"+\
-                    CONFIG_ARGS["MODEL_INFO"]["scenario"]+\
+                    CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]+\
                     "."+jules_profname+"."+year+".nc" for year in years]
     print("First input file:")
     print(files_in[0])
@@ -367,7 +367,7 @@ def make_outfilename(out_dir, outprofile, var, syr, eyr):
                   outprofile+".nc"
         if L_JULES_ROSE:
             outfilename = out_dir+"/"+CONFIG_ARGS["MODEL_INFO"]["model"]+"_"+\
-                  CONFIG_ARGS["MODEL_INFO"]["scenario"]+"_"+var+"_"+\
+                  CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]+"_"+var+"_"+\
                   outprofile+".nc"
     elif "ISIMIP" in MIPNAME:
         outfilename = isimip_func.make_outfilename_isimip(out_dir, outprofile,
