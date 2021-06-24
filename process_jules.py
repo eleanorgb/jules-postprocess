@@ -291,7 +291,7 @@ def define_syr_eyr_output(var):
         eyrall = [int(CONFIG_ARGS["MODEL_INFO"]["end_year"])]
     elif not L_JULES_ROSE:
         syrall = [int(MIP_INFO["start_year"][MIPNAME])]
-        eyrall = [int(MIP_INFO["start_year"][MIPNAME])]
+        eyrall = [int(MIP_INFO["end_year"][MIPNAME])]
     l_alltimes_in_one_file = True
 
     if L_TESTING:
@@ -576,15 +576,14 @@ def twsa_func(cubelist):
 # #############################################################################
 
 # #############################################################################
-def burntarea_func(cubelist):
+def burntarea_func(cube):
     """
     converts units from "fraction of land per second"
     to "% of land per year"
     """
-    sys.exit("check burntarea function")
-    cubelist[0].data = cubelist[0].data*365.0*86400.0*100.0
-    cubelist[0].units = Unit("%")
-    return cubelist[0]
+    cube.data = cube.core_data()*365.0*86400.0*100.0
+    cube.units = Unit("%/year")
+    return cube
 # #############################################################################
 
 

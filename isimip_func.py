@@ -82,6 +82,7 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
     if L_JULES_ROSE:
         outfilename = out_dir+CONFIG_ARGS["OUT_INFO"]["model_out_id"].lower()+\
                    "_"+CONFIG_ARGS["MODEL_INFO"]["driving_name"].lower()+"_"+\
+                   CONFIG_ARGS['MODEL_INFO']['climate_scenario']+"_"+\
                    CONFIG_ARGS['MODEL_INFO']['soc_scenario']+"_"+\
                    CONFIG_ARGS['MODEL_INFO']['co2_scenario']+"_"+\
                    var+"_global_"+outprofile+"_"+str(syr)+"_"+str(eyr)+".nc"
