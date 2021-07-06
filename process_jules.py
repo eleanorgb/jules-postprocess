@@ -342,9 +342,17 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
                     MIP_INFO["in_scenario"][MIPNAME]+\
                     "."+jules_profname+"."+year+".nc" for year in years]
         elif L_JULES_ROSE:
-            files_in = [src_dir+CONFIG_ARGS["MODEL_INFO"]["driving_model"]+"_"+\
-                    CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]+\
-                    "."+jules_profname+"."+year+".nc" for year in years]
+            if "isimip" in CONFIG_ARGS["MODEL_INFO"]["mipname"]:
+                files_in = [src_dir+\
+                            CONFIG_ARGS["MODEL_INFO"]["mipname"]+"_"+\
+                            CONFIG_ARGS["MODEL_INFO"]["configname"]+"_"+\
+                            CONFIG_ARGS["MODEL_INFO"]["driving_model"]+"_"+\
+                            CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]+\
+                            "."+jules_profname+"."+year+".nc" for year in years]
+            else:
+                files_in = [src_dir+CONFIG_ARGS["MODEL_INFO"]["driving_model"]+"_"+\
+                            CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]+\
+                            "."+jules_profname+"."+year+".nc" for year in years]
     print("First input file:")
     print(files_in[0])
 
