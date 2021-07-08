@@ -2,7 +2,7 @@ def get_var_dict():
 #############"outVar":[0.inputVars, 1.longName, 2.scale, 3.units, 4.outprofile, 5.func]
     var_dict = {
         ##################### ilamb - MONTHLY #####################
-        "burntarea":     ["burnt_area_gb", "Burnt area fraction", None, "%", "ilamb", "burntarea_func"], # check fire currently switched off
+        "burntarea":     ["burnt_area_gb", "Burnt area fraction", None, "%/year", "ilamb", "burntarea_func"], # need specific function to covnert units
         "thawdepth":      ["depth_unfrozen", "Thaw Depth", None, "m", "ilamb", None],
         "evap":           ["fqw_gb", "Evapotranspiration", None, "kg m-2 s-1", "ilamb", None],
         "gpp":            ["gpp_gb", "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land", None, "kg m-2 s-1", "ilamb", None],
