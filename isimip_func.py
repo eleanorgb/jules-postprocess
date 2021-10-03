@@ -40,11 +40,11 @@ def define_years_daily_isimip2b():
     """
     break into 10 year batches
     """
-    if "HIST" in MIPNAME:
+    if "HIST" in MIPNAME.upper():
         syrall = np.arange(1861, 2011, 10)
         eyrall = syrall + 9
         eyrall[eyrall == 2010] = 2005
-    if "RCP" in MIPNAME:
+    if "RCP" in MIPNAME.upper():
         syrall = np.arange(2001, 2101, 10)
         eyrall = syrall + 9
         syrall[syrall == 2001] = 2006
@@ -57,10 +57,20 @@ def define_years_daily_isimip2b():
 # #############################################################################
 def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
     """
-    define outfilename for isimip
+    define outfilename for isimip2b:
     <modelname>_<gcm>_<bias-correction>_<climate-scenario>_
     <soc-scenario>_<co2sens-scenarios>_<variable>_<region>_
     <timestep>_<start-year>_<end-year>.nc4
+    
+    define outfilename for isimip3a: appendix nc not nc4
+    <model>_<climate-forcing>_<climate-scenario>_
+    <soc-scenario>_<sens-scenario>_<variable>(-<crop>-<irrigation>|-<pft>)
+    _<region>_<time-step>_<start-year>_<end-year>.nc
+    
+    define outfilename for isimip3b: appendix nc not nc4
+    <model>_<climate-forcing>_<bias-adjustment>_<climate-scenario>
+    _<soc-scenario>_<sens-scenario>_<variable>(-<crop>-<irrigation>|-<pft>)
+    _<region>_<time-step>_<start-year>_<end-year>.nc
     """
     if not L_JULES_ROSE:
         if MIP_INFO["in_scenario"][MIPNAME] in "c20c":
@@ -73,15 +83,22 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
             soc = "nosoc_co2"
         else:
             sys.exit("no soc")
+        if "ISIMIP2" in MIPNAME.upper():
+             add_drive_info = "ewembi_"
+        elif "ISIMIP3B" in MIPNAME.upper():
+             add_drive_info = "w5e5_"
+        else:
+             add_drive_info = ""
         outfilename = out_dir+"/"+MIP_INFO["model"][MIPNAME].lower()+"_"+\
-                       MIP_INFO["run_name"][MIPNAME].lower()+"ewembi_"+\
+                       MIP_INFO["run_name"][MIPNAME].lower()+"_"+add_drive_info+\
                        MIP_INFO["out_scenario"][MIPNAME]+"_"+\
                        soc+"_"+var+"_global_"+outprofile+"_"+\
                        str(syr)+"_"+str(eyr)+".nc"
 
     if L_JULES_ROSE:
         outfilename = out_dir+CONFIG_ARGS["OUT_INFO"]["model_out_id"].lower()+\
-                   "_"+CONFIG_ARGS["MODEL_INFO"]["driving_name"].lower()+"_"+\
+                   "_"+CONFIG_ARGS["MODEL_INFO"]["driving_model"].lower()+ \
+                   CONFIG_ARGS["MODEL_INFO"]["bias_correction"].lower()+ \
                    CONFIG_ARGS['MODEL_INFO']['climate_scenario']+"_"+\
                    CONFIG_ARGS['MODEL_INFO']['soc_scenario']+"_"+\
                    CONFIG_ARGS['MODEL_INFO']['co2_scenario']+"_"+\
@@ -93,10 +110,11 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
 # #############################################################################
 def sort_outfilename_isimip(outfilename, var, varout):
     """
-    JULES-ES assumed here
+    JULES-ES assumed here for vegetation types
     do we need to return varout?
     """
-    outfilename = outfilename+"4"
+    if "ISIMIP2" in MIPNAME.upper():
+        outfilename = outfilename+"4"
     if "pft" in var:   # only checking filename containing first pft
         var_minus_pft = varout.replace("-pft", "-")
         print(varout, var_minus_pft, UKESM_TYPES[0])
@@ -122,12 +140,17 @@ def sort_isimip_cube(cube, outprofile):
     """
     tcoord = cube.coord("time")
     tcoord.units = Unit(tcoord.units.origin, calendar="gregorian")
+
+    if "ISIMIP2B" in MIPNAME.upper() or "ISIMIP3B" in MIPNAME.upper():
+        ref_year=1661
+    elif "ISIMIP3A" in MIPNAME.upper():
+        ref_year=1901
     if "daily" in outprofile:
-        tcoord.convert_units("days since 1661-01-01 00:00:00")
+        tcoord.convert_units("days since "+str(ref_year)+"-01-01 00:00:00")
     elif "monthly" in outprofile:
-        tcoord.convert_units("months since 1661-01-01 00:00:00")
+        tcoord.convert_units("months since "+str(ref_year)+"-01-01 00:00:00")
     elif "annual" in outprofile:
-        tcoord.convert_units("years since 1661-01-01 00:00:00")
+        tcoord.convert_units("years since "+str(ref_year)+"-01-01 00:00:00")
     else:
         sys.exit("frequency for time unit origin not defined")
     tcoord.units = Unit(tcoord.units.origin, calendar="360_day")

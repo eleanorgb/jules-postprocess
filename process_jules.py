@@ -69,7 +69,7 @@ def main():
         src_dir = CONFIG_ARGS['MODEL_INFO']['model_input_dir']
         out_dir =  CONFIG_ARGS['MODEL_INFO']['output_dir']
         mip = CONFIG_ARGS['MODEL_INFO']['mipname']
-        if "CMIP" in MIPNAME:
+        if "CMIP" in MIPNAME.upper():
             out_dir = out_dir+CONFIG_ARGS["MODEL_INFO"]["suite_id"]+"_"+\
                    CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]
 
@@ -80,7 +80,7 @@ def main():
         MIP_INFO = read_mip_info_no_rose(MIPNAME)
         src_dir = MIP_INFO["src_dir"][MIPNAME]+MIP_INFO["suite_id"][MIPNAME]+"/"
         out_dir = OUT_BASEDIR+MIP_INFO["suite_id"][MIPNAME]
-        if "CMIP" in MIPNAME:
+        if "CMIP" in MIPNAME.upper():
             out_dir = OUT_BASEDIR+MIP_INFO["suite_id"][MIPNAME]+"_"+\
                    MIP_INFO["out_scenario"][MIPNAME]
 
@@ -153,7 +153,7 @@ def main():
             outfilename, varout = write_out_final_cube(diag_dic, None, var,
                                                        out_dir, syr, eyr,
                                                        l_onlymakefname=True)
-            if "ISIMIP" in MIPNAME:
+            if "ISIMIP" in MIPNAME.upper():
                 outfilename = isimip_func.sort_outfilename_isimip(outfilename,
                                                                   var, varout)
             print("outfilename: "+outfilename)
@@ -272,7 +272,7 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         cube = select_vegfrac(cube, var)
 
     # need to expand grids to global (not done for imogen, maybe wont bother)
-    if "IMOGEN" not in MIPNAME:
+    if "IMOGEN" not in MIPNAME.upper():
         cube = expand_to_global(cube)
 
     return cube
@@ -298,9 +298,9 @@ def define_syr_eyr_output(var):
         eyrall = [syrall[0] + 1]
 
     if "daily" in var:
-        if "CMIP" in MIPNAME:
+        if "CMIP" in MIPNAME.upper():
             syrall, eyrall = cmip_func.define_years_daily_cmip()
-        elif "ISIMIP2b" in MIPNAME:
+        elif "ISIMIP2B" in MIPNAME.upper():
             syrall, eyrall = isimip_func.define_years_daily_isimip2b()
         else:
             syrall = [-1]
@@ -333,7 +333,7 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
     # only files between start_year and end_year
     # CONFIG_ARGS = config_parse_args(MIPNAME)
     years = [str(year) for year in np.arange(syr, eyr+1)]
-    if "IMOGEN" in MIPNAME:
+    if "IMOGEN" in MIPNAME.upper():
         files_in = imogen_func.make_infilename_imogen(src_dir, jules_profname,
                                                       years)
     else:
@@ -365,10 +365,10 @@ def make_outfilename(out_dir, outprofile, var, syr, eyr):
     """
     make filename of outfilename
     """
-    if "CMIP" in MIPNAME:
+    if "CMIP" in MIPNAME.upper():
         outfilename = cmip_func.make_outfilename_cmip(out_dir, outprofile,
                                                       var, syr, eyr)
-    elif "TRENDY" in MIPNAME:
+    elif "TRENDY" in MIPNAME.upper():
         if not L_JULES_ROSE:
             outfilename = out_dir+"/"+MIP_INFO["model"][MIPNAME]+"_"+\
                   MIP_INFO["out_scenario"][MIPNAME]+"_"+var+"_"+\
@@ -377,10 +377,10 @@ def make_outfilename(out_dir, outprofile, var, syr, eyr):
             outfilename = out_dir+"/"+CONFIG_ARGS["MODEL_INFO"]["model"]+"_"+\
                   CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]+"_"+var+"_"+\
                   outprofile+".nc"
-    elif "ISIMIP" in MIPNAME:
+    elif "ISIMIP" in MIPNAME.upper():
         outfilename = isimip_func.make_outfilename_isimip(out_dir, outprofile,
                                                           var, syr, eyr)
-    elif "IMOGEN" in MIPNAME:
+    elif "IMOGEN" in MIPNAME.upper():
         outfilename = imogen_func.make_outfilename_imogen(out_dir, outprofile,
                                                           var, syr, eyr)
 
@@ -400,12 +400,12 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
     if L_TESTING:
         if not l_onlymakefname:
             #this realises lazy data
-            #stat(cube)
-            print("after stat lazy data is realised ",cube.has_lazy_data())
+            print(cube)
+            print("lazy data still? ",cube.has_lazy_data())
 
     # sort out varout and outprofile
     varout, outprofile = sort_varout_outprofile_name(var)
-    if "CMIP" in MIPNAME:
+    if "CMIP" in MIPNAME.upper():
         outprofile = diag_dic[var][6]
 
     if not l_onlymakefname:
@@ -419,7 +419,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
         cube.remove_coord("year")
         fill_value = 1.e+20  # this might need to change with different mips?
         # sort out formatting of ISIMIP output
-        if "ISIMIP" in MIPNAME:
+        if "ISIMIP" in MIPNAME.upper():
             cube = isimip_func.sort_isimip_cube(cube, outprofile)
 
     outfilename = make_outfilename(out_dir, outprofile, varout, syr, eyr)
@@ -429,7 +429,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
         # might have to do some work ISIMIP2 output files
         # https://www.isimip.org/protocol/preparing-simulation-files/
         # quality-check-of-your-simulation-data
-        if "pft" in var and "ISIMIP" in MIPNAME:
+        if "pft" in var and "ISIMIP" in MIPNAME.upper():
             # need to separate cube by pft
             for ipft in cube.coord("vegtype").points:
                 isimip_func.sort_and_write_pft_cube(varout, cube, outfilename,
@@ -442,7 +442,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
                 iris.save(cube, outfilename, fill_value=fill_value, zlib=True,
                       netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizes,
                       contiguous=False, complevel=9)
-                if "ISIMIP" in MIPNAME:
+                if "ISIMIP2" in MIPNAME.upper():
                     retcode = subprocess.call("mv "+outfilename+" "+\
                                                    outfilename+"4", shell=True)
                     if retcode != 0:
@@ -456,9 +456,9 @@ def expand_to_global(cube):
     """
     define new cube with global grid for output
     """
-    if "ISIMIP" in MIPNAME:
+    if "ISIMIP" in MIPNAME.upper():
         latitude, longitude, nlat, nlon = isimip_func.make_global_grid_0p5()
-    elif "CMIP" in MIPNAME or "TRENDY" in MIPNAME:
+    elif "CMIP" in MIPNAME.upper() or "TRENDY" in MIPNAME.upper():
         latitude, longitude, nlat, nlon = cmip_func.make_global_grid_n96e()
     else:
         sys.exit("add definition of the full global grid in expand_to_global")
@@ -509,7 +509,7 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
     print("load cube using jules load for "+diag_in)
     variable_cons = iris.Constraint(cube_func=(lambda c: c.var_name == diag_in))
 
-    if "IMOGEN" in MIPNAME:
+    if "IMOGEN" in MIPNAME.upper():
         # read ensembles for imogen
         try:
             cube = imogen_func.read_ensemble(files_in, variable_cons, time_cons)
