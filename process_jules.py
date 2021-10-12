@@ -589,8 +589,8 @@ def burntarea_func(cube):
     converts units from "fraction of land per second"
     to "% of land per year"
     """
-    cube.data = cube.core_data()*365.0*86400.0*100.0
-    cube.units = Unit("%/year")
+    cube.data = cube.core_data()*30.0*86400.0*100.0
+    cube.units = Unit("%/month")
     return cube
 # #############################################################################
 
