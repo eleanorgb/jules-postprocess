@@ -1,5 +1,6 @@
 '''
-script to postprocess jules output
+script to postprocess jules output 
+suitable for ISIMIP, TRENDY, ILAMB, IMOGEN, CMIP
 BE CAREFUL with nitrogen on and off and npp and nlim
 sometimes needs lots of memory - run on spice
 '''
@@ -22,9 +23,9 @@ from read_input import parse_args
 from read_input import config_parse_args
 from read_input import read_mip_info_no_rose
 from sort_varout_outprofile_name import sort_varout_outprofile_name
-import isimip_func
-import imogen_func
-import cmip_func
+import isimip_func   #isimip runs only
+import imogen_func   #imogen runs only
+import cmip_func     # cmip runs only
 
 warnings.filterwarnings("ignore")
 
@@ -32,17 +33,18 @@ warnings.filterwarnings("ignore")
 # read command line arguments
 global MIPNAME, L_TESTING, L_JULES_ROSE
 MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
+# #########################################################################
 
 if not L_JULES_ROSE:
-    import ISIMIP_variables
+    import ISIMIP2_variables
+    import ISIMIP3_variables
     import CMIP_variables
     import TRENDY_variables
     import IMOGEN_variables
     import IMOGENvariant_variables
+    import IMOGEN6nc_variables
     sys.path.append("/home/h03/hadea/bin")
-    import jules
-    # this version of JULES is currently in karinas directory
-    # sys.path.append("/home/h03/kwilliam/other_fcm/jules_py/trunk/jules")
+    import jules #https://code.metoffice.gov.uk/svn/utils/smstress_jpeg/trunk/jules.py
 elif L_JULES_ROSE:
     import suite_postprocessed_variables
     diag_dic = suite_postprocessed_variables.get_var_dict()
@@ -97,14 +99,18 @@ def main():
     if L_JULES_ROSE:
         diag_dic = suite_postprocessed_variables.get_var_dict()
     elif not L_JULES_ROSE:
-        if "ISIMIP" in mip:
-            diag_dic = ISIMIP_variables.get_var_dict()
+        if "ISIMIP2" in mip:
+            diag_dic = ISIMIP2_variables.get_var_dict()
+        if "ISIMIP3" in mip:
+            diag_dic = ISIMIP3_variables.get_var_dict()
         elif "CMIP" in mip:
             diag_dic = CMIP_variables.get_var_dict()
         elif "IMOGEN5variant" in mip:
             diag_dic = IMOGENvariant_variables.get_var_dict()
         elif "IMOGEN5" in mip:
             diag_dic = IMOGEN_variables.get_var_dict()
+        elif "IMOGEN6nc" in mip:
+            diag_dic = IMOGEN6nc_variables.get_var_dict()
         elif "TRENDY" in mip:
             diag_dic = TRENDY_variables.get_var_dict()
         else:
@@ -233,14 +239,14 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         else:
             sys.exit("MISSING function for pre-processing")
         func = globals()[diag_dic[var][5]]
-        cube = func(cubelist)  # return a cube and then work with it!
+        cube = func(cubelist, var)  # return a cube and then work with it!
     else:
         # one variable read from the files
         cube = get_jules_cube(inputdiags, files_in, time_cons=time_cons)
         if diag_dic[var][5] is not None:
-            print("function for pre-processing "+diag_dic[var][5])
+            print("function for pre-processing: "+diag_dic[var][5])
             func = globals()[diag_dic[var][5]]
-            cube = func(cube)  # return a cube and then work with it!
+            cube = func(cube, var)  # return a cube and then work with it!
 
     # sort out units and names for jules cube
     if cube.units != Unit(diag_dic[var][3]):
@@ -295,7 +301,7 @@ def define_syr_eyr_output(var):
     l_alltimes_in_one_file = True
 
     if L_TESTING:
-        eyrall = [syrall[0] + 1]
+        eyrall = [syrall[0] + 11]
 
     if "daily" in var:
         if "CMIP" in MIPNAME.upper():
@@ -400,7 +406,10 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
     if L_TESTING:
         if not l_onlymakefname:
             #this realises lazy data
-            print(cube)
+            try:
+                print(cube)
+            except:
+                print("error in print cube statement")
             print("lazy data still? ",cube.has_lazy_data())
 
     # sort out varout and outprofile
@@ -553,7 +562,7 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
 # #############################################################################
 
 # #############################################################################
-def twsa_func(cubelist):
+def twsa_func(cubelist, var):
     """
     variation in total water mass
     (-1 * depth to water table) * water density +
@@ -578,16 +587,16 @@ def twsa_func(cubelist):
     for cube in cubelist:
         if cube.var_name != watertabledepthname:
             cubelist_minuszw.append(cube)
-    cube = sum_func(cubelist_minuszw)
+    cube = sum_func(cubelist_minuszw, var)
 
     return cube - zw_cube
 # #############################################################################
 
 # #############################################################################
-def burntarea_func(cube):
+def burntarea_func(cube, var):
     """
     converts units from "fraction of land per second"
-    to "% of land per year"
+    to "% of land per month"
     """
     cube.data = cube.core_data()*30.0*86400.0*100.0
     cube.units = Unit("%/month")
@@ -596,7 +605,7 @@ def burntarea_func(cube):
 
 
 # #############################################################################
-def fracweight_func(cubelist):
+def fracweight_func(cubelist, var):
     """
     weight by fractional cover
     """
@@ -622,14 +631,14 @@ def fracweight_func(cubelist):
     for cube in cubelist:
         if cube.var_name != fracname:
             cubelist_minusfrac.append(cube)
-    cube = sum_func(cubelist_minusfrac)
+    cube = sum_func(cubelist_minusfrac, var)
     cube = cube.collapsed("vegtype", iris.analysis.SUM, weights=weights.data)
     return cube
 # #############################################################################
 
 
 # #############################################################################
-def top10cm_func(cube):
+def top10cm_func(cube, var):
     """"
     define mean value in top 10cm of soil
     """
@@ -644,7 +653,7 @@ def top10cm_func(cube):
 
 
 # #############################################################################
-def minus_func(cubelist):
+def minus_func(cubelist, var):
     """
     subtract from first element in cubelist
     """
@@ -656,7 +665,7 @@ def minus_func(cubelist):
 
 
 # #############################################################################
-def sth_func(cubelist):
+def sth_func(cubelist, var):
     """
     get water content in a layer in kg m-2 from fraction of saturation
     and saturated watercontent
@@ -673,7 +682,7 @@ def sth_func(cubelist):
 
 
 # #############################################################################
-def nbp_func(cubelist):
+def nbp_func(cubelist, var):
     """
     should check that the input cubes are the variables expected.
     assumes first cube is npp and all others are loss terms
@@ -705,7 +714,7 @@ def nbp_func(cubelist):
 
 
 # #############################################################################
-def sum_func(cubelist):
+def sum_func(cubelist, var):
     """
     add cubes in cubelist
     """
@@ -717,7 +726,7 @@ def sum_func(cubelist):
 
 
 # #############################################################################
-def rflow_func(cube):
+def rflow_func(cube, var):
     """
     used to convert river flow (kg/m2/s) to discharge (m3/s)
     """
@@ -736,13 +745,45 @@ def rflow_func(cube):
 
 
 # #############################################################################
-def annmax_func(cube):
+def annmax_func(cube, var):
     """
     used e.g for annual maximum thaw depth
     """
     iris.coord_categorisation.add_year(cube, "time")
     cube = cube.aggregated_by("year", iris.analysis.MAX)
     cube.remove_coord("year")
+    return cube
+
+# #############################################################################
+
+
+# #############################################################################
+def cs_func(cube, var):
+    """
+    used for outputting cs/ns/rh into layers
+    """
+    all_coord_names = [ coord.name() for coord in cube.coords() ]
+    if "sclayer" in all_coord_names and "scpool" in all_coord_names:
+            cube = cube.collapsed("scpool", iris.analysis.SUM)
+    cube.coord("sclayer").rename("soil")
+    return cube
+
+# #############################################################################
+
+
+# #############################################################################
+def conv360_func(cubelist, var):
+    """
+    used to add N fluxes with different units
+    """
+    cubelist_sameunits = iris.cube.CubeList([])
+    for cube in cubelist:
+        print(cube.units.__str__())
+        if "360" in cube.units.__str__():
+            cube = cube/(86400.0*360.0)
+            cube.units="kg/m2/s"
+        cubelist_sameunits.append(cube)
+    cube = sum_func(cubelist_sameunits, var)
     return cube
 
 # #############################################################################
@@ -794,7 +835,7 @@ def define_chunksizes(cube):
     """
     all_coord_names = [ coord.name() for coord in cube.coords() ]
     ndims = len(cube.shape)
-    if "realization" in all_coord_names:
+    if "realization" in all_coord_names and ndims == len(all_coord_names):
         ndims = ndims - 1
     if ndims == 3:
         chunksizes = [1, cube.shape[-2], cube.shape[-1]]
@@ -805,7 +846,7 @@ def define_chunksizes(cube):
                       cube.shape[-1]]
     else:
         sys.exit("chunksizes are undefined")
-    if "realization" in all_coord_names:
+    if "realization" in all_coord_names and ndims == len(all_coord_names):
         chunksizes = np.append([1], chunksizes)
     return chunksizes
 # #############################################################################

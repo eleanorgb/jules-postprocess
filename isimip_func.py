@@ -75,6 +75,8 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
     if not L_JULES_ROSE:
         if MIP_INFO["in_scenario"][MIPNAME] in "c20c":
             soc = "histsoc_co2"
+        elif MIP_INFO["in_scenario"][MIPNAME] in "historical":
+            soc = "default"
         elif MIP_INFO["in_scenario"][MIPNAME] in "rcp2p6":
             soc = "rcp26soc_co2"
         elif MIP_INFO["in_scenario"][MIPNAME] in "rcp6p0":
@@ -90,7 +92,7 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
         else:
              add_drive_info = ""
         outfilename = out_dir+"/"+MIP_INFO["model"][MIPNAME].lower()+"_"+\
-                       MIP_INFO["run_name"][MIPNAME].lower()+"_"+add_drive_info+\
+                       MIP_INFO["run_name"][MIPNAME].lower()+add_drive_info+\
                        MIP_INFO["out_scenario"][MIPNAME]+"_"+\
                        soc+"_"+var+"_global_"+outprofile+"_"+\
                        str(syr)+"_"+str(eyr)+".nc"
@@ -122,9 +124,14 @@ def sort_outfilename_isimip(outfilename, var, varout):
                                   UKESM_TYPES[0].lower())
     if "npp" in var and "_nlim" in var:
         outfilename = outfilename.replace(varout, "npp")
+        if "total" in var:
+                    outfilename = outfilename.replace("npp", "npp-total")
         # npp is different in Nitrogen/non-Nitrogen cases
     elif "npp" in var:
         outfilename = outfilename.replace(varout, "npp_noNlimitation")
+        if "total" in var:
+                    outfilename = outfilename.replace("npp_noNlimitation",\
+                                                      "npp_noNlimitation-total")
         # npp is different in Nitrogen/non-Nitrogen cases
     return outfilename
  # #############################################################################

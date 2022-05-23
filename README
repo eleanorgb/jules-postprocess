@@ -1,3 +1,6 @@
+#############################################################################
+# RUNNING postprocessing
+###########################################################################
 # add the following row to file mip_info.csv
 # MIPNAME - identifier used in code to select the relevant information from mip_info.csv
 #          - include 'CMIP' or 'TRENDY' or 'ISIMIP' in this name depending on what the MIP is.
@@ -15,8 +18,28 @@
 # end_year_in - end year for output (if not all available files are used)
 #                set to less than 0 to read all available files
 
+On the Met Office linux system
+module load scitools
+python process_jules.py [-h] [--l_testing] [--l_backfill_missing_files]
+                        [--l_jules_rose]
+                        MIPNAME
+
+l_testing switch: test runs for the first 10 years of data for the variables
+                  in sel_diags_test.
+                  
+l_backfill_missing_files: this determines whether the file for that variable exists already 
+                          if it exists it doesnt make a new file
+                          
+l_jules_rose: this is used when need the postprocessing to run within the jules rose suite.
+
+MIPNAME: is used to look up information in mip_info which gives details of the
+         model to be postprocessed. This is used outside rose
+
+The variables to be postprocessed are defined in ***_variables.py where *** is the 
+first term (before the underscore) of the MIPNAME. This is only used outside rose.
+
 #############################################################################
-RUNNING MIP_CONVERT on CMIP data
+# RUNNING MIP_CONVERT to make CMIP data for submission
 ###########################################################################
 Getting hold of the code;
 fcm co https://code.metoffice.gov.uk/svn/cdds/main/branches/dev/matthewmizielinski/r8439_1898_JULES_land_only

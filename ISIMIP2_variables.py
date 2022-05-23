@@ -79,24 +79,27 @@ def get_var_dict():
         # "ecoatmflux_daily_nlim":[["npp_n_gb", "resp_s_to_atmos_gb", "harvest_gb", "WP_fast_out", "WP_med_out", "WP_slow_out"], "Carbon Mass Flux out of Atmosphere due to Net biome Production on Land (NBP)  n_limited", None, "kg m-2 s-1", "cn_day_nbp", "nbp_func"],
         # "ecoatmflux_daily":     [["npp_gb", "resp_s_to_atmos_gb", "harvest_gb", "WP_fast_out", "WP_med_out", "WP_slow_out"], "Carbon Mass Flux out of Atmosphere due to Net biome Production on Land (NBP)", None, "kg m-2 s-1", "cn_day_nbp", "nbp_func"],
         #gen_ann_pftlayer - ANNUAL
-        "pft-pft_annual":    ["frac", "Plant Functional Type Grid Fraction", 100., "%", "gen_ann_pftlayer", None],
-        "gpp-pft_annual":    ["gpp", "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land", None, "kg m-2 s-1", "gen_ann_pftlayer", None],
-        "lai-pft_annual":    ["lai", "Leaf Area Index", None, "1", "gen_ann_pftlayer", None],
-        "npp-pft_annual":    ["npp", "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land", 1.0/(86400.0*360.0), "kg m-2 s-1", "gen_ann_pftlayer", None],
+        #"pft-pft_annual":    ["frac", "Plant Functional Type Grid Fraction", 100., "%", "gen_ann_pftlayer", None],
+        #"gpp-pft_annual":    ["gpp", "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land", None, "kg m-2 s-1", "gen_ann_pftlayer", None],
+        #"lai-pft_annual":    ["lai", "Leaf Area Index", None, "1", "gen_ann_pftlayer", None],
+        #"npp-pft_annual":    ["npp", "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land", 1.0/(86400.0*360.0), "kg m-2 s-1", "gen_ann_pftlayer", None],
         #c_ann_gb - ANNUAL
-        "csoil_annual":      ["cs_gb", "Carbon Mass in Soil Pool", None, "kg m-2", "c_ann_gb", None],
-        "cveg_annual":       ["cv", "Carbon Mass in Vegetation", None, "kg m-2", "c_ann_gb", None],
+        "nsoil-total_annual":      ["ns", "Nitrogen Mass in Soil Pool in each layer", None, "kg m-2", "n_ann_pftlayer", None],
+        "csoillayer-total_annual":      ["cs", "Carbon Mass in Soil Pool in each layer", None, "kg m-2", "c_ann_pftlayer", None],
+        "nmineral_annual":      ["n_inorg", "Mineral Nitrogen in the soil", None, "kg m-2", "n_ann_pftlayer", None],
+        #"csoil_annual":      ["cs_gb", "Carbon Mass in Soil Pool", None, "kg m-2", "c_ann_gb", None],
+        #"cveg_annual":       ["cv", "Carbon Mass in Vegetation", None, "kg m-2", "c_ann_gb", None],
         #c_ann_pftlayer - ANNUAL
-        "cvegag-pft_annual": [["woodC", "leafC"], "Carbon Mass in Above Ground Vegetation Biomass", None, "kg m-2", "c_ann_pftlayer", "sum_func"],
-        "cveg-pft_annual":   ["c_veg", "Carbon Mass in Vegetation", None, "kg m-2", "c_ann_pftlayer", None],
-        "cvegag_annual":     [["frac", "woodC", "leafC"], "Carbon Mass in Above Ground Vegetation Biomass", None, "kg m-2", "c_ann_pftlayer", "fracweight_func"],
-        "cvegbg-pft_annual": ["rootC", "Carbon Mass in Below Ground Vegetation Biomass", None, "kg m-2", "c_ann_pftlayer", None],
-        "cvegbg_annual":     [["frac", "rootC"], "Carbon Mass in Below Ground Vegetation Biomass", None, "kg m-2", "c_ann_pftlayer", "fracweight_func"],
+        #"cvegag-pft_annual": [["woodC", "leafC"], "Carbon Mass in Above Ground Vegetation Biomass", None, "kg m-2", "c_ann_pftlayer", "sum_func"],
+        #"cveg-pft_annual":   ["c_veg", "Carbon Mass in Vegetation", None, "kg m-2", "c_ann_pftlayer", None],
+        #"cvegag_annual":     [["frac", "woodC", "leafC"], "Carbon Mass in Above Ground Vegetation Biomass", None, "kg m-2", "c_ann_pftlayer", "fracweight_func"],
+        #"cvegbg-pft_annual": ["rootC", "Carbon Mass in Below Ground Vegetation Biomass", None, "kg m-2", "c_ann_pftlayer", None],
+        #"cvegbg_annual":     [["frac", "rootC"], "Carbon Mass in Below Ground Vegetation Biomass", None, "kg m-2", "c_ann_pftlayer", "fracweight_func"],
         #"csoil_annual":      ["cs", "Carbon Mass in each soil pool", None, "kg m-2", "c_ann_pftlayer", None],
         #n_ann_pftlayer - ANNUAL
-        "npp_nlim_annual":      ["npp_n_gb", "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land", 1.0/(86400.0*360.0), "kg m-2 s-1", "c_ann_gb", None],
-        "npp_annual":           ["npp_gb", "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land", None, "kg m-2 s-1", "gen_ann_gb", None],
-         "gpp_annual":            ["gpp_gb", "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land", None, "kg m-2 s-1", "gen_ann_gb", None],
-         "npp-pft_nlim_annual":    ["npp_n", "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited", 1.0/(86400.0*360.0), "kg m-2 s-1", "n_ann_pftlayer", None]
+        #"npp_nlim_annual":      ["npp_n_gb", "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land", 1.0/(86400.0*360.0), "kg m-2 s-1", "c_ann_gb", None],
+        #"npp_annual":           ["npp_gb", "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land", None, "kg m-2 s-1", "gen_ann_gb", None],
+         #"gpp_annual":            ["gpp_gb", "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land", None, "kg m-2 s-1", "gen_ann_gb", None],
+         #"npp-pft_nlim_annual":    ["npp_n", "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited", 1.0/(86400.0*360.0), "kg m-2 s-1", "n_ann_pftlayer", None]
             }
     return var_dict

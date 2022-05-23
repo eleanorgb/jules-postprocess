@@ -17,7 +17,7 @@ def get_var_dict():
         "npp_nlim_annual":         ["npp_n_gb", "Net Primary Production on Land as Carbon Mass Flux", 1.0/(86400.0*360.0), "kg m-2 s-1", "Annual", None, None],
         "rh":                      ["resp_s_to_atmos_gb", "Total Heterotrophic Respiration on Land as Carbon Mass Flux", 1.0/(86400.0*360.0), "kg m-2 s-1", "Annual", None, None],
         "npp_annual":              ["npp_gb", "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land", None, "kg m-2 s-1", "Annual", None, None],
-        "exudates_annual":          ["exudates_gb", "exudates_gb", 1.0/(86400.0*360.0), "kg m-2 s-1", "Annual", None]
+        "exudates_annual":          ["exudates_gb", "exudates_gb", 1.0/(86400.0*360.0), "kg m-2 s-1", "Annual", None],
         "frac_annual":              ["frac", "Plant Functional Type Grid Fraction", 100., "%", "Annual", None]
         }
     return var_dict

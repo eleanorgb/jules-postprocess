@@ -17,7 +17,7 @@
 
 echo This is task $SLURM_ARRAY_TASK_ID
 
-module load scitools/experimental-current
+module load scitools
 
 declare -a mod_arr=("IMOGEN5_aj257_26" "IMOGEN5_aj257_45" "IMOGEN5_aj257_85"
 "IMOGEN5_aj257_26_ninorg_cemissions_excludeoldc" "IMOGEN5_aj257_45_ninorg_cemissions_excludeoldc" "IMOGEN5_aj257_85_ninorg_cemissions_excludeoldc"
@@ -27,6 +27,8 @@ declare -a mod_arr=("IMOGEN5_aj257_26" "IMOGEN5_aj257_45" "IMOGEN5_aj257_85"
 "IMOGEN5_ah181_26_excludeoldc" "IMOGEN5_ah181_45_excludeoldc" "IMOGEN5_ah181_85_excludeoldc"
 "IMOGEN5_ah181_26" "IMOGEN5_ah181_45" "IMOGEN5_ah181_85")
 # get length of an array
+#declare -a mod_arr=("IMOGEN5_aj257_26_isunfrozen"
+#             "IMOGEN5_aj257_45_isunfrozen" "IMOGEN5_aj257_85_isunfrozen")
 arraylength=${#mod_arr[@]}
 
 # Run this task.

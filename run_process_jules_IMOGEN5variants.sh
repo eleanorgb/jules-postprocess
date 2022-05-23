@@ -6,7 +6,7 @@
 #SBATCH --error=outinfo/imogen5.%A_%a.err
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --array=1-2
+#SBATCH --array=1-27
 #SBATCH --qos=long
 
 ##########################################################################
@@ -17,7 +17,7 @@
 
 echo This is task $SLURM_ARRAY_TASK_ID
 
-module load scitools/experimental-current
+module load scitools
 
 #declare -a mod_arr=("IMOGEN5variant_C_co2only_85")
 declare -a mod_arr=("IMOGEN5variant_CN_PIndep_26" "IMOGEN5variant_CN_PIndep_45"
@@ -30,8 +30,15 @@ declare -a mod_arr=("IMOGEN5variant_CN_PIndep_26" "IMOGEN5variant_CN_PIndep_45"
                     "IMOGEN5variant_CN_climonly_85" "IMOGEN5variant_CN_26"
                     "IMOGEN5variant_CN_45" "IMOGEN5variant_CN_85"
                     "IMOGEN5variant_C_26" "IMOGEN5variant_C_45"
-                    "IMOGEN5variant_C_85")
-declare -a mod_arr=("IMOGEN5variant_CN_85" "IMOGEN5variant_C_85")
+                    "IMOGEN5variant_C_85" "IMOGEN5variant_CN_control_26"
+                    "IMOGEN5variant_CN_control_45" "IMOGEN5variant_CN_control_85"
+                    "IMOGEN5variant_C_control_26" "IMOGEN5variant_C_control_45"
+                    "IMOGEN5variant_C_control_85")
+#declare -a mod_arr=("IMOGEN5variant_CN_85" "IMOGEN5variant_C_85"
+#              "IMOGEN5variant_CN_co2only_85" "IMOGEN5variant_C_co2only_85"
+#              "IMOGEN5variant_CN_climonly_85" "IMOGEN5variant_C_climonly_85"
+#              "IMOGEN5variant_CN_PIndep_85" "IMOGEN5variant_CN_control_85"
+#               "IMOGEN5variant_C_control_85")
 # get length of an array
 arraylength=${#mod_arr[@]}
 

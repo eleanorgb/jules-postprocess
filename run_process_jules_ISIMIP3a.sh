@@ -17,7 +17,7 @@
 
 echo This is task $SLURM_ARRAY_TASK_ID
 
-module load scitools/experimental-current
+module load scitools
 
 declare -a mod_arr=("ISIMIP3a_GSWP2-W5E5")
 # get length of an array

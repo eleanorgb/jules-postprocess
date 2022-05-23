@@ -19,12 +19,12 @@ echo This is task $SLURM_ARRAY_TASK_ID
 
 module load scitools
 
-declare -a mod_arr=("ISIMIP2b_GFDL-ESM2M_C20C" "ISIMIP2b_HADGEM2-ES_C20C" 
-                   "ISIMIP2b_IPSL-CM5A-LR_C20C" "ISIMIP2b_MIROC5_C20C"
-                   "ISIMIP2b_GFDL-ESM2M_RCP2P6" "ISIMIP2b_HADGEM2-ES_RCP2P6" 
-                   "ISIMIP2b_IPSL-CM5A-LR_RCP2P6" "ISIMIP2b_MIROC5_RCP2P6"
-                   "ISIMIP2b_GFDL-ESM2M_RCP6P0" "ISIMIP2b_HADGEM2-ES_RCP6P0" 
-                   "ISIMIP2b_IPSL-CM5A-LR_RCP6P0" "ISIMIP2b_MIROC5_RCP6P0")
+declare -a mod_arr=("ISIMIP2b_GFDL-ESM2M_C20C_fire" "ISIMIP2b_HADGEM2-ES_C20C_fire" 
+                   "ISIMIP2b_IPSL-CM5A-LR_C20C_fire" "ISIMIP2b_MIROC5_C20C_fire"
+                   "ISIMIP2b_GFDL-ESM2M_RCP2P6_fire" "ISIMIP2b_HADGEM2-ES_RCP2P6_fire" 
+                   "ISIMIP2b_IPSL-CM5A-LR_RCP2P6_fire" "ISIMIP2b_MIROC5_RCP2P6_fire"
+                   "ISIMIP2b_GFDL-ESM2M_RCP6P0_fire" "ISIMIP2b_HADGEM2-ES_RCP6P0_fire" 
+                   "ISIMIP2b_IPSL-CM5A-LR_RCP6P0_fire" "ISIMIP2b_MIROC5_RCP6P0_fire")
 # get length of an array
 arraylength=${#mod_arr[@]}
 
