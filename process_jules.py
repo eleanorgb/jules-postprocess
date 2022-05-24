@@ -835,7 +835,8 @@ def define_chunksizes(cube):
     """
     all_coord_names = [ coord.name() for coord in cube.coords() ]
     ndims = len(cube.shape)
-    if "realization" in all_coord_names and ndims == len(all_coord_names):
+    ndims_orig = ndims
+    if "realization" in all_coord_names and ndims_orig == len(all_coord_names):
         ndims = ndims - 1
     if ndims == 3:
         chunksizes = [1, cube.shape[-2], cube.shape[-1]]
@@ -846,7 +847,7 @@ def define_chunksizes(cube):
                       cube.shape[-1]]
     else:
         sys.exit("chunksizes are undefined")
-    if "realization" in all_coord_names and ndims == len(all_coord_names):
+    if "realization" in all_coord_names and ndims_orig == len(all_coord_names):
         chunksizes = np.append([1], chunksizes)
     return chunksizes
 # #############################################################################
