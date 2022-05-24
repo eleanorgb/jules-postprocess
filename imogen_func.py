@@ -113,10 +113,13 @@ def read_ensemble(files_in, variable_cons, time_cons):
 
 
     cubeall = iris.cube.CubeList([])
-    if "imogen6" in MIP_INFO["model"][MIPNAME].lower() :
-      imodel_dict = imodel_dict_cmip6
-    else:
-      imodel_dict = imodel_dict_cmip5
+    imodel_dict = imodel_dict_cmip5
+    try:
+      if "imogen6" in MIP_INFO["model"][MIPNAME].lower() :
+        imodel_dict = imodel_dict_cmip6
+    except:
+      if "imogen6" in CONFIG_ARGS["MODEL_INFO"]["mipname"].lower() :
+        imodel_dict = imodel_dict_cmip6
     print(imodel_dict)
     keys = imodel_dict.keys()
     for key in keys:
@@ -183,7 +186,7 @@ def make_infilename_imogen(src_dir, jules_profname, years):
                     MIP_INFO["run_name"][MIPNAME]+\
                     jules_profname+"."+year+".nc" for year in years]
     else:
-        files_in = [src_dir+"*/*_"+CONFIG_ARGS["MODEL_INFO"]["cliamte_scenario"]+"_"+\
+        files_in = [src_dir+"*/*_"+CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]+"_"+\
                     CONFIG_ARGS["MODEL_INFO"]["configname"]+"."+\
                     jules_profname+"."+year+".nc" for year in years]
 

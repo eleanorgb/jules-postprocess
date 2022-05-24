@@ -42,7 +42,7 @@ if not L_JULES_ROSE:
     import TRENDY_variables
     import IMOGEN_variables
     import IMOGENvariant_variables
-    import IMOGEN6nc_variables
+    import IMOGEN6_variables
     sys.path.append("/home/h03/hadea/bin")
     import jules #https://code.metoffice.gov.uk/svn/utils/smstress_jpeg/trunk/jules.py
 elif L_JULES_ROSE:
@@ -109,8 +109,8 @@ def main():
             diag_dic = IMOGENvariant_variables.get_var_dict()
         elif "IMOGEN5" in mip:
             diag_dic = IMOGEN_variables.get_var_dict()
-        elif "IMOGEN6nc" in mip:
-            diag_dic = IMOGEN6nc_variables.get_var_dict()
+        elif "IMOGEN6" in mip:
+            diag_dic = IMOGEN6_variables.get_var_dict()
         elif "TRENDY" in mip:
             diag_dic = TRENDY_variables.get_var_dict()
         else:

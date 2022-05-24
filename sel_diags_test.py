@@ -1,3 +1,3 @@
 def sel_diags_test():
-    diags = ["tas_annual"]
+    diags = ["tas"]
     return diags
