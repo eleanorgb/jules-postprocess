@@ -81,7 +81,7 @@ imodel_dict_cmip6 = {
     "UKESM1-0-LL": 18 }
 
 # #############################################################################
-def read_ensemble(files_in, variable_cons, time_cons):
+def read_ensemble(files_in, variable_cons, time_cons, diag_in):
     """
     Read imogen ensembles defined by imodel_dict
     """
@@ -141,16 +141,22 @@ def read_ensemble(files_in, variable_cons, time_cons):
             coord_names = [coord.name() for coord in cube.coords()]
             if "scpool" in coord_names:
                 cube = cube.collapsed("scpool", iris.analysis.SUM)
-            #print(cube)
+            if diag_in in ["imogen_radf", "dtemp_g", "c_emiss_out",
+                                 "d_ocean_atmos", "d_land_atmos_co2"]:
+                cube = cube.collapsed(["latitude","longitude"], iris.analysis.MEAN)
+                cube.remove_coord("latitude")
+                cube.remove_coord("longitude")
             cubeall.append(cube)
         except:
             continue
     cubeall = cubeall.merge_cube()
-    cubeall.coord('latitude').guess_bounds()
-    cubeall.coord('longitude').guess_bounds()
-    cubeall.coord("latitude").long_name ="latitude"
-    cubeall.coord("longitude").long_name ="longitude"
-    #iris.coord_categorisation.add_year(cubeall, "time")
+    coord_names = [coord.name() for coord in cubeall.coords()]
+    if "latitude" in coord_names:
+        cubeall.coord('latitude').guess_bounds()
+        cubeall.coord("latitude").long_name ="latitude"
+    if "longitude" in coord_names:
+        cubeall.coord('longitude').guess_bounds()
+        cubeall.coord("longitude").long_name ="longitude"
     
     return cubeall
 # #############################################################################

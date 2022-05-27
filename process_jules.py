@@ -446,7 +446,9 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
         else:
             chunksizes = define_chunksizes(cube)
             print("cube should still have lazy data ",cube.has_lazy_data())
-            cube.data.mask[np.isnan(cube.data)] = True    # breaks lazy data
+            coord_names = [coord.name() for coord in cube.coords()]
+            if "latitude" in coord_names or "lat" in coord_names:
+                cube.data.mask[np.isnan(cube.data)] = True    # breaks lazy data
             if not L_TESTING:
                 iris.save(cube, outfilename, fill_value=fill_value, zlib=True,
                       netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizes,
@@ -521,7 +523,8 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
     if "IMOGEN" in MIPNAME.upper():
         # read ensembles for imogen
         try:
-            cube = imogen_func.read_ensemble(files_in, variable_cons, time_cons)
+            cube = imogen_func.read_ensemble(files_in, variable_cons,
+                                             time_cons, diag_in)
         except:
             print(diag_in+" not available in "+files_in[0])
             raise
@@ -833,6 +836,8 @@ def define_chunksizes(cube):
     """"
     define the chunksizes for the output file
     """
+    data_shape = False
+    chunksizes = None
     all_coord_names = [ coord.name() for coord in cube.coords() ]
     ndims = len(cube.shape)
     ndims_orig = ndims
@@ -846,9 +851,14 @@ def define_chunksizes(cube):
         chunksizes = [1, cube.shape[-4], cube.shape[-3], cube.shape[-2],
                       cube.shape[-1]]
     else:
-        sys.exit("chunksizes are undefined")
+        data_shape = True
+        print("chunksizes are undefined set to shape of data")
     if "realization" in all_coord_names and ndims_orig == len(all_coord_names):
-        chunksizes = np.append([1], chunksizes)
+        if chunksizes is not None:
+            chunksizes = np.append([1], chunksizes)
+    if data_shape:
+        if len(cube.shape) == 2:
+            chunksizes = [cube.shape[0], cube.shape[1]]
     return chunksizes
 # #############################################################################
 
