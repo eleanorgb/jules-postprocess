@@ -40,11 +40,11 @@ def define_years_daily_isimip2b():
     """
     break into 10 year batches
     """
-    if "HIST" in MIPNAME.upper():
+    if "hist" in MIPNAME:
         syrall = np.arange(1861, 2011, 10)
         eyrall = syrall + 9
         eyrall[eyrall == 2010] = 2005
-    if "RCP" in MIPNAME.upper():
+    if "rcp" in MIPNAME:
         syrall = np.arange(2001, 2101, 10)
         eyrall = syrall + 9
         syrall[syrall == 2001] = 2006
@@ -85,9 +85,9 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
             soc = "nosoc_co2"
         else:
             sys.exit("no soc")
-        if "ISIMIP2" in MIPNAME.upper():
+        if "isimip2" in MIPNAME:
              add_drive_info = "ewembi_"
-        elif "ISIMIP3B" in MIPNAME.upper():
+        elif "isimip3b" in MIPNAME:
              add_drive_info = "w5e5_"
         else:
              add_drive_info = ""
@@ -115,7 +115,7 @@ def sort_outfilename_isimip(outfilename, var, varout):
     JULES-ES assumed here for vegetation types
     do we need to return varout?
     """
-    if "ISIMIP2" in MIPNAME.upper():
+    if "isimip2" in MIPNAME:
         outfilename = outfilename+"4"
     if "pft" in var:   # only checking filename containing first pft
         var_minus_pft = varout.replace("-pft", "-")
@@ -148,9 +148,9 @@ def sort_isimip_cube(cube, outprofile):
     tcoord = cube.coord("time")
     tcoord.units = Unit(tcoord.units.origin, calendar="gregorian")
 
-    if "ISIMIP2B" in MIPNAME.upper() or "ISIMIP3B" in MIPNAME.upper():
+    if "isimip2b" in MIPNAME or "isimip3b" in MIPNAME:
         ref_year=1661
-    elif "ISIMIP3A" in MIPNAME.upper():
+    elif "isimip3a" in MIPNAME:
         ref_year=1901
     if "daily" in outprofile:
         tcoord.convert_units("days since "+str(ref_year)+"-01-01 00:00:00")
