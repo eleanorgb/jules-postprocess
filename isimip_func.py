@@ -189,10 +189,16 @@ def sort_isimip_cube(cube, outprofile):
     cube.cell_methods = None
     cube = iris.util.squeeze(cube)
 
+
+
+
     # depth coordinate
     for coord in cube.coords():
         if coord.name()=="depth":
             coord.long_name = "Depth of vertical layer center below land"
+            if "isimip3" in MIPNAME:
+                coord.rename("depth_below_surface")
+                coord.long_name("Depth of Vertical Layer Center Below Surface")
         if coord.name()=="vegtype":
             if len(cube.coord("vegtype").points) == 1:
                 cube.remove_coord("vegtype")
