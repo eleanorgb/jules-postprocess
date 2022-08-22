@@ -602,7 +602,7 @@ def burntarea_func(cube, var):
     to "% of land per month"
     """
     cube.data = cube.core_data()*30.0*86400.0*100.0
-    cube.units = Unit("%/month")
+    cube.units = Unit("%")
     return cube
 # #############################################################################
 
