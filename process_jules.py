@@ -719,6 +719,57 @@ def nbp_func(cubelist, var):
 
 
 # #############################################################################
+def reco_func(cubelist, var):
+    """
+    convert units and add cubes in cubelist
+    """
+    for i, cube in enumerate(cubelist):
+        if cube.units != Unit("kg m-2 s-1"):
+            if "360" in str(cube.units):
+                print("reco_func: units from "+
+                    str(cube.units)+" "+cube.var_name)
+                cube.data = cube.core_data() * 1.0/(86400.0*360.0)
+                cube.units = "kg m-2 s-1"
+            else:
+                sys.exit("problem with units in reco_func")
+        cubelist[i] = cube
+
+    out_cube = sum_func(cubelist, var)
+    return out_cube
+# #############################################################################
+
+
+# #############################################################################
+def nee_func(cubelist, var):
+    """
+    should check that the input cubes are the variables expected.
+    assumes first cube is npp and all others are loss terms
+    """
+    for i, cube in enumerate(cubelist):
+        if cube.var_name in ["resp_s_to_atmos_gb", "npp_n_gb"]:
+            if cube.units != Unit("kg m-2 s-1"):
+                if "360" in str(cube.units):
+                    print("nee_func: units from "+
+                          str(cube.units)+" "+cube.var_name)
+                    cube.data = cube.core_data() * 1.0/(86400.0*360.0)
+                    cube.units = "kg m-2 s-1"
+                else:
+                    sys.exit("problem with units in nee_func")
+            if cubelist[0].var_name != "npp_n_gb":
+                if cubelist[0].var_name != "npp_gb":
+                    sys.exit("check nbp function - cubes in wrong order")
+            cubelist[i] = cube
+
+    if len(cubelist) != 2:
+        sys.exit("check nee function - wrong number of cubes")
+
+    out_cube = minus_func(cubelist, var)
+    out_cube.units="kg m-2 s-1"
+    return out_cube
+# #############################################################################
+
+
+# #############################################################################
 def sum_func(cubelist, var):
     """
     add cubes in cubelist
@@ -738,6 +789,17 @@ def mult_func(cubelist, var):
     out_cube = cubelist[0]
     for cube in cubelist[1:]:
         out_cube = out_cube * cube
+    return out_cube
+# #############################################################################
+
+
+# #############################################################################
+def div_func(cubelist, var):
+    """
+    divide cubes in cubelist
+    """
+    out_cube = cubelist[0] / cubelist[1]
+
     return out_cube
 # #############################################################################
 
@@ -802,7 +864,24 @@ def conv360_func(cubelist, var):
         cubelist_sameunits.append(cube)
     cube = sum_func(cubelist_sameunits, var)
     return cube
+# #############################################################################
 
+
+# #############################################################################
+def rhums_func(cubeList):
+    """
+    calculate relative humidity from specific humidity
+    inputs are 1.5m q, 1.5m T and p*
+    """
+    q = cubeList[0]
+    T = cubeList[1]
+    p = cubeList[2]
+    #saturated vapor pressure(?) = es
+    es = 6.1078 * np.exp((17.26938818 * (T.data - 273.15)) / (237.3 + (T.data - 273.15)))
+    #calculate relative humidity
+    hurs = p.copy(q.data * p.data / (es * (0.622 - (1.0 - 0.622) * q.data)))
+    hurs.units = cf_units.Unit("%")
+    return hurs
 # #############################################################################
 
 
