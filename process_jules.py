@@ -693,7 +693,9 @@ def nbp_func(cubelist, var):
     for i, cube in enumerate(cubelist):
         if cube.var_name in ["resp_s_to_atmos_gb", "WP_fast_out",
                              "WP_med_out", "WP_slow_out",
-                             "npp_n_gb", "harvest_gb", "npp_gb"]:
+                             "npp_n_gb", "harvest_gb", "npp_gb",
+                             "veg_c_fire_emission_gb", "burnt_carbon_dpm",
+                             "burnt_carbon_rpm"]:
             if cube.units != Unit("kg m-2 s-1"):
                 if "360" in str(cube.units):
                     print("nbp_func: units from "+
@@ -707,10 +709,10 @@ def nbp_func(cubelist, var):
                     sys.exit("check nbp function - cubes in wrong order")
             cubelist[i] = cube
 
-    if len(cubelist) != 6:
-        sys.exit("check nbp function - wrong number of cubes")
+    if len(cubelist) != 9:
+        sys.exit("check nbp function - wrong number of cubes - have we added fire or not?")
 
-    out_cube = minus_func(cubelist)
+    out_cube = minus_func(cubelist, var)
     out_cube.units="kg m-2 s-1"
     return out_cube
 # #############################################################################
@@ -724,6 +726,18 @@ def sum_func(cubelist, var):
     out_cube = cubelist[0]
     for cube in cubelist[1:]:
         out_cube = out_cube + cube
+    return out_cube
+# #############################################################################
+
+
+# #############################################################################
+def mult_func(cubelist, var):
+    """
+    multiply cubes in cubelist
+    """
+    out_cube = cubelist[0]
+    for cube in cubelist[1:]:
+        out_cube = out_cube * cube
     return out_cube
 # #############################################################################
 

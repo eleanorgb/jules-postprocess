@@ -198,7 +198,7 @@ def sort_isimip_cube(cube, outprofile):
             coord.long_name = "Depth of vertical layer center below land"
             if "isimip3" in MIPNAME:
                 coord.rename("depth_below_surface")
-                coord.long_name("Depth of Vertical Layer Center Below Surface")
+                coord.long_name = "Depth of Vertical Layer Center Below Surface"
         if coord.name()=="vegtype":
             if len(cube.coord("vegtype").points) == 1:
                 cube.remove_coord("vegtype")
@@ -250,9 +250,10 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
         if retcode != 0:
             print("ncrename variable broken "+outfilename)
             sys.exit("ncrename broken")
-        retcode = subprocess.call("mv "+outfilename+" "+outfilename+"4", 
+        if "isimip2b" in MIPNAME:
+            retcode = subprocess.call("mv "+outfilename+" "+outfilename+"4", 
                                   shell=True)
-        if retcode != 0:
-            print("mv "+outfilename+" "+outfilename+"4")
-            sys.exit("mv broken")
+            if retcode != 0:
+                print("mv "+outfilename+" "+outfilename+"4")
+                sys.exit("mv broken")
 # #############################################################################
