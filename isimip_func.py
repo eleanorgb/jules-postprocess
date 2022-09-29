@@ -73,7 +73,10 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
     _<region>_<time-step>_<start-year>_<end-year>.nc
     """
     if not L_JULES_ROSE:
-        if MIP_INFO["in_scenario"][MIPNAME] in "c20c":
+        print(MIP_INFO["in_scenario"][MIPNAME])
+        if MIP_INFO["in_scenario"][MIPNAME] in "obsclim":
+            soc = "histsoc_co2"
+        elif MIP_INFO["in_scenario"][MIPNAME] in "c20c":
             soc = "histsoc_co2"
         elif MIP_INFO["in_scenario"][MIPNAME] in "historical":
             soc = "default"
@@ -148,9 +151,9 @@ def sort_isimip_cube(cube, outprofile):
     tcoord = cube.coord("time")
     tcoord.units = Unit(tcoord.units.origin, calendar="gregorian")
 
-    if "isimip2b" in MIPNAME or "isimip3b" in MIPNAME:
+    if "isimip2b" in MIPNAME.lower() or "isimip3b" in MIPNAME.lower():
         ref_year=1661
-    elif "isimip3a" in MIPNAME:
+    elif "isimip3a" in MIPNAME.lower():
         ref_year=1901
     if "daily" in outprofile:
         tcoord.convert_units("days since "+str(ref_year)+"-01-01 00:00:00")

@@ -608,6 +608,19 @@ def burntarea_func(cube, var):
 
 
 # #############################################################################
+def burntarea_pftfunc(cube, var):
+    """
+    converts units from "fraction of pft per second"
+    to "% of land per month"
+    """
+    cube.data = cube.core_data()*30.0*86400.0*100.0
+    cube.units = Unit("%")
+    return cube
+# #############################################################################
+
+
+
+# #############################################################################
 def fracweight_func(cubelist, var):
     """
     weight by fractional cover
@@ -635,7 +648,8 @@ def fracweight_func(cubelist, var):
         if cube.var_name != fracname:
             cubelist_minusfrac.append(cube)
     cube = sum_func(cubelist_minusfrac, var)
-    cube = cube.collapsed("vegtype", iris.analysis.SUM, weights=weights.data)
+    cube = cube.collapsed("vegtype", iris.analysis.SUM,
+                           weights=weights.core_data())
     return cube
 # #############################################################################
 
@@ -868,19 +882,28 @@ def conv360_func(cubelist, var):
 
 
 # #############################################################################
-def rhums_func(cubeList):
+def rhums_func(cubeList, var):
     """
     calculate relative humidity from specific humidity
     inputs are 1.5m q, 1.5m T and p*
+    http://www.eol.ucar.edu/projects/ceop/dm/documents/refdata_report/eqns.html
     """
-    q = cubeList[0]
-    T = cubeList[1]
-    p = cubeList[2]
-    #saturated vapor pressure(?) = es
-    es = 6.1078 * np.exp((17.26938818 * (T.data - 273.15)) / (237.3 + (T.data - 273.15)))
-    #calculate relative humidity
-    hurs = p.copy(q.data * p.data / (es * (0.622 - (1.0 - 0.622) * q.data)))
-    hurs.units = cf_units.Unit("%")
+    q1p5m = cubeList[0]
+    t1p5m = cubeList[1]
+    t1p5m.convert_units("celsius")
+    pstar = cubeList[2]
+    pstar.convert_units("mbar")
+
+    # convert q1p5m to vapour pressure in millibars
+    vp = q1p5m * pstar / ( 0.378 * q1p5m + 0.622 )
+    # saturated vapor pressure = svp
+    svp = iris.analysis.maths.exp((17.26938818 * t1p5m) / (237.3 + t1p5m)) * 6.1078
+    # calculate relative humidity
+    hurs = vp / svp * 100.0
+    hurs.core_data()[hurs.core_data() > 100.0] = 100.0
+    hurs.core_data()[hurs.core_data() < 0.0] = 0.0
+    hurs.units = Unit("%")
+
     return hurs
 # #############################################################################
 
