@@ -6,6 +6,7 @@ import sys
 import subprocess
 import numpy as np
 import iris
+import netCDF4
 from iris.coords import DimCoord
 from cf_units import Unit
 from landcover_types import UKESM_TYPES
@@ -35,6 +36,33 @@ def make_global_grid_0p5():
 
 # #############################################################################
 
+def rename_cfcompliant_to_isimip(outfilename, cube):
+    """
+    annoyingly iris save changes somevariable and dimension names
+    -total is automatically changed to _total
+    depth_below_surface is automatically changed to dim1
+    """
+    
+    # changes from _total to -total
+    if '-total' in outfilename:
+        var_old = cube.var_name.split("-")
+        var_old = ''.join([var_old[0], "_", var_old[1]])
+        dataset = netCDF4.Dataset(outfilename, 'r+')
+        dataset.renameVariable(var_old, cube.var_name)
+        dataset[var_old].long_name = cube.var_name
+        dataset.close()
+
+    # changes soil dimension name from depth to depth_below_surface
+    all_coord_names = [ coord.name() for coord in cube.coords() ]
+    if "ISIMIP3" in MIPNAME.upper():
+        if "depth" in all_coord_names:
+            dataset = netCDF4.Dataset(outfilename, 'r+')
+            dataset.renameDimension('depth', 'depth_below_surface')
+            dataset.renameVariable('depth', 'depth_below_surface')
+            dataset['depth_below_surface'].long_name = 'depth_below_surface'
+            dataset.close()
+
+    return
 # #############################################################################
 def define_years_daily_isimip2b():
     """
@@ -192,16 +220,10 @@ def sort_isimip_cube(cube, outprofile):
     cube.cell_methods = None
     cube = iris.util.squeeze(cube)
 
-
-
-
     # depth coordinate
     for coord in cube.coords():
         if coord.name()=="depth":
             coord.long_name = "Depth of vertical layer center below land"
-            if "isimip3" in MIPNAME:
-                coord.rename("depth_below_surface")
-                coord.long_name = "Depth of Vertical Layer Center Below Surface"
         if coord.name()=="vegtype":
             if len(cube.coord("vegtype").points) == 1:
                 cube.remove_coord("vegtype")

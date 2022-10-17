@@ -449,7 +449,10 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
             coord_names = [coord.name() for coord in cube.coords()]
             if "latitude" in coord_names or "lat" in coord_names:
                 cube.data.mask[np.isnan(cube.data)] = True    # breaks lazy data
-            if not L_TESTING:
+            if "frac_name" in coord_names:
+                cube.remove_coord("frac_name")
+            print(L_TESTING)
+            if L_TESTING:
                 iris.save(cube, outfilename, fill_value=fill_value, zlib=True,
                       netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizes,
                       contiguous=False, complevel=9)
@@ -459,6 +462,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
                     if retcode != 0:
                         print("mv "+outfilename+" "+outfilename+"4")
                         sys.exit("mv broken")
+                if "ISIMIP3" in MIPNAME.upper():
+                    isimip_func.rename_cfcompliant_to_isimip(outfilename, cube)
 
     return outfilename, varout
 
