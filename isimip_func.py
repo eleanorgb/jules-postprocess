@@ -40,7 +40,6 @@ def rename_cfcompliant_to_isimip(outfilename, cube):
     """
     annoyingly iris save changes somevariable and dimension names
     -total is automatically changed to _total
-    depth_below_surface is automatically changed to dim1
     """
     
     # changes from _total to -total
@@ -51,16 +50,6 @@ def rename_cfcompliant_to_isimip(outfilename, cube):
         dataset.renameVariable(var_old, cube.var_name)
         dataset[var_old].long_name = cube.var_name
         dataset.close()
-
-    # changes soil dimension name from depth to depth_below_surface
-    all_coord_names = [ coord.name() for coord in cube.coords() ]
-    if "ISIMIP3" in MIPNAME.upper():
-        if "depth" in all_coord_names:
-            dataset = netCDF4.Dataset(outfilename, 'r+')
-            dataset.renameDimension('depth', 'depth_below_surface')
-            dataset.renameVariable('depth', 'depth_below_surface')
-            dataset['depth_below_surface'].long_name = 'depth_below_surface'
-            dataset.close()
 
     return
 # #############################################################################
