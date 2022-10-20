@@ -451,8 +451,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
                 cube.data.mask[np.isnan(cube.data)] = True    # breaks lazy data
             if "frac_name" in coord_names:
                 cube.remove_coord("frac_name")
-            print(L_TESTING)
-            if L_TESTING:
+            if not L_TESTING:
                 iris.save(cube, outfilename, fill_value=fill_value, zlib=True,
                       netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizes,
                       contiguous=False, complevel=9)
@@ -856,14 +855,14 @@ def annmax_func(cube, var):
 
 
 # #############################################################################
-def cs_func(cube, var):
+def layered_soilbgc_func(cube, var):
     """
     used for outputting cs/ns/rh into layers
     """
     all_coord_names = [ coord.name() for coord in cube.coords() ]
     if "sclayer" in all_coord_names and "scpool" in all_coord_names:
             cube = cube.collapsed("scpool", iris.analysis.SUM)
-    cube.coord("sclayer").rename("soil")
+    cube.coord("sclayer").rename("depth")
     return cube
 
 # #############################################################################
