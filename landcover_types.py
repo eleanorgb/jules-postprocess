@@ -18,6 +18,7 @@ PERMAFROST14_TYPES = ["BdlDcd", "BdlEvgTrop", "BdlEvgTemp", "NdlDcd", "NdlEvg",
                "soil", "ice"]
 HADGEM_TYPES = ["evgTree", "dcdTree", "c3", "c4", "shrub",
                 "urban", "lake", "soil", "ice"]
+SOIL_POOLS = ["dpm", "rpm", "bio", "hum"]
 
 # #############################################################################
 def add_tile_info(cube, typename):

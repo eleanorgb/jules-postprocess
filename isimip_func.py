@@ -10,6 +10,7 @@ import netCDF4
 from iris.coords import DimCoord
 from cf_units import Unit
 from landcover_types import UKESM_TYPES
+from landcover_types import SOIL_POOLS
 from read_input import parse_args
 from read_input import config_parse_args
 from read_input import read_mip_info_no_rose
@@ -137,6 +138,12 @@ def sort_outfilename_isimip(outfilename, var, varout):
     """
     if "isimip2" in MIPNAME:
         outfilename = outfilename+"4"
+    if "-pool" in var:  # only checking filename containing first soil pool
+        var_minus_pool = varout.replace("-pool", "-")
+        print(varout, var_minus_pool, SOIL_POOLS[0])
+        outfilename = outfilename.replace(varout, var_minus_pool +\
+                                  SOIL_POOLS[0].lower())
+
     if "pft" in var:   # only checking filename containing first pft
         var_minus_pft = varout.replace("-pft", "-")
         print(varout, var_minus_pft, UKESM_TYPES[0])
@@ -271,3 +278,48 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
                 print("mv "+outfilename+" "+outfilename+"4")
                 sys.exit("mv broken")
 # #############################################################################
+
+# #############################################################################
+def sort_and_write_pool_cube(varout, cube, outfilename, ipool, fill_value):
+    """
+    for each pool sort out the cube
+    """
+    cubeout = cube.extract(iris.Constraint(scpool=ipool))
+    var_minus_pool = varout.replace("-pool", "-")
+    cubeout.var_name = var_minus_pool + SOIL_POOLS[ipool]
+    cubeout.var_name=cubeout.var_name.lower()
+    outfilename = outfilename.replace(varout, cubeout.var_name.lower())
+    print(outfilename)
+    wrong_name = varout.replace("-pool", "_") + SOIL_POOLS[ipool]
+    wrong_name = wrong_name.lower()
+    # remove some stuff
+    for coord in cubeout.coords():
+        if coord.name()=="scpool":
+            cubeout.remove_coord("scpool")
+        if coord.name()=="sclayer":
+            if len(cubeout.coord("sclayer").points) > 1:
+                cubeout = cubeout.collapsed("sclayer", iris.annalysis.SUM)
+            cubeout.remove_coord("sclayer")
+
+    print("cube should still have lazy data ",cubeout.has_lazy_data())
+    cubeout.data.mask[np.isnan(cubeout.data)] = True   #breaks lazy data
+    chunksizes = [1, cubeout.shape[1], cubeout.shape[2]]
+    if not L_TESTING:
+        iris.save(cubeout, outfilename, fill_value=fill_value,
+                  zlib=True, netcdf_format='NETCDF4_CLASSIC',
+                  chunksizes=chunksizes,
+                  contiguous=False, complevel=9)
+        # dont really understand why this below happens
+        retcode = subprocess.call("ncrename -h -v "+wrong_name+","+\
+                              cubeout.var_name+" "+outfilename, shell=True)
+        if retcode != 0:
+            print("ncrename variable broken "+outfilename)
+            sys.exit("ncrename broken")
+        if "isimip2b" in MIPNAME:
+            retcode = subprocess.call("mv "+outfilename+" "+outfilename+"4", 
+                                  shell=True)
+            if retcode != 0:
+                print("mv "+outfilename+" "+outfilename+"4")
+                sys.exit("mv broken")
+# #############################################################################
+

@@ -443,6 +443,10 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
             for ipft in cube.coord("vegtype").points:
                 isimip_func.sort_and_write_pft_cube(varout, cube, outfilename,
                                                     ipft, fill_value)
+        elif "-pool" in var and "ISIMIP" in MIPNAME.upper():
+            for ipool in cube.coord("scpool").points:
+                isimip_func.sort_and_write_pool_cube(varout, cube, outfilename,
+                                                    ipool, fill_value)
         else:
             chunksizes = define_chunksizes(cube)
             print("cube should still have lazy data ",cube.has_lazy_data())
