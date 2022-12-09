@@ -46,11 +46,15 @@ def rename_cfcompliant_to_isimip(outfilename, cube):
     # changes from _total to -total
     if '-total' in outfilename:
         var_old = cube.var_name.split("-")
-        var_old = ''.join([var_old[0], "_", var_old[1]])
-        dataset = netCDF4.Dataset(outfilename, 'r+')
-        dataset.renameVariable(var_old, cube.var_name)
-        dataset[var_old].long_name = cube.var_name
-        dataset.close()
+        if len(var_old) == 2:
+            var_old = ''.join([var_old[0], "_", var_old[1]])
+            dataset = netCDF4.Dataset(outfilename, 'r+')
+            try:
+                dataset.renameVariable(var_old, cube.var_name)
+                dataset[var_old].long_name = cube.var_name
+            except:
+                print("varname already cf compliant when looking at _/-")
+            dataset.close()
 
     return
 # #############################################################################
@@ -104,6 +108,16 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
             soc = "rcp60soc_co2"
         elif MIP_INFO["in_scenario"][MIPNAME] in "rcp8p5":
             soc = "nosoc_co2"
+        # these below are only for 2015 land use with transient historical land use
+        # plus changing co2
+        elif MIP_INFO["in_scenario"][MIPNAME] in "ssp126":
+            soc = "2015soc-from-histsoc_default"
+        elif MIP_INFO["in_scenario"][MIPNAME] in "ssp370":
+            soc = "2015soc-from-histsoc_default"
+        elif MIP_INFO["in_scenario"][MIPNAME] in "ssp585":
+            soc = "2015soc-from-histsoc_default"
+        # these above are only for 2015 land use with transient historical land use
+        # plus changing co2
         else:
             sys.exit("no soc")
         if "isimip2" in MIPNAME:
