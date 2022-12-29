@@ -184,7 +184,7 @@ def sort_isimip_cube(cube, outprofile):
     make isimip data past validity tests
     isimip reference dates:
     ISIMIP3a 	1901-01-01, 00:00:00, 'proleptic_gregorian'
-    ISIMIP3b 	1661-01-01, 00:00:00, '360_day'
+    ISIMIP3b 	1661-01-01, 00:00:00, 'proleptic_gregorian'
     """
     tcoord = cube.coord("time")
     tcoord.units = Unit(tcoord.units.origin, calendar="gregorian")
@@ -193,6 +193,8 @@ def sort_isimip_cube(cube, outprofile):
         ref_year=1661
     elif "isimip3a" in MIPNAME.lower():
         ref_year=1901
+    elif "isimip3b" in MIPNAME.lower():
+        ref_year=1601
     if "daily" in outprofile:
         tcoord.convert_units("days since "+str(ref_year)+"-01-01 00:00:00")
     elif "monthly" in outprofile:
@@ -201,9 +203,7 @@ def sort_isimip_cube(cube, outprofile):
         tcoord.convert_units("years since "+str(ref_year)+"-01-01 00:00:00")
     else:
         sys.exit("frequency for time unit origin not defined")
-    tcoord.units = Unit(tcoord.units.origin, calendar="360_day")
-    # will probably need this below line for isimip3a
-    # tcoord.units = Unit(tcoord.units.origin, calendar="proleptic_gregorian")
+    tcoord.units = Unit(tcoord.units.origin, calendar="proleptic_gregorian")
     cube.remove_coord("time")
     cube.add_dim_coord(tcoord, 0) # might need to find this dimension
     cube.coord("time").long_name = "Time"
