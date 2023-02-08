@@ -509,6 +509,18 @@ def add_soil_info(cube):
         bounds = np.transpose(bounds)
         cube.coord("soil").points = calc_mid_depth(bottom_of_layer)
         cube.coord("soil").bounds = bounds
+    elif len(cube.coord("soil").points) == 20:
+        dzsoil_io = (0.05000000,0.09012505,0.12721053,0.16245048,0.19637876,
+                     0.22929710,0.26139865,0.29281714,0.32365039,0.35397289,
+                     0.38384314,0.41330824,0.44240686,0.47117131,0.49962893,
+                     0.52780316,0.55571432,0.58338013,0.61081623,0.63803647)
+        bottom_of_layer = np.cumsum(dzsoil_io)
+        top_of_layer = np.array([0.0])
+        top_of_layer = np.append(top_of_layer, np.cumsum(dzsoil_io)[:-1])
+        bounds = np.vstack((top_of_layer, bottom_of_layer))
+        bounds = np.transpose(bounds)
+        cube.coord("soil").points = calc_mid_depth(bottom_of_layer)
+        cube.coord("soil").bounds = bounds
     else:
         print("look in add_soil_info - check the relevant information is coded")
         sys.exit("need depth coordinates to be set properly")
