@@ -4,6 +4,7 @@ dont need to look at if not processing isimip
 """
 import sys
 import subprocess
+import glob
 import numpy as np
 import iris
 import netCDF4
@@ -37,12 +38,18 @@ def make_global_grid_0p5():
 
 # #############################################################################
 
-def rename_cfcompliant_to_isimip(outfilename, cube):
+def rename_cfcompliant_to_isimip(outfilename, cube, divide_files=False):
     """
-    annoyingly iris save changes somevariable and dimension names
+    annoyingly iris save changes some variable and dimension names
     -total is automatically changed to _total
     """
-    
+    if divide_files:
+        try:
+            filesall = glob.glob(outfilename[:-3]+'_separate*.nc')
+    #        subprocess.run("conda activate cdo; cdo cat "+' '.join(filesall)+" "+outfilename+"; conda deactivate", shell=True)
+        except:
+            pass
+
     # changes from _total to -total
     if '-total' in outfilename:
         var_old = cube.var_name.split("-")
@@ -55,7 +62,6 @@ def rename_cfcompliant_to_isimip(outfilename, cube):
             except:
                 print("varname already cf compliant when looking at _/-")
             dataset.close()
-
     return
 # #############################################################################
 def define_years_daily_isimip2b():

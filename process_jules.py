@@ -449,16 +449,34 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
                                                     ipool, fill_value)
         else:
             chunksizes = define_chunksizes(cube)
-            print("cube should still have lazy data ",cube.has_lazy_data())
+            print("cube should still have lazy data",cube.has_lazy_data())
             coord_names = [coord.name() for coord in cube.coords()]
-            if "latitude" in coord_names or "lat" in coord_names:
-                cube.data.mask[np.isnan(cube.data)] = True    # breaks lazy data
+            if "depth" in coord_names:
+                if len(cube.coord("depth").points) > 10:
+                    print(">10 soil levels which means files are very big")
+                    divide_files = True # divide into separate files 
             if "frac_name" in coord_names:
                 cube.remove_coord("frac_name")
             if not L_TESTING:
-                iris.save(cube, outfilename, fill_value=fill_value, zlib=True,
-                      netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizes,
-                      contiguous=False, complevel=9)
+                if divide_files:
+                    subtimes = 10 # change this in anger
+                    cube_count=-1
+                    for i in range(0, len(cube.coord("time").points), subtimes):
+                        cube_count=cube_count+1
+                        cubeout = cube[i:i+subtimes].copy()
+                        print("lazy data still? ",cubeout.has_lazy_data())
+                        if "latitude" in coord_names or "lat" in coord_names:
+                            cubeout.data.mask[np.isnan(cubeout.data)] = True    # breaks lazy data
+                        outfilenametmp = outfilename[:-3]+'_separate'+str(cube_count)+'.nc'
+                        iris.save(cubeout, outfilenametmp, fill_value=fill_value, zlib=True,
+                            netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizes,
+                            contiguous=False, complevel=9)
+                else:
+                    if "latitude" in coord_names or "lat" in coord_names:
+                        cube.data.mask[np.isnan(cube.data)] = True    # breaks lazy data
+                    iris.save(cube, outfilename, fill_value=fill_value, zlib=True,
+                        netcdf_format='NETCDF4_CLASSIC', chunksizes=chunksizes,
+                        contiguous=False, complevel=9)
                 if "ISIMIP2" in MIPNAME.upper():
                     retcode = subprocess.call("mv "+outfilename+" "+\
                                                    outfilename+"4", shell=True)
