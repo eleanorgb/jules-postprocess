@@ -201,14 +201,7 @@ def sort_isimip_cube(cube, outprofile):
         ref_year=1901
     elif "isimip3b" in MIPNAME.lower():
         ref_year=1601
-    if "daily" in outprofile:
-        tcoord.convert_units("days since "+str(ref_year)+"-01-01 00:00:00")
-    elif "monthly" in outprofile:
-        tcoord.convert_units("months since "+str(ref_year)+"-01-01 00:00:00")
-    elif "annual" in outprofile:
-        tcoord.convert_units("years since "+str(ref_year)+"-01-01 00:00:00")
-    else:
-        sys.exit("frequency for time unit origin not defined")
+    tcoord.convert_units("days since "+str(ref_year)+"-01-01 00:00:00")
     tcoord.units = Unit(tcoord.units.origin, calendar="proleptic_gregorian")
     cube.remove_coord("time")
     cube.add_dim_coord(tcoord, 0) # might need to find this dimension
