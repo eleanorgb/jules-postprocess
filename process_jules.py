@@ -868,7 +868,7 @@ def rflow_func(cube, var):
     # area of grid cells
     area_weights = iris.analysis.cartography.area_weights(cube_area)
     # 1000 kg/s = 1 m3/sec
-    cube = cube * 1000. * area_weights
+    cube = cube / 1000. * area_weights
     cube.units = "m3 s-1"
     return cube
 
