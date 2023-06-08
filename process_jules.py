@@ -448,6 +448,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
                 isimip_func.sort_and_write_pool_cube(varout, cube, outfilename,
                                                     ipool, fill_value)
         else:
+            divide_files = False
             chunksizes = define_chunksizes(cube)
             print("cube should still have lazy data",cube.has_lazy_data())
             coord_names = [coord.name() for coord in cube.coords()]
