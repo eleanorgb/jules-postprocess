@@ -222,7 +222,7 @@ def sort_isimip_cube(cube, outprofile):
             lat_coord_idx=ilat
     cube.data = np.flip(cube.core_data(), axis=lat_coord_idx)
     cube.data = cube.core_data().astype("float32")
-    cube.attributes['missing_value'] = 1e+20
+    cube.attributes['missing_value'] = 1.0e+20
     for key in list(cube.attributes.keys()):
         if key=="coordinates":
             del cube.attributes[key]
