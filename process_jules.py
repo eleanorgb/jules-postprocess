@@ -604,10 +604,10 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
 # #############################################################################
 
 # #############################################################################
-def twsa_func(cubelist, var):
+def tws_func(cubelist, var):
     """
-    variation in total water mass
-    (-1 * depth to water table) * water density +
+    total water mass
+    depth to water table * water density +
     canopy water + snow + soil moisture
     should check that the input cubes are the variables expected.
     """
@@ -631,7 +631,7 @@ def twsa_func(cubelist, var):
             cubelist_minuszw.append(cube)
     cube = sum_func(cubelist_minuszw, var)
 
-    return cube - zw_cube
+    return cube + zw_cube
 # #############################################################################
 
 # #############################################################################
