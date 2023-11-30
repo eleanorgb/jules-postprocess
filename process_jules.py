@@ -159,7 +159,7 @@ def main():
             outfilename, varout = write_out_final_cube(diag_dic, None, var,
                                                        out_dir, syr, eyr,
                                                        l_onlymakefname=True)
-            if "ISIMIP" in MIPNAME.upper():
+            if "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower():
                 outfilename = isimip_func.sort_outfilename_isimip(outfilename,
                                                                   var, varout)
             print("outfilename: "+outfilename)
@@ -348,7 +348,7 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
                     MIP_INFO["in_scenario"][MIPNAME]+\
                     "."+jules_profname+"."+year+".nc" for year in years]
         elif L_JULES_ROSE:
-            if "isimip" in CONFIG_ARGS["MODEL_INFO"]["mipname"]:
+            if "isimip" in CONFIG_ARGS["MODEL_INFO"]["mipname"] or "crujra" in CONFIG_ARGS["MODEL_INFO"]["mipname"]:
                 files_in = [src_dir+\
                             CONFIG_ARGS["MODEL_INFO"]["mipname"]+"_"+\
                             CONFIG_ARGS["MODEL_INFO"]["configname"]+"_"+\
@@ -383,7 +383,7 @@ def make_outfilename(out_dir, outprofile, var, syr, eyr):
             outfilename = out_dir+"/"+CONFIG_ARGS["MODEL_INFO"]["model"]+"_"+\
                   CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]+"_"+var+"_"+\
                   outprofile+".nc"
-    elif "ISIMIP" in MIPNAME.upper():
+    elif "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower():
         outfilename = isimip_func.make_outfilename_isimip(out_dir, outprofile,
                                                           var, syr, eyr)
     elif "IMOGEN" in MIPNAME.upper():
@@ -428,7 +428,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
         cube.remove_coord("year")
         fill_value = 1.e+20  # this might need to change with different mips?
         # sort out formatting of ISIMIP output
-        if "ISIMIP" in MIPNAME.upper():
+        if "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower():
             cube = isimip_func.sort_isimip_cube(cube, outprofile)
 
     outfilename = make_outfilename(out_dir, outprofile, varout, syr, eyr)
@@ -438,12 +438,12 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
         # might have to do some work ISIMIP2 output files
         # https://www.isimip.org/protocol/preparing-simulation-files/
         # quality-check-of-your-simulation-data
-        if "pft" in var and "ISIMIP" in MIPNAME.upper():
+        if "pft" in var and ("ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower()):
             # need to separate cube by pft
             for ipft in cube.coord("vegtype").points:
                 isimip_func.sort_and_write_pft_cube(varout, cube, outfilename,
                                                     ipft, fill_value)
-        elif "-pool" in var and "ISIMIP" in MIPNAME.upper():
+        elif "-pool" in var and ("ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower()):
             for ipool in cube.coord("scpool").points:
                 isimip_func.sort_and_write_pool_cube(varout, cube, outfilename,
                                                     ipool, fill_value)
@@ -494,7 +494,7 @@ def expand_to_global(cube):
     """
     define new cube with global grid for output
     """
-    if "ISIMIP" in MIPNAME.upper():
+    if "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower():
         latitude, longitude, nlat, nlon = isimip_func.make_global_grid_0p5()
     elif "CMIP" in MIPNAME.upper() or "TRENDY" in MIPNAME.upper():
         latitude, longitude, nlat, nlon = cmip_func.make_global_grid_n96e()
@@ -861,6 +861,7 @@ def div_func(cubelist, var):
 def rflow_func(cube, var):
     """
     used to convert river flow (kg/m2/s) to discharge (m3/s)
+    for a specific point need to multiply by area of grid cell
     """
     cube_area = cube.copy()
     if cube_area.coord("latitude").bounds is None:
@@ -898,6 +899,19 @@ def layered_soilbgc_func(cube, var):
     if "sclayer" in all_coord_names and "scpool" in all_coord_names:
             cube = cube.collapsed("scpool", iris.analysis.SUM)
     cube.coord("sclayer").rename("depth")
+    return cube
+
+# #############################################################################
+
+
+# #############################################################################
+def soilbgc_pool_func(cube, var):
+    """
+    used for outputting cs/ns as pools
+    """
+    all_coord_names = [ coord.name() for coord in cube.coords() ]
+    if "sclayer" in all_coord_names and "scpool" in all_coord_names:
+            cube = cube.collapsed("sclayer", iris.analysis.SUM)
     return cube
 
 # #############################################################################

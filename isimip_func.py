@@ -195,6 +195,7 @@ def sort_isimip_cube(cube, outprofile):
     tcoord = cube.coord("time")
     tcoord.units = Unit(tcoord.units.origin, calendar="gregorian")
 
+    ref_year=1901
     if "isimip2b" in MIPNAME.lower() or "isimip3b" in MIPNAME.lower():
         ref_year=1661
     elif "isimip3a" in MIPNAME.lower():

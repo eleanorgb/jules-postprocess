@@ -62,7 +62,7 @@ def select_vegfrac(cube, var):
     make mapping of vegtypes that are defined by the output requirements
     """
     lengthoftype = len(cube.coord("vegtype").points)
-    print(lengthoftype)
+   # print(lengthoftype)
     if lengthoftype == 17:  # JULES-ES type
         vegtype_mapping = {"BdlDcd": "BdlDcd",
                            "treeFracBdlDcd": "BdlDcd",
@@ -80,9 +80,14 @@ def select_vegfrac(cube, var):
                            "pastureFracC4": "c4pasture",
                            "treeFrac": ["BdlDcd", "BdlEvgTemp", "BdlEvgTrop",
                                         "NdlDcd", "NdlEvg"],
+                           "grassFrac": ["c3grass", "c3pasture", "c3crop",
+                                        "c4grass", "c4pasture", "c4crop"],
                            "c3PftFrac": ["c3grass", "c3pasture", "c3crop"],
                            "c4PftFrac": ["c4grass", "c4pasture", "c4crop"],
                            "shrubFrac": ["shrubDcd", "shrubEvg"],
+                           "vegFrac": ["BdlDcd", "BdlEvgTemp", "BdlEvgTrop",
+                                        "NdlDcd", "NdlEvg", "c3grass", "c3pasture", "c3crop",
+                                        "c4grass", "c4pasture", "c4crop","shrubDcd", "shrubEvg"],
                            "baresoilFrac": "soil",
                            "residualFrac": ["urban", "lake", "ice"]
                            }
