@@ -308,6 +308,8 @@ def define_syr_eyr_output(var):
             syrall, eyrall = cmip_func.define_years_daily_cmip()
         elif "ISIMIP2B" in MIPNAME.upper():
             syrall, eyrall = isimip_func.define_years_daily_isimip2b()
+        elif "crujra" in MIPNAME.lower():
+            syrall, eyrall = isimip_func.define_years_daily_wrpmip()
         else:
             syrall = [-1]
             eyrall = [-1]

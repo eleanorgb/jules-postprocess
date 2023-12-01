@@ -83,6 +83,17 @@ def define_years_daily_isimip2b():
 
 
 # #############################################################################
+def define_years_daily_wrpmip():
+    """
+    break into 1 year batches
+    """
+    syrall = np.arange(2000, 2023)
+    eyrall = syrall
+    return syrall, eyrall
+# #############################################################################
+
+
+# #############################################################################
 def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
     """
     define outfilename for isimip2b:
