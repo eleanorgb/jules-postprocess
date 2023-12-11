@@ -323,7 +323,7 @@ def sort_and_write_pool_cube(varout, cube, outfilename, ipool, fill_value):
             cubeout.remove_coord("scpool")
         if coord.name()=="sclayer":
             if len(cubeout.coord("sclayer").points) > 1:
-                cubeout = cubeout.collapsed("sclayer", iris.annalysis.SUM)
+                cubeout = cubeout.collapsed("sclayer", iris.analysis.SUM)
             cubeout.remove_coord("sclayer")
 
     print("cube should still have lazy data ",cubeout.has_lazy_data())
