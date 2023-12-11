@@ -746,6 +746,9 @@ def nbp_func(cubelist, var):
     assumes first cube is npp and all others are loss terms
     """
     for i, cube in enumerate(cubelist):
+        all_coord_names = [ coord.name() for coord in cube.coords() ]
+        if "sclayer" in all_coord_names:
+            cube = cube.collapsed("sclayer", iris.annalysis.SUM)
         if cube.var_name in ["resp_s_to_atmos_gb", "WP_fast_out",
                              "WP_med_out", "WP_slow_out",
                              "npp_n_gb", "harvest_gb", "npp_gb",
@@ -802,6 +805,9 @@ def nee_func(cubelist, var):
     """
     for i, cube in enumerate(cubelist):
         if cube.var_name in ["resp_s_to_atmos_gb", "npp_n_gb"]:
+            all_coord_names = [ coord.name() for coord in cube.coords() ]
+            if "sclayer" in all_coord_names:
+                cube = cube.collapsed("sclayer", iris.annalysis.SUM)
             if cube.units != Unit("kg m-2 s-1"):
                 if "360" in str(cube.units):
                     print("nee_func: units from "+
@@ -830,7 +836,13 @@ def sum_func(cubelist, var):
     add cubes in cubelist
     """
     out_cube = cubelist[0]
+    all_coord_names = [ coord.name() for coord in out_cube.coords() ]
+    if "sclayer" in all_coord_names:
+        out_cube = out_cube.collapsed("sclayer", iris.annalysis.SUM)
     for cube in cubelist[1:]:
+        all_coord_names = [ coord.name() for coord in cube.coords() ]
+        if "sclayer" in all_coord_names:
+            cube = cube.collapsed("sclayer", iris.annalysis.SUM)
         out_cube = out_cube + cube
     return out_cube
 # #############################################################################
