@@ -458,6 +458,11 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
                 if len(cube.coord("depth").points) > 10:
                     print(">10 soil levels which means files are very big")
                     divide_files = True # divide into separate files 
+            if "sclayer" in coord_names:
+                if len(cube.coord("sclayer").points) > 10:
+                    print(">10 soil bgc levels which means files can be very big")
+                    if diag_dic[var][5] is "layered_soilbgc_func":
+                        divide_files = True # divide into separate files 
             if "frac_name" in coord_names:
                 cube.remove_coord("frac_name")
             if not L_TESTING:
@@ -924,7 +929,7 @@ def soilbgc_pool_func(cube, var):
     used for outputting cs/ns as pools
     """
     all_coord_names = [ coord.name() for coord in cube.coords() ]
-    if "sclayer" in all_coord_names and "scpool" in all_coord_names:
+    if "sclayer" in all_coord_names:
             cube = cube.collapsed("sclayer", iris.analysis.SUM)
     return cube
 
