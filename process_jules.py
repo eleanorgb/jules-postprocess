@@ -461,7 +461,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
             if "sclayer" in coord_names:
                 if len(cube.coord("sclayer").points) > 10:
                     print(">10 soil bgc levels which means files can be very big")
-                    if diag_dic[var][5] is "layered_soilbgc_func":
+                    if diag_dic[var][5] == "layered_soilbgc_func":
                         divide_files = True # divide into separate files 
             if "frac_name" in coord_names:
                 cube.remove_coord("frac_name")
