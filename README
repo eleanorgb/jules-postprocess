@@ -39,6 +39,21 @@ The variables to be postprocessed are defined in ***_variables.py where *** is t
 first term (before the underscore) of the MIPNAME. This is only used outside rose.
 
 #############################################################################
+# ISSUES
+###################################################################
+CMIP6:
+   fNdep: should be monthly (Emon) and not annual 
+      - needs to be changed in the output profiles and in the variable namelists
+      
+###################################################################
+ISIMIP:
+  need to get final year of future simulation
+   - this can be done by adding another year to the driving by
+      making links to the last year.
+
+
+
+#############################################################################
 # RUNNING MIP_CONVERT to make CMIP data for submission
 ###########################################################################
 Getting hold of the code;
