@@ -101,7 +101,7 @@ def main():
     elif not L_JULES_ROSE:
         if "ISIMIP2" in mip:
             diag_dic = ISIMIP2_variables.get_var_dict()
-        if "ISIMIP3" in mip:
+        if "ISIMIP3" in mip or "ISIMIP3".lower():
             diag_dic = ISIMIP3_variables.get_var_dict()
         elif "CMIP" in mip:
             diag_dic = CMIP_variables.get_var_dict()
@@ -614,7 +614,7 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
 def tws_func(cubelist, var):
     """
     total water mass
-    depth to water table * water density +
+    (-1 * depth to water table) * water density +
     canopy water + snow + soil moisture
     should check that the input cubes are the variables expected.
     """
@@ -629,7 +629,7 @@ def tws_func(cubelist, var):
         print("name of watertabledepth is not recognised")
         raise
     water_density = 1000.0 #kg m-3
-    zw_cube = zw_cube * water_density
+    zw_cube = zw_cube * water_density * (-1.0)
     zw_cube.units = Unit("kg m-2")
 
     cubelist_minuszw = iris.cube.CubeList([])
