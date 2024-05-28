@@ -201,13 +201,13 @@ def sort_isimip_cube(cube, outprofile):
     make isimip data past validity tests
     isimip reference dates:
     ISIMIP3a 	1901-01-01, 00:00:00, 'proleptic_gregorian'
-    ISIMIP3b 	1661-01-01, 00:00:00, 'proleptic_gregorian'
+    ISIMIP3b 	1601-01-01, 00:00:00, 'proleptic_gregorian'
     """
     tcoord = cube.coord("time")
     tcoord.units = Unit(tcoord.units.origin, calendar="gregorian")
 
     ref_year=1901
-    if "isimip2b" in MIPNAME.lower() or "isimip3b" in MIPNAME.lower():
+    if "isimip2b" in MIPNAME.lower():
         ref_year=1661
     elif "isimip3a" in MIPNAME.lower():
         ref_year=1901
@@ -234,7 +234,7 @@ def sort_isimip_cube(cube, outprofile):
             lat_coord_idx=ilat
     cube.data = np.flip(cube.core_data(), axis=lat_coord_idx)
     cube.data = cube.core_data().astype("float32")
-    cube.attributes['missing_value'] = 1.0e+20
+    cube.attributes['missing_value'] = np.float32(1.0e+20)
     for key in list(cube.attributes.keys()):
         if key=="coordinates":
             del cube.attributes[key]
@@ -250,6 +250,8 @@ def sort_isimip_cube(cube, outprofile):
                 cube.remove_coord("vegtype")
     if cube.units=="kg/m2":
         cube.units = "kg m-2"
+    if cube.units=="kg/m2/s":
+        cube.units = "kg m-2 s-1"
 
     return cube
 # #############################################################################

@@ -4,6 +4,10 @@ suitable for ISIMIP, TRENDY, ILAMB, IMOGEN, CMIP
 BE CAREFUL with nitrogen on and off and npp and nlim
 sometimes needs lots of memory - run on spice
 '''
+
+USE_JULES_PY = False   # trying a quicker way of reading data
+
+import time
 import os
 import sys
 import warnings
@@ -26,6 +30,8 @@ from sort_varout_outprofile_name import sort_varout_outprofile_name
 import isimip_func   #isimip runs only
 import imogen_func   #imogen runs only
 import cmip_func     # cmip runs only
+if not USE_JULES_PY:
+    import jules_xarray
 
 warnings.filterwarnings("ignore")
 
@@ -43,12 +49,14 @@ if not L_JULES_ROSE:
     import IMOGEN_variables
     import IMOGENvariant_variables
     import IMOGEN6_variables
-    sys.path.append("/home/h03/hadea/bin")
-    import jules #https://code.metoffice.gov.uk/svn/utils/smstress_jpeg/trunk/jules.py
+    if USE_JULES_PY:
+       sys.path.append("/home/h03/hadea/bin")
+       import jules #https://code.metoffice.gov.uk/svn/utils/smstress_jpeg/trunk/jules.py
 elif L_JULES_ROSE:
     import suite_postprocessed_variables
     diag_dic = suite_postprocessed_variables.get_var_dict()
-    import jules
+    if USE_JULES_PY:
+        import jules
     
 # #############################################################################
 if not L_JULES_ROSE:
@@ -139,6 +147,7 @@ def main():
     # #########################################################################
     # loop through variables
     for var in diags:
+        start_time = time.time()
         # ######################################################################
         # define start and end years
         syrall, eyrall, l_alltimes_in_one_file = define_syr_eyr_output(var)
@@ -201,6 +210,10 @@ def main():
                     pass
                 else:
                     raise
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print("Elapsed time:", elapsed_time, "seconds")
+
 
     # show list of broken variables at the end and write out missing files
     print("THESE variables broke: "+error)
@@ -428,7 +441,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr,
             print("end years", np.max(cube.coord("year").points), eyr)
             sys.exit("end years in data and filenames are incompatible")
         cube.remove_coord("year")
-        fill_value = 1.e+20  # this might need to change with different mips?
+        fill_value = np.float32(1.0e+20)  # this might need to change with different mips?
         # sort out formatting of ISIMIP output
         if "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower():
             cube = isimip_func.sort_isimip_cube(cube, outprofile)
@@ -563,7 +576,10 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
     """
     read and pre-process jules cube
     """
-    print("load cube using jules load for "+diag_in)
+    if USE_JULES_PY:
+        print("load cube using jules load for "+diag_in)
+    else:
+        print("load cube using jules_xarray load for "+diag_in)
     variable_cons = iris.Constraint(cube_func=(lambda c: c.var_name == diag_in))
 
     if "IMOGEN" in MIPNAME.upper():
@@ -577,8 +593,11 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
     else:
         # any mips which are not imogen ensembles
         try:
-            cube = jules.load(files_in, variable_cons & time_cons,
+            if USE_JULES_PY:
+                cube = jules.load(files_in, variable_cons & time_cons,
                           missingdata=ma.masked, callback=add_time_middle)
+            else:
+                cube = jules_xarray.load(files_in, variable_cons & time_cons)
         except:
             print(diag_in+" not available in "+files_in[0])
             raise
@@ -611,7 +630,7 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
 # #############################################################################
 
 # #############################################################################
-def tws_func(cubelist, var):
+def tws_broken_func(cubelist, var):
     """
     total water mass
     (-1 * depth to water table) * water density +
