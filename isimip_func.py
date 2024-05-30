@@ -8,6 +8,7 @@ import glob
 import numpy as np
 import iris
 import netCDF4
+import dask.array as da
 from iris.coords import DimCoord
 from cf_units import Unit
 from landcover_types import UKESM_TYPES
@@ -252,6 +253,8 @@ def sort_isimip_cube(cube, outprofile):
         cube.units = "kg m-2"
     if cube.units=="kg/m2/s":
         cube.units = "kg m-2 s-1"
+    if cube.units=="m-2.kg.s-1":
+        cube.units = "kg m-2 s-1"
 
     return cube
 # #############################################################################
@@ -286,6 +289,7 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
 
     print("cube should still have lazy data ",cubeout.has_lazy_data())
     cubeout.data.mask[np.isnan(cubeout.data)] = True   #breaks lazy data
+    #cubeout.data = da.where(da.isnan(cubeout.data), True, cubeout.data)  # think fixes above issue
     chunksizes = [1, cubeout.shape[1], cubeout.shape[2]]
     if not L_TESTING:
         iris.save(cubeout, outfilename, fill_value=fill_value,
