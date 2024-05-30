@@ -706,12 +706,15 @@ def fracweight_func(cubelist, var):
         print("name of landcover fraction is not recognised")
         raise
     weights = weights.extract(iris.Constraint(
-              vegtype=lambda cell: cell.point < npft-0.5))
+              vegtype=lambda cell: cell.point < npft+0.5))
+    print(weights)
+    print(npft)
 
     cubelist_minusfrac = iris.cube.CubeList([])
     for cube in cubelist:
         if cube.var_name != fracname:
             cubelist_minusfrac.append(cube)
+    print(cubelist_minusfrac)
     cube = sum_func(cubelist_minusfrac, var)
     cube = cube.collapsed("vegtype", iris.analysis.SUM,
                            weights=weights.core_data())
