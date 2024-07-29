@@ -1,6 +1,7 @@
 """
 define land cover types
 """
+
 import sys
 import iris
 
@@ -118,15 +119,15 @@ def add_tile_info(cube, typename):
 
 
 # #############################################################################
-
-
 # #############################################################################
 def select_vegfrac(cube, var):
     """
     make mapping of vegtypes that are defined by the output requirements
     """
+    errorcode = 0
+
     lengthoftype = len(cube.coord("vegtype").points)
-    print(lengthoftype)
+    print(f"Number of vegetation types {lengthoftype}")
     if lengthoftype == 17:  # JULES-ES type
         vegtype_mapping = {
             "BdlDcd": "BdlDcd",
@@ -188,19 +189,14 @@ def select_vegfrac(cube, var):
             "residualFrac": ["urban", "lake", "ice"],
         }
     else:
-        sys.exit("output not setup for this number of pfts")
+        print("ERROR: output not setup for this number of pfts")
+        errorcode = 1
     try:
-        print(cube.coord("frac_name"))
-        print(var)
-        print(vegtype_mapping[var])
         cube = cube.extract(iris.Constraint(frac_name=vegtype_mapping[var]))
         if len(cube.coord("vegtype").points) > 1:
             cube = cube.collapsed("vegtype", iris.analysis.SUM)
     except:
-        print("vegetation type not recognised")
-        print("need to add it to vegtype_mapping dictionary")
-        raise
-    return cube
-
-
-# #############################################################################
+        print(f"ERROR: vegetation type not in mapping: {var}")
+        print("ERROR: add it to vegtype_mapping dictionary if you think it is needed")
+        errorcode = 1
+    return cube, errorcode
