@@ -1,0 +1,1664 @@
+{
+    "burntarea-pft": {
+        "cmip_profile": "",
+        "jules_profile": "c_mon_pftlayer",
+        "long_name": "Burnt Area Fraction",
+        "process_func": {
+            "args": {},
+            "func": "burntarea_func"
+        },
+        "units": "%",
+        "var_name": "burnt_area"
+    },
+    "burntarea-total": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Burnt Area Fraction",
+        "process_func": {
+            "args": {},
+            "func": "burntarea_func"
+        },
+        "units": "%",
+        "var_name": "burnt_area_gb"
+    },
+    "ch4": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Total Surface Carbon Mass Flux into CH4 emissions",
+        "process_func": {
+            "args": {},
+            "func": "mult_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "fch4_wetl_cs",
+            "fwetl"
+        ]
+    },
+    "cleaf-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_pftlayer",
+        "long_name": "Carbon Mass in Leaves",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "leafC"
+        ]
+    },
+    "cproduct-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_gb",
+        "long_name": "Carbon in Products of Land Use Change",
+        "process_func": {
+            "args": {},
+            "func": "sum_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "wood_prod_fast",
+            "wood_prod_med",
+            "wood_prod_slow"
+        ]
+    },
+    "croot-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_pftlayer",
+        "long_name": "Carbon Mass in Roots",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "rootC"
+        ]
+    },
+    "csoil": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Carbon Mass in Soil Pool",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "cs_gb"
+    },
+    "csoil-pool_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_pftlayer",
+        "long_name": "Carbon Mass in each soil pool",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "cs"
+    },
+    "csoil-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_gb",
+        "long_name": "Carbon Mass in Soil Pool",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "cs_gb"
+    },
+    "csoillayer-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_pftlayer",
+        "long_name": "Carbon Mass in Soil Pool in each layer",
+        "process_func": {
+            "args": {},
+            "func": "layered_soilbgc_func"
+        },
+        "units": "kg m-2",
+        "var_name": "cs"
+    },
+    "cveg": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Carbon Mass in Vegetation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "cv"
+    },
+    "cveg-pft_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_pftlayer",
+        "long_name": "Carbon Mass in Vegetation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "c_veg"
+    },
+    "cveg-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_gb",
+        "long_name": "Carbon Mass in Vegetation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "cv"
+    },
+    "cvegag-pft_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_pftlayer",
+        "long_name": "Carbon Mass in Above Ground Vegetation Biomass",
+        "process_func": {
+            "args": {},
+            "func": "sum_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "leafC",
+            "woodC"
+        ]
+    },
+    "cvegag-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_pftlayer",
+        "long_name": "Carbon Mass in Above Ground Vegetation Biomass",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "leafC",
+            "woodC"
+        ]
+    },
+    "cvegbg-pft_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_pftlayer",
+        "long_name": "Carbon Mass in Below Ground Vegetation Biomass",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "rootC"
+    },
+    "cvegbg-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_pftlayer",
+        "long_name": "Carbon Mass in Below Ground Vegetation Biomass",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "rootC"
+        ]
+    },
+    "cwood-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_pftlayer",
+        "long_name": "Carbon Mass in Wood",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "woodC"
+        ]
+    },
+    "dis": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Discharge",
+        "process_func": {
+            "args": {},
+            "func": "rflow_func"
+        },
+        "units": "m3 s-1",
+        "var_name": "rflow"
+    },
+    "dis_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Discharge",
+        "process_func": {
+            "args": {},
+            "func": "rflow_func"
+        },
+        "units": "m3 s-1",
+        "var_name": "rflow"
+    },
+    "esoil-pft": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_pft",
+        "long_name": "Water Evaporation from Soil",
+        "process_func": {
+            "args": {},
+            "func": "minus_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "esoil",
+            "et_stom"
+        ]
+    },
+    "esoil-total": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Water Evaporation from Soil",
+        "process_func": {
+            "args": {},
+            "func": "minus_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "esoil_gb",
+            "et_stom_gb"
+        ]
+    },
+    "evap-pft": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_pft",
+        "long_name": "Evapotranspiration",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "fqw"
+    },
+    "evap-pft_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_pft",
+        "long_name": "Evapotranspiration",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "fqw"
+    },
+    "evap-total": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Evapotranspiration",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "fqw_gb"
+    },
+    "evap_daily": {
+         "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Evapotranspiration",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "fqw_gb"
+    },
+    "evapfrac": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Evaporative fraction",
+        "process_func": {
+            "args": {},
+            "func": "div_func"
+        },
+        "units": "1",
+        "var_name": [
+            "ftl_gb",
+            "latent_heat"
+        ]
+    },
+    "fapar": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Fraction of Absorbed Photosynthetically Active Radiation",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "%",
+        "var_name": [
+            "fapar",
+            "frac"
+        ]
+    },
+    "fapar-pft": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Fraction of Absorbed Photosynthetically Active Radiation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "%",
+        "var_name": "fapar"
+    },
+    "fbnf": {
+        "cmip_profile": "",
+        "jules_profile": "cn_mon_gb",
+        "long_name": "Biological nitrogen fixation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "n_fix_gb"
+    },
+    "fbnf_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_gb",
+        "long_name": "Biological nitrogen fixation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "n_fix_gb"
+    },
+    "fcropharvest-total": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "CO2 Flux to Atmosphere from Crop Harvesting",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "harvest_gb"
+    },
+    "ffire-total": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Carbon Mass Flux into Atmosphere due to C Emission from Fire",
+        "process_func": {
+            "args": {},
+            "func": "sum_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "burnt_carbon_dpm",
+            "burnt_carbon_rpm",
+            "veg_c_fire_emission_gb"
+        ]
+    },
+    "ffire-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "gen_ann_gb",
+        "long_name": "Carbon Mass Flux into Atmosphere due to C Emission from Fire",
+        "process_func": {
+            "args": {},
+            "func": "sum_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "burnt_carbon_dpm",
+            "burnt_carbon_rpm",
+            "veg_c_fire_emission_gb"
+        ]
+    },
+    "fluc-total": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "CO2 Flux to Atmosphere from Land Use Change",
+        "process_func": {
+            "args": {},
+            "func": "sum_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "WP_fast_out",
+            "WP_med_out",
+            "WP_slow_out",
+            "harvest_gb"
+        ]
+    },
+    "fndep_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_gb",
+        "long_name": "Dry and wet deposition of reactive nitrogen onto land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "deposition_n"
+    },
+    "fnetmin": {
+        "cmip_profile": "",
+        "jules_profile": "cn_mon_gb",
+        "long_name": "Net nitrogen release from soil and litter as the outcome of nitrogen immobilisation and gross mineralisation",
+        "process_func": {
+            "args": {},
+            "func": "minus_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "immob_n_gb",
+            "minl_n_gb"
+        ]
+    },
+    "fnetmin_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_gb",
+        "long_name": "Net nitrogen release from soil and litter as the outcome of nitrogen immobilisation and gross mineralisation",
+        "process_func": {
+            "args": {},
+            "func": "minus_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "immob_n_gb",
+            "minl_n_gb"
+        ]
+    },
+    "fngas": {
+        "cmip_profile": "",
+        "jules_profile": "cn_mon_gb",
+        "long_name": "Total nitrogen lost to the atmosphere (sum of NHx, NOx, N2O, N2)",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "n_gas_gb"
+    },
+    "fngas_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_gb",
+        "long_name": "Total nitrogen lost to the atmosphere (sum of NHx, NOx, N2O, N2)",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "n_gas_gb"
+    },
+    "fngasfire": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Total Nitrogen lost to the atmosphere (including NHx, N2O, N2) from fire",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "fire_em_NOx_gb"
+    },
+    "fngasfire_annual": {
+        "cmip_profile": "",
+        "jules_profile": "gen_ann_gb",
+        "long_name": "Total Nitrogen lost to the atmosphere (including NHx, N2O, N2) from fire",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "fire_em_NOx_gb"
+    },
+    "fnleach": {
+        "cmip_profile": "",
+        "jules_profile": "cn_mon_gb",
+        "long_name": "Total nitrogen loss due to leaching or runoff (sum of ammonium, nitrite and nitrate)",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "n_leach"
+    },
+    "fnleach_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_gb",
+        "long_name": "Total nitrogen loss due to leaching or runoff (sum of ammonium, nitrite and nitrate)",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "n_leach"
+    },
+    "fnproduct": {
+        "cmip_profile": "",
+        "jules_profile": "cn_mon_gb",
+        "long_name": "Nitrogen in deforested or harvested biomass as a result of anthropogenic land-use or change",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "frac",
+            "harvest_n"
+        ]
+    },
+    "fnproduct_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_gb",
+        "long_name": "Nitrogen in deforested or harvested biomass as a result of anthropogenic land-use or change",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "harvest_n_gb"
+    },
+    "fvegsoil-pft": {
+        "cmip_profile": "",
+        "jules_profile": "c_mon_pftlayer",
+        "long_name": "Total Carbon Flux from Vegetation Directly to Soil",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "lit_c"
+    },
+    "fvegsoil-total": {
+        "cmip_profile": "",
+        "jules_profile": "cn_mon_gb",
+        "long_name": "Total Carbon Flux from Vegetation Directly to Soil",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "lit_c_mean"
+    },
+    "gpp-pft_annual": {
+        "cmip_profile": "",
+        "jules_profile": "gen_ann_pftlayer",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "gpp"
+    },
+    "gpp-total": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "gpp_gb"
+    },
+    "gpp-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "gen_ann_gb",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "gpp_gb"
+    },
+    "gpp_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "gpp_gb"
+    },
+    "hfss": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "sensible heat flux",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "ftl_gb"
+    },
+    "hfss_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "sensible heat flux",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "ftl_gb"
+    },
+    "intercep-pft": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_pft",
+        "long_name": "Evaporation from Canopy (interception)",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "ecan"
+    },
+    "intercep-pft_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_pft",
+        "long_name": "Evaporation from Canopy (interception)",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "ecan"
+    },
+    "intercep-total": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Evaporation from Canopy (interception)",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "ecan_gb"
+    },
+    "intercep_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Evaporation from Canopy (interception)",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "ecan_gb"
+    },
+    "lai": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Leaf Area Index",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "1",
+        "var_name": "lai_gb"
+    },
+    "lai-pft_annual": {
+        "cmip_profile": "",
+        "jules_profile": "gen_ann_pftlayer",
+        "long_name": "Leaf Area Index",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "1",
+        "var_name": "lai"
+    },
+    "lai_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "TOTAL Leaf Area Index",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "1",
+        "var_name": "lai_gb"
+    },
+    "landalbedo": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Surface Albedo of Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "1",
+        "var_name": "albedo_land"
+    },
+    "le": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Latent heat flux",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "latent_heat"
+    },
+    "lwnet": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Net longwave radiation",
+        "process_func": {
+            "args": {},
+            "func": "minus_func"
+        },
+        "units": "W m-2",
+        "var_name": [
+            "lw_down",
+            "lw_up"
+        ]
+    },
+    "mrso_daily": {
+         "cmip_profile": "",
+       "jules_profile": "gen_day_gb",
+        "long_name": "total soil moisture",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "smc_tot"
+    },
+    "nbp-total": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Biospheric Production on Land",
+        "process_func": {
+            "args": {},
+            "func": "nbp_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "burnt_carbon_dpm",
+            "burnt_carbon_rpm",
+            "harvest_gb",
+            "npp_gb",
+            "resp_s_to_atmos_gb",
+            "veg_c_fire_emission_gb",
+            "WP_fast_out",
+            "WP_med_out",
+            "WP_slow_out"
+        ]
+    },
+    "nbp-total_daily": {
+        "cmip_profile": "",
+        "jules_profile": "cn_day_nbp",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net biome Production on Land (NBP)",
+        "process_func": {
+            "args": {},
+            "func": "nbp_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "burnt_carbon_dpm",
+            "burnt_carbon_rpm",
+            "harvest_gb",
+            "npp_gb",
+            "resp_s_to_atmos_gb",
+            "veg_c_fire_emission_gb",
+            "WP_fast_out",
+            "WP_med_out",
+            "WP_slow_out"
+        ]
+    },
+    "nbp-total_daily_nlim": {
+        "cmip_profile": "",
+        "jules_profile": "cn_day_nbp",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net biome Production on Land (NBP)  n_limited",
+        "process_func": {
+            "args": {},
+            "func": "nbp_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "burnt_carbon_dpm",
+            "burnt_carbon_rpm",
+            "harvest_gb",
+            "npp_n_gb",
+            "resp_s_to_atmos_gb",
+            "veg_c_fire_emission_gb",
+            "WP_fast_out",
+            "WP_med_out",
+            "WP_slow_out"
+        ]
+    },
+    "nbp-total_nlim": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Biospheric Production on Land Nitrogen limited",
+        "process_func": {
+            "args": {},
+            "func": "nbp_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "burnt_carbon_dpm",
+            "burnt_carbon_rpm",
+            "harvest_gb",
+            "npp_n_gb",
+            "resp_s_to_atmos_gb",
+            "veg_c_fire_emission_gb",
+            "WP_fast_out",
+            "WP_med_out",
+            "WP_slow_out"
+        ]
+    },
+    "nee": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Net Ecosysten Exchange",
+        "process_func": {
+            "args": {},
+            "func": "nee_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "npp_n_gb",
+            "resp_s_to_atmos_gb"
+        ]
+    },
+    "nloss": {
+        "cmip_profile": "",
+        "jules_profile": "cn_mon_gb",
+        "long_name": "Total nitrogen lost (including NHx, NOx, N2O, N2 and leaching)",
+        "process_func": {
+            "args": {},
+            "func": "sum_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "n_gas_gb",
+            "n_leach",
+            "n_loss"
+        ]
+    },
+    "nloss_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_gb",
+        "long_name": "Total nitrogen lost (including NHx, NOx, N2O, N2 and leaching)",
+        "process_func": {
+            "args": {},
+            "func": "sum_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "n_gas_gb",
+            "n_leach",
+            "n_loss"
+        ]
+    },
+    "nmineral_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_pftlayer",
+        "long_name": "Mineral Nitrogen in the soil",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_inorg"
+    },
+    "npp-pft_annual": {
+        "cmip_profile": "",
+        "jules_profile": "gen_ann_pftlayer",
+        "long_name": "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp"
+    },
+    "npp-pft_nlim_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_pftlayer",
+        "long_name": "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_n"
+    },
+    "npp-total": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_gb"
+    },
+    "npp-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "gen_ann_gb",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_gb"
+    },
+    "npp-total_nlim": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_n_gb"
+    },
+    "npp_daily": {
+        "cmip_profile": "",
+        "jules_profile": "cn_day_nbp",
+        "long_name": "TOTAL Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_gb"
+    },
+    "npp_daily_nlim": {
+        "cmip_profile": "",
+        "jules_profile": "cn_day_nbp",
+        "long_name": "TOTAL Carbon Mass flux out of Atmosphere due to Net Primary Production on Land Nitrogen limited",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_n_gb"
+    },
+    "npp_nlim_annual": {
+        "cmip_profile": "",
+        "jules_profile": "c_ann_gb",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_n_gb"
+    },
+    "nsoil-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_gb",
+        "long_name": "Nitrogen Mass in Soil Pool",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "ns_gb"
+    },
+    "nsoillayer-total_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_pftlayer",
+        "long_name": "Nitrogen Mass in Soil Pool in each layer",
+        "process_func": {
+            "args": {},
+            "func": "layered_soilbgc_func"
+        },
+        "units": "kg m-2",
+        "var_name": "ns"
+    },
+    "nveg_annual": {
+        "cmip_profile": "",
+        "jules_profile": "n_ann_gb",
+        "long_name": "Nitrogen Mass in Vegetation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_veg_gb"
+    },
+    "pft-pft": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Plant Functional Type Grid Fraction",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "%",
+        "var_name": "frac"
+    },
+    "pft-pft_annual": {
+        "cmip_profile": "",
+        "jules_profile": "gen_ann_pftlayer",
+        "long_name": "Plant Functional Type Grid Fraction",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "%",
+        "var_name": "frac"
+    },
+    "precip": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Precipitaiton rate",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "precip"
+    },
+    "precip_daily": {
+        "cmip_profile": "",
+        "jules_profile": "drive_day_gb",
+        "long_name": "Precipitation rate",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "precip"
+    },
+    "qs": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Surface Runoff",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "surf_roff"
+    },
+    "qs_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Surface runoff",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "surf_roff"
+    },
+    "qsb": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Subsurface Runoff",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "sub_surf_roff"
+    },
+    "qsb_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Subsurface runoff",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "sub_surf_roff"
+    },
+    "qtot": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Total Runoff",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "runoff"
+    },
+    "qtot_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Total Runoff",
+        "process_func": {
+            "args": {},
+            "func": "sum_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "sub_surf_roff",
+            "surf_roff"
+        ]
+    },
+    "ra-pft": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_pft",
+        "long_name": "Carbon Mass Flux into Atmosphere due to Autotrophic (plant) Respiration on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "resp_p"
+    },
+    "ra-total": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Carbon Mass Flux into Atmosphere due to Autotrophic (plant) Respiration on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "resp_p_gb"
+    },
+    "ra_daily": {
+        "jules_profile": "gen_day_gb",
+        "long_name": "Carbon Mass Flux into atmosphere due to Autotrophic (Plant) Respiration on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "resp_p_gb"
+    },
+    "radnet": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Net radiation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "rad_net"
+    },
+    "reco": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Ecosysten respiration",
+        "process_func": {
+            "args": {},
+            "func": "sum_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": [
+            "resp_p_gb",
+            "resp_s_to_atmos_gb"
+        ]
+    },
+    "rh-total": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Carbon Mass Flux into Atmosphere due to Heterotrophic Respiration on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "resp_s_to_atmos_gb"
+    },
+    "rh_daily": {
+        "cmip_profile": "",
+        "jules_profile": "cn_day_nbp",
+        "long_name": "Carbon Mass Flux into atmosphere due to Heterotrophic Respiration on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "resp_s_to_atmos_gb"
+    },
+    "rhlayer-total": {
+        "cmip_profile": "",
+        "jules_profile": "c_mon_pftlayer",
+        "long_name": "Carbon Mass Flux into Atmosphere due to Heterotrophic Respiration on Land in each layer",
+        "process_func": {
+            "args": {},
+            "func": "layered_soilbgc_func"
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "resp_s"
+    },
+    "rhums": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Relative humidity",
+        "process_func": {
+            "args": {},
+            "func": "rhums_func"
+        },
+        "units": "%",
+        "var_name": [
+            "pstar",
+            "q1p5m_gb",
+            "t1p5m_gb"
+        ]
+    },
+    "rlds": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Downward longwave radiation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "lw_down"
+    },
+    "rlds_daily": {
+        "cmip_profile": "",
+        "jules_profile": "drive_day_gb",
+        "long_name": "Downward longwave radiation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "lw_down"
+    },
+    "rlus": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Upward longwave radiation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "lw_up"
+    },
+    "rlus_daily": {
+        "cmip_profile": "",
+        "jules_profile": "drive_day_gb",
+        "long_name": "Upward longwave radiation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "lw_up"
+    },
+    "rsds": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Downward shortwave radiation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "sw_down"
+    },
+    "rsds_daily": {
+        "cmip_profile": "",
+        "jules_profile": "drive_day_gb",
+        "long_name": "Downward shortwave radiation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "sw_down"
+    },
+    "rsus_daily": {
+        "cmip_profile": "",
+        "jules_profile": "drive_day_gb",
+        "long_name": "Upward shortwave radiation",
+        "process_func": {
+            "args": {},
+            "func": "minus_func"
+        },
+        "units": "W m-2",
+        "var_name": [
+            "sw_down",
+            "sw_net"
+        ]
+    },
+    "snc_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Snow fraction",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "1",
+        "var_name": "snow_frac"
+    },
+    "snd": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Snow depth",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "m",
+        "var_name": "snow_depth_gb"
+    },
+    "snd_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Snow depth",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "m",
+        "var_name": "snow_depth_gb"
+    },
+    "soilmoist": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_layer",
+        "long_name": "Total Soil Moisture Content",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "smcl"
+    },
+    "soilmoist_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_layer",
+        "long_name": "Total Soil Moisture Content",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "smcl"
+    },
+    "soilmoistfroz": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_layer",
+        "long_name": "Frozen Soil Moisture Content",
+        "process_func": {
+            "args": {},
+            "func": "sth_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "sm_sat",
+            "sthf"
+        ]
+    },
+    "sublim": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Gridbox sublimation from lying snow or sea-ice",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "ei_gb"
+    },
+    "sublim-pft": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_pft",
+        "long_name": "Tile sublimation from lying snow or sea-ice",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "ei"
+    },
+    "sublim-pft_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_pft",
+        "long_name": "Tile sublimation from lying snow for land tiles",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "ei"
+    },
+    "sublim_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Gridbox sublimation from lying snow or sea-ice",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "ei_gb"
+    },
+    "swe": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Snow Water Equivalent",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "snow_mass_gb"
+    },
+    "swe_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Snow water equivalent",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "snow_mass_gb"
+    },
+    "swnet": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Net shortwave radiation",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "W m-2",
+        "var_name": "sw_net"
+    },
+    "tas": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Near-Surface Air Temperature",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "K",
+        "var_name": "t1p5m_gb"
+    },
+    "tas_daily": {
+        "cmip_profile": "",
+        "jules_profile": "drive_day_gb",
+        "long_name": "Daily Near-Surface Air Temperature",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "K",
+        "var_name": "t1p5m_gb"
+    },
+    "tasmax_daily": {
+        "cmip_profile": "",
+        "jules_profile": "drive_day_gb",
+        "long_name": "Daily Maximum Near-Surface Air Temperature",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "K",
+        "var_name": "t1p5m_gb_dailymax"
+    },
+    "tasmin_daily": {
+        "cmip_profile": "",
+        "jules_profile": "drive_day_gb",
+        "long_name": "Daily Minimum Near-Surface Air Temperature",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "K",
+        "var_name": "t1p5m_gb_dailymin"
+    },
+    "thawdepth": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Thaw Depth",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "m",
+        "var_name": "depth_unfrozen"
+    },
+    "thawdepth_annual": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Annual Maximum Thaw Depth",
+        "process_func": {
+            "args": {},
+            "func": "annmax_func"
+        },
+        "units": "m",
+        "var_name": "depth_unfrozen"
+    },
+    "thawdepth_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_layer",
+        "long_name": "Thaw Depth",
+        "process_func": {
+            "args": {},
+            "func": "thawdepth_func"
+        },
+        "units": "m",
+        "var_name": "t_soil"
+    },
+    "trans-pft": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_pft",
+        "long_name": "Transpiration",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "et_stom"
+    },
+    "trans-pft_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_pft",
+        "long_name": "Transpiration",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "et_stom"
+    },
+    "trans-total": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Transpiration",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "et_stom_gb"
+    },
+    "trans_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_gb",
+        "long_name": "Transpiration",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "et_stom_gb"
+    },
+    "tsl": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Temperature of Soil",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "K",
+        "var_name": "t_soil"
+    },
+    "tsl_daily": {
+        "cmip_profile": "",
+        "jules_profile": "gen_day_layer",
+        "long_name": "Temperature of soil - layer",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "K",
+        "var_name": "t_soil"
+    },
+    "tws": {
+        "cmip_profile": "",
+        "jules_profile": "ilamb",
+        "long_name": "Total Water Storage",
+        "process_func": {
+            "args": {},
+            "func": "sum_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "canopy_gb",
+            "smc_tot",
+            "snow_mass_gb"
+        ]
+    },
+    "wetlandch4": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Grid averaged methane emissions from wetland (NPP)",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "fch4_wetl_cs"
+    },
+    "wetlandfrac": {
+        "cmip_profile": "",
+        "jules_profile": "gen_mon_gb",
+        "long_name": "Wetland Fraction",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "%",
+        "var_name": "fwetl"
+    }
+}

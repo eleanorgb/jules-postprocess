@@ -3,6 +3,7 @@ import numpy as np
 from cf_units import Unit
 
 
+# #############################################################################
 # #####################################################################
 def conv_360days_to_sec(cube):
     def conv360(cube):
@@ -21,66 +22,68 @@ def conv_360days_to_sec(cube):
 
 
 # #############################################################################
+# #############################################################################
 def annmax_func(cube, var):
     """
     annual maximum function
     used e.g for annual maximum thaw depth
     """
+    errorcode = 0
     if not isinstance(cube, iris.cube.Cube):
-        raise ValueError("cube must be an instance of iris.cube.Cube.")
+        raise ValueError("cube must be an instance of iris.cube.Cube")
 
     if "year" not in [coord.name() for coord in cube.coords()]:
         iris.coord_categorisation.add_year(cube, "time")
     cube = cube.aggregated_by("year", iris.analysis.MAX)
     cube.remove_coord("year")
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
-
-
 # #############################################################################
 def burntarea_func(cube, var):
     """
     converts units from "fraction of land per second"
     to "% of land per month"
     """
+    errorcode = 0
     if not isinstance(cube, iris.cube.Cube):
-        raise ValueError("cube must be an instance of iris.cube.Cube.")
+        raise ValueError("cube must be an instance of iris.cube.Cube")
 
     cube.data = cube.core_data() * 30.0 * 86400.0 * 100.0
     cube.units = Unit("%")
     cube.long_name = var
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
-
-
 # #############################################################################
 def burntarea_pftfunc(cube, var):
     """
     converts units from "fraction of pft per second"
     to "% of land per month"
     """
-    raise "this shoudl eb redundant"
+    errorcode = 0
+    raise ValueError("this should be redundant")
     if not isinstance(cube, iris.cube.Cube):
         raise ValueError("cube must be an instance of iris.cube.Cube.")
 
     cube.data = cube.core_data() * 30.0 * 86400.0 * 100.0
     cube.units = Unit("%")
     cube.long_name = var
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
-
-
 # #############################################################################
 def fracweight_func(cubelist, var):
     """
     weight by fractional cover
     """
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
+
     # find out how many pfts
     npft = np.array([])
     for cube in cubelist:
@@ -105,19 +108,28 @@ def fracweight_func(cubelist, var):
     for cube in cubelist:
         if cube.var_name != fracname:
             cubelist_withoutfrac.append(cube)
-    cube = sum_func(cubelist_withoutfrac, var)
+    if len(cubelist_withoutfrac) != 0:
+        cube, errorcode = sum_func(cubelist_withoutfrac, var)
+    else:
+        errorcode = 1
+        print("ERROR: frac weight function does not have enough variabes")
+        print(cubelist)
+        return None, errorcode
+
     cube = cube.collapsed("vegtype", iris.analysis.SUM, weights=weights.core_data())
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
-
-
 # #############################################################################
 def minus_func(cubelist, var):
     """
     subtract from first element in cubelist
     """
+
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
 
     cubelist = conv_360days_to_sec(cubelist)
 
@@ -125,24 +137,26 @@ def minus_func(cubelist, var):
     for cube in cubelist[1:]:
         out_cube = out_cube - cube
     out_cube.long_name = var
-    return out_cube
+    return out_cube, errorcode
 
 
 # #############################################################################
-
-
 # #############################################################################
 def mult_func(cubelist, var):
     """
     multiply all cubes in cubelist together
     """
 
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
+
     cubelist = conv_360days_to_sec(cubelist)
 
     out_cube = cubelist[0]
     for cube in cubelist[1:]:
         out_cube = out_cube * cube
-    return out_cube
+    return out_cube, errorcode
 
 
 # #############################################################################
@@ -154,6 +168,10 @@ def nbp_func(cubelist, var, fire=True):
     should check that the input cubes are the variables expected.
     first cube is npp and all others are loss terms
     """
+
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
 
     npp_found = False
     cubelist_used = iris.cube.CubeList([])
@@ -193,9 +211,9 @@ def nbp_func(cubelist, var, fire=True):
         if cubelist_used[0].var_name != "npp_gb":
             raise ValueError("check nbp function - cubes in wrong order")
 
-    out_cube = minus_func(cubelist_used, var)
+    out_cube, errorcode = minus_func(cubelist_used, var)
     out_cube.units = "kg m-2 s-1"
-    return out_cube
+    return out_cube, errorcode
 
 
 # #############################################################################
@@ -205,6 +223,10 @@ def nee_func(cubelist, var):
     should check that the input cubes are the variables expected.
     assumes first cube is npp and all others are loss terms
     """
+
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
 
     if cubelist[0].var_name != "npp_n_gb":
         if cubelist[0].var_name != "npp_gb":
@@ -221,9 +243,9 @@ def nee_func(cubelist, var):
     if len(cubelist_used) != 2:
         raise ValueError("check nee function - wrong number of cubes")
 
-    out_cube = minus_func(cubelist, var)
+    out_cube, errorcode = minus_func(cubelist, var)
 
-    return out_cube
+    return out_cube, errorcode
 
 
 # #############################################################################
@@ -235,6 +257,10 @@ def sth_func(cubelist, var):
     get water content in a layer in kg m-2 from fraction of saturation
     and saturated watercontent
     """
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
+
     if len(cubelist) != 2:
         raise ValueError("cubelist must contain exactly two elements.")
 
@@ -250,7 +276,7 @@ def sth_func(cubelist, var):
     soil_thick = np.broadcast_to(soil_thick[0], cubelist[0].core_data().shape)
     out_cube = cubelist[0] * cubelist[1] * soil_thick * 1000.0
     out_cube.units = "kg m-2"
-    return out_cube
+    return out_cube, errorcode
 
 
 # #############################################################################
@@ -262,6 +288,10 @@ def div_func(cubelist, var):
     divide cubes in cubelist, first check there are only 2 cubes present
     """
 
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
+
     cubelist = conv_360days_to_sec(cubelist)
 
     if len(cubelist) != 2:
@@ -269,7 +299,7 @@ def div_func(cubelist, var):
     else:
         out_cube = cubelist[0] / cubelist[1]
 
-    return out_cube
+    return out_cube, errorcode
 
 
 # #############################################################################
@@ -280,6 +310,10 @@ def top10cm_func(cube, var):
     """ "
     define mean value in top 10cm of soil only one special case here
     """
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
     # need to put lambda functions here
     try:
         if (
@@ -291,7 +325,7 @@ def top10cm_func(cube, var):
             raise ValueError("Need to sort top 10cm soil variables")
     except iris.exceptions.CoordinateNotFoundError:
         raise ValueError("The 'depth' coordinate was not found in the cube.")
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
@@ -303,6 +337,10 @@ def rflow_func(cube, var):
     used to convert river flow (kg/m2/s) to discharge (m3/s)
     for a specific point need to multiply by area of grid cell
     """
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
     cube_area = cube.copy()
     if cube_area.coord("latitude").bounds is None:
         cube_area.coord("latitude").guess_bounds()
@@ -312,7 +350,7 @@ def rflow_func(cube, var):
     # 1000 kg/s = 1 m3/sec
     cube = cube / 1000.0 * area_weights
     cube.units = "m3 s-1"
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
@@ -323,13 +361,17 @@ def layered_soilbgc_func(cube, var):
     """
     used for outputting layered cs/ns/rh but adding pools together
     """
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
     all_coord_names = [coord.name() for coord in cube.coords()]
     if "sclayer" in all_coord_names and "scpool" in all_coord_names:
         cube = cube.collapsed("scpool", iris.analysis.SUM)
     # raise ValueError("Need to sort out layered soilbgc function")
     # cube.coord("sclayer").rename("depth")
     # add depth coordinate
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
@@ -340,14 +382,16 @@ def soilbgc_pool_func(cube, var):
     """
     used for outputting cs/ns as pools but removing layers
     """
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
     if "sclayer" in [coord.name() for coord in cube.coords()]:
         cube = cube.collapsed("sclayer", iris.analysis.SUM)
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
-
-
 # #############################################################################
 def rhums_func(cubelist, var):
     """
@@ -355,10 +399,15 @@ def rhums_func(cubelist, var):
     inputs are 1.5m q, 1.5m T and p*
     http://www.eol.ucar.edu/projects/ceop/dm/documents/refdata_report/eqns.html
     """
+
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
+
     if len(cubelist) != 3:
         raise ValueError("cubelist must contain exactly three elements.")
 
-    q1p5m_constraint = iris.Constraint(cube_func=lambda cube: 'q1p5m' in cube.var_name)
+    q1p5m_constraint = iris.Constraint(cube_func=lambda cube: "q1p5m" in cube.var_name)
     q1p5m = cubelist.extract_cube(q1p5m_constraint)
     if not q1p5m:
         raise ValueError("Cube 'q1p5m' not found in cubelist")
@@ -367,7 +416,7 @@ def rhums_func(cubelist, var):
     #     raise ValueError(
     #         f"name of specific humidity is not recognised {q1p5m.var_name}"
     #     )
-    t1p5m_constraint = iris.Constraint(cube_func=lambda cube: 't1p5m' in cube.var_name)
+    t1p5m_constraint = iris.Constraint(cube_func=lambda cube: "t1p5m" in cube.var_name)
     t1p5m = cubelist.extract_cube(t1p5m_constraint)
     if not t1p5m:
         raise ValueError("Cube 't1p5m' not found in cubelist")
@@ -376,13 +425,13 @@ def rhums_func(cubelist, var):
     #     raise ValueError(f"name of air temperature is not recognised {t1p5m.var_name}")
     t1p5m.convert_units("celsius")
 
-    pstar_constraint = iris.Constraint(cube_func=lambda cube: 'pstar' in cube.var_name)
+    pstar_constraint = iris.Constraint(cube_func=lambda cube: "pstar" in cube.var_name)
     pstar = cubelist.extract_cube(pstar_constraint)
     if not pstar:
         raise ValueError("Cube 'pstar' not found in cubelist")
-#    pstar = cubelist[2]  # surface pressure
-#    if "pstar" not in pstar.var_name:
-#        raise ValueError(f"name of air temperature is not recognised {pstar.var_name}")
+    #    pstar = cubelist[2]  # surface pressure
+    #    if "pstar" not in pstar.var_name:
+    #        raise ValueError(f"name of air temperature is not recognised {pstar.var_name}")
     pstar.convert_units("mbar")
 
     # convert q1p5m to vapour pressure in millibars
@@ -396,28 +445,33 @@ def rhums_func(cubelist, var):
     hurs.units = Unit("%")
     hurs.var_name = var
 
-    return hurs
+    return hurs, errorcode
 
 
 # #############################################################################
-
-
 # #############################################################################
 def get_vegtype_frac(cube, var):
+
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
     if "vegtype" not in [coord.name() for coord in cube.coords()]:
         cube = add_tile_info(cube, "type")
     cube = select_vegfrac(cube, var)
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
-
-
 # #############################################################################
 def sum_func(cubelist, var, collapse_sclayer=True):
     """
     add cubes in cubelist
     """
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
+
     if collapse_sclayer:
         for i, cube in enumerate(cubelist):
             if "sclayer" in [coord.name() for coord in cube.coords()]:
@@ -429,7 +483,7 @@ def sum_func(cubelist, var, collapse_sclayer=True):
     for cube in cubelist[1:]:
         out_cube = out_cube + cube
     out_cube.long_name = var
-    return out_cube
+    return out_cube, errorcode
 
 
 # #############################################################################
@@ -442,6 +496,10 @@ def netatmco2flux_func(cubelist, var):
     should check that the input cubes are the variables expected.
     assumes first cube is npp and all others are loss terms
     """
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
+
     for i, cube in enumerate(cubelist):
         if cubelist[0].var_name != "npp_n_gb":
             if cubelist[0].var_name != "npp_gb":
@@ -456,17 +514,19 @@ def netatmco2flux_func(cubelist, var):
     out_cube = minus_func(cubelist, var)
     out_cube.units = "kg m-2 s-1"
     out_cube.long_name = var
-    return out_cube
+    return out_cube, errorcode
 
 
 # #############################################################################
-
-
 # #############################################################################
 def pf_annmaxthaw_func(cube, var):
     """
     used to caluclate permafrost extent from annual maximum thawdepth
     """
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
     if "year" not in [coord.name() for coord in cube.coords()]:
         iris.coord_categorisation.add_year(cube, "time")
     # qplt.pcolormesh(cube[0])
@@ -484,17 +544,19 @@ def pf_annmaxthaw_func(cube, var):
     cube.remove_coord("year")
     cube.long_name = var
     cube.units = Unit("1e6 km2")
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
-
-
 # #############################################################################
 def pf_deepsoilt_func(cube, var):
     """
     used to caluclate permafrost extent from depsoil temperture
     """
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
     if "year" not in [coord.name() for coord in cube.coords()]:
         iris.coord_categorisation.add_year(cube, "time")
     cube = cube.extract(
@@ -513,4 +575,4 @@ def pf_deepsoilt_func(cube, var):
     cube.remove_coord("year")
     cube.long_name = var
     cube.units = Unit("1e6 km2")
-    return cube
+    return cube, errorcode

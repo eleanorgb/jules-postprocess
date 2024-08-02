@@ -9,6 +9,7 @@ import glob
 import numpy as np
 import iris
 import netCDF4
+import os
 import dask.array as da
 from iris.coords import DimCoord
 from cf_units import Unit
@@ -122,7 +123,7 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
     _<region>_<time-step>_<start-year>_<end-year>.nc
     """
     if not L_JULES_ROSE:
-        print(MIP_INFO["in_scenario"][MIPNAME])
+        # print("scenario: ",MIP_INFO["in_scenario"][MIPNAME])
         if MIP_INFO["in_scenario"][MIPNAME] in "obsclim":
             soc = "histsoc_co2"
         elif MIP_INFO["in_scenario"][MIPNAME] in "c20c":
@@ -210,14 +211,14 @@ def sort_outfilename_isimip(outfilename, var, varout):
         outfilename = outfilename + "4"
     if "-pool" in var:  # only checking filename containing first soil pool
         var_minus_pool = varout.replace("-pool", "-")
-        print(varout, var_minus_pool, SOIL_POOLS[0])
+        print(varout, ": only checking file exists for first soil pool")
         outfilename = outfilename.replace(
             varout, var_minus_pool + SOIL_POOLS[0].lower()
         )
 
     if "pft" in var:  # only checking filename containing first pft
         var_minus_pft = varout.replace("-pft", "-")
-        print(varout, var_minus_pft, UKESM_TYPES[0])
+        print(varout, ": only checking file exists for first pft")
         outfilename = outfilename.replace(
             varout, var_minus_pft + UKESM_TYPES[0].lower()
         )
@@ -227,10 +228,10 @@ def sort_outfilename_isimip(outfilename, var, varout):
             outfilename = outfilename.replace("npp", "npp-total")
         # npp is different in Nitrogen/non-Nitrogen cases
     elif "npp" in var:
-        outfilename = outfilename.replace(varout, "npp_noNlimitation")
+        outfilename = outfilename.replace(varout, "npp_nonlimitation")
         if "total" in var:
             outfilename = outfilename.replace(
-                "npp_noNlimitation", "npp_noNlimitation-total"
+                "npp_nonlimitation", "npp_nonlimitation-total"
             )
         # npp is different in Nitrogen/non-Nitrogen cases
     return outfilename
@@ -308,13 +309,13 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
     """
     cubeout = cube.extract(iris.Constraint(vegtype=ipft))
     var_minus_pft = varout.replace("-pft", "-")
-    print(var_minus_pft)
     cubeout.var_name = var_minus_pft + cubeout.coord("frac_name").points[0]
     cubeout.var_name = cubeout.var_name.lower()
     outfilename = outfilename.replace(varout, cubeout.var_name.lower())
-    print(outfilename)
+    #print("outfilename: " + os.path.basename(outfilename))
     wrong_name = varout.replace("-pft", "_") + cubeout.coord("frac_name").points[0]
     wrong_name = wrong_name.lower()
+
     # remove some stuff
     for coord in cubeout.coords():
         if coord.name() == "frac_name":
@@ -324,9 +325,9 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
                 cubeout.remove_coord("vegtype")
     if "vegtype" in list(cubeout.attributes.keys()):
         del cubeout.attributes["vegtype"]
-    # remove some stuff
+    # end remove some stuff
 
-    print("cube should still have lazy data ", cubeout.has_lazy_data())
+    #print("cube should still have lazy data ", cubeout.has_lazy_data())
     cubeout.data.mask[np.isnan(cubeout.data)] = True  # breaks lazy data
     # cubeout.data = da.where(da.isnan(cubeout.data), True, cubeout.data)  # think fixes above issue
     chunksizes = [1, cubeout.shape[1], cubeout.shape[2]]
@@ -347,15 +348,14 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
             shell=True,
         )
         if retcode != 0:
-            print("ncrename variable broken " + outfilename)
-            sys.exit("ncrename broken")
-        if "isimip2b" in MIPNAME:
+            raise ValueError("ERROR: ncrename variable broken " + outfilename)
+
+        if "ISIMIP2B" in MIPNAME.upper():
             retcode = subprocess.call(
                 "mv " + outfilename + " " + outfilename + "4", shell=True
             )
             if retcode != 0:
-                print("mv " + outfilename + " " + outfilename + "4")
-                sys.exit("mv broken")
+                raise ValueError("ERROR: mv " + outfilename + " " + outfilename + "4")
 
 
 # #############################################################################
@@ -369,9 +369,10 @@ def sort_and_write_pool_cube(varout, cube, outfilename, ipool, fill_value):
     cubeout.var_name = var_minus_pool + SOIL_POOLS[ipool - 1]
     cubeout.var_name = cubeout.var_name.lower()
     outfilename = outfilename.replace(varout, cubeout.var_name.lower())
-    print(outfilename)
+    # print("outfilename: " + os.path.basename(outfilename))
     wrong_name = varout.replace("-pool", "_") + SOIL_POOLS[ipool - 1]
     wrong_name = wrong_name.lower()
+
     # remove some stuff
     for coord in cubeout.coords():
         if coord.name() == "scpool":
@@ -380,6 +381,7 @@ def sort_and_write_pool_cube(varout, cube, outfilename, ipool, fill_value):
             if len(cubeout.coord("sclayer").points) > 1:
                 cubeout = cubeout.collapsed("sclayer", iris.analysis.SUM)
             cubeout.remove_coord("sclayer")
+    # end remove some stuff
 
     print("cube should still have lazy data ", cubeout.has_lazy_data())
     cubeout.data.mask[np.isnan(cubeout.data)] = True  # breaks lazy data
@@ -401,12 +403,10 @@ def sort_and_write_pool_cube(varout, cube, outfilename, ipool, fill_value):
             shell=True,
         )
         if retcode != 0:
-            print("ncrename variable broken " + outfilename)
-            sys.exit("ncrename broken")
+            raise ValueError("ERROR: ncrename variable broken " + outfilename)
         if "isimip2b" in MIPNAME:
             retcode = subprocess.call(
                 "mv " + outfilename + " " + outfilename + "4", shell=True
             )
             if retcode != 0:
-                print("mv " + outfilename + " " + outfilename + "4")
-                sys.exit("mv broken")
+                raise ValueError("ERROR: mv " + outfilename + " " + outfilename + "4")

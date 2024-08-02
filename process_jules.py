@@ -5,7 +5,8 @@ BE CAREFUL with nitrogen on and off and npp and nlim
 sometimes needs lots of memory - run on spice
 """
 
-USE_JULES_PY = False  # trying a quicker way of reading data
+USE_JULES_PY = False  # false - trying a quicker way of reading data
+READ_JSON = True  # true - trying to read from json file
 
 import time
 import os
@@ -30,53 +31,67 @@ from sort_varout_outprofile_name import sort_varout_outprofile_name
 import isimip_func  # isimip runs only
 import imogen_func  # imogen runs only
 import cmip_func  # cmip runs only
+import json
 
 if not USE_JULES_PY:
     import jules_xarray
 
+from cubelist_functions import (
+    burntarea_func,
+    sum_func,
+    nee_func,
+    div_func,
+    rhums_func,
+    nbp_func,
+    annmax_func,
+    minus_func,
+    fracweight_func,
+    rflow_func,
+    mult_func,
+    top10cm_func,
+    sth_func,
+    layered_soilbgc_func,
+    conv_360days_to_sec,
+)
+
 warnings.filterwarnings("ignore")
 
+# #############################################################################
 # #########################################################################
-# read command line arguments
+# read command line arguments and finsh imports
 global MIPNAME, L_TESTING, L_JULES_ROSE
 MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
 # #########################################################################
 
 if not L_JULES_ROSE:
-    import ISIMIP2_variables
-    import ISIMIP3_variables
-    import CMIP_variables
-    import TRENDY_variables
-    import IMOGEN_variables
-    import IMOGENvariant_variables
-    import IMOGEN6_variables
+    if not READ_JSON:
+        import ISIMIP2_variables
+        import ISIMIP3_variables
+        import CMIP_variables
+        import TRENDY_variables
+        import IMOGEN_variables
+        import IMOGENvariant_variables
+        import IMOGEN6_variables
 
-    if USE_JULES_PY:
-        sys.path.append("/home/h03/hadea/bin")
-        import jules  # https://code.metoffice.gov.uk/svn/utils/smstress_jpeg/trunk/jules.py
-elif L_JULES_ROSE:
+if L_JULES_ROSE:
     import suite_postprocessed_variables
 
     diag_dic = suite_postprocessed_variables.get_var_dict()
-    if USE_JULES_PY:
-        import jules
 
-# #############################################################################
 if not L_JULES_ROSE:
     CONTACT_EMAIL = "eleanor.burke@metoffice.gov.uk"  # dont use my email!
     OUT_BASEDIR = "/scratch/" + getpass.getuser() + "/jules_postprocess/"  # out dir
     INSTITUTION = "Met Office"
     COMMENT = ""
 
+if USE_JULES_PY:
+    sys.path.append("/home/h03/hadea/bin")
+    import jules  # https://code.metoffice.gov.uk/svn/utils/smstress_jpeg/trunk/jules.py
+
 
 # #############################################################################
-def main():
-    """
-    this is the main code reads information and loops through all diagnostics
-    """
-    # #########################################################################
-    # read jules info for relevant mip and define input and output directories
-    # #########################################################################
+# #############################################################################
+def define_inout_paths():
     if L_JULES_ROSE:
         global CONFIG_ARGS
         CONFIG_ARGS = config_parse_args(MIPNAME)  # MIPNAME.ini
@@ -90,9 +105,7 @@ def main():
                 + "_"
                 + CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]
             )
-
-    # #########################################################################
-    elif not L_JULES_ROSE:
+    else:  # not L_JULES_ROSE:
         global MIP_INFO
         mip = MIPNAME.split("_")[0]
         MIP_INFO = read_mip_info_no_rose(MIPNAME)
@@ -106,47 +119,78 @@ def main():
                 + MIP_INFO["out_scenario"][MIPNAME]
             )
 
-    # #########################################################################
-    retcode = subprocess.call("mkdir -p " + out_dir, shell=True)
-    if retcode != 0:
-        print("mkdir -p " + out_dir)
-        sys.exit("mkdir broken")
-    error = "\n"
-    outfile_error = ""
+    # make directory
+    try:
+        retcode = subprocess.call("mkdir -p " + out_dir, shell=True)
+        if retcode != 0:
+            raise OSError(f"Failed to create directory {out_dir}")
+    except OSError as e:
+        print(e)
+        raise
+    return src_dir, out_dir, mip
 
-    # #########################################################################
-    # get diagnstics for processing
-    if L_JULES_ROSE:
-        diag_dic = suite_postprocessed_variables.get_var_dict()
-    elif not L_JULES_ROSE:
-        if "ISIMIP2" in mip:
-            diag_dic = ISIMIP2_variables.get_var_dict()
-        if "ISIMIP3" in mip or "ISIMIP3".lower():
-            diag_dic = ISIMIP3_variables.get_var_dict()
-        elif "CMIP" in mip:
-            diag_dic = CMIP_variables.get_var_dict()
-        elif "IMOGEN5variant" in mip:
-            diag_dic = IMOGENvariant_variables.get_var_dict()
-        elif "IMOGEN5" in mip:
-            diag_dic = IMOGEN_variables.get_var_dict()
-        elif "IMOGEN6" in mip:
-            diag_dic = IMOGEN6_variables.get_var_dict()
-        elif "TRENDY" in mip:
-            diag_dic = TRENDY_variables.get_var_dict()
+
+# #########################################################################
+# #########################################################################
+def get_diag_for_output(mip):
+    # get diagnostics for processing
+    if READ_JSON:  # newer version
+        if "ISIMIP3" in MIPNAME.upper():
+            json_file = "ISIMIP3_variables.json"
         else:
-            print("need to define dictionary for mip")
-            sys.exit()
+            json_file = mip + "_variables.json"
+        try:
+            with open(json_file, "r") as json_file:
+                diag_dic = json.load(json_file)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"File {json_file} not found.")
+        except json.JSONDecodeError:
+            raise json.JSONDecodeError(f"Error decoding JSON from file {json_file}.")
+    else:  # older version
+        if L_JULES_ROSE:
+            diag_dic = suite_postprocessed_variables.get_var_dict()
+        elif not L_JULES_ROSE:
+            if "ISIMIP2" in mip:
+                diag_dic = ISIMIP2_variables.get_var_dict()
+            if "ISIMIP3" in mip or "ISIMIP3".lower() in mip:
+                diag_dic = ISIMIP3_variables.get_var_dict()
+            elif "CMIP" in mip:
+                diag_dic = CMIP_variables.get_var_dict()
+            elif "IMOGEN5variant" in mip:
+                diag_dic = IMOGENvariant_variables.get_var_dict()
+            elif "IMOGEN5" in mip:
+                diag_dic = IMOGEN_variables.get_var_dict()
+            elif "IMOGEN6" in mip:
+                diag_dic = IMOGEN6_variables.get_var_dict()
+            elif "TRENDY" in mip:
+                diag_dic = TRENDY_variables.get_var_dict()
+            else:
+                raise ValueError("ERROR: need to define dictionary for mip")
 
+    # define all prognistics
     diags = diag_dic.keys()  ## all diagnostics
+
+    if READ_JSON:
+        # select required prognostics
+        # REMOVE ALL DAILY DATA POSTPROCESSING
+        diags = [s for s in diags if "daily" not in s]
+        # REMOVE ALL DAILY DATA POSTPROCESSING
 
     # select specific ones here for testing (L_TESTING=True)
     if L_TESTING:
         diags = sel_diags_test()
+    print("####################################################")
     print("Diagnostics:", diags)
-    # #########################################################################
+    print("####################################################")
 
-    # #########################################################################
-    # write out information
+    return diags, diag_dic
+
+
+# #########################################################################
+# #########################################################################
+def print_run_information(src_dir, out_dir):
+    """print information for the model run"""
+    print("")
     print("####################################################")
     print("INFORMATION FOR MODEL RUNS TO BE PROCESSED")
     print("MIPNAME", MIPNAME)
@@ -155,14 +199,40 @@ def main():
     print("src_dir", src_dir)
     print("out_dir", out_dir)
     print("####################################################")
+    print("")
+
+
+# #############################################################################
+# #############################################################################
+def main():
+    """
+    this is the main code reads information and loops through all diagnostics
+    """
+    # #########################################################################
+    # read jules info for relevant mip and define input and output directories
+    # #########################################################################
+    src_dir, out_dir, mip = define_inout_paths()
+
+    # #########################################################################
+    # get diagnstics for processing
+    diags, diag_dic = get_diag_for_output(mip)
+
+    # #########################################################################
+    # write out information
+    print_run_information(src_dir, out_dir)
 
     # #########################################################################
     # loop through variables
+    # #########################################################################
+    var_error = "\n"
+    outfile_error = "\n"
     for var in diags:
+        errorcode = 0
+        print("# ##### " + var + " ##########")
         start_time = time.time()
         # ######################################################################
         # define start and end years
-        syrall, eyrall, l_alltimes_in_one_file = define_syr_eyr_output(var)
+        syrall, eyrall, l_alltimes_in_one_file = define_syr_eyr_output(var, MIPNAME)
 
         for i, syr in enumerate(syrall):  # loop through all years
             eyr = eyrall[i]
@@ -182,60 +252,59 @@ def main():
             outfilename, varout = write_out_final_cube(
                 diag_dic, None, var, out_dir, syr, eyr, l_onlymakefname=True
             )
+
             if "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower():
                 outfilename = isimip_func.sort_outfilename_isimip(
                     outfilename, var, varout
                 )
-            print("outfilename: " + outfilename)
 
-            # if file exists do nothing unless BACKFILL is false.
+            # if file exists do nothing unless L_BACKFILL_MISSING_FILES is false.
             if os.path.exists(outfilename) and bool(L_BACKFILL_MISSING_FILES):
-                print("File exists: " + outfilename)
+                print("file exists: " + os.path.basename(outfilename))
+                continue
+            else:
+                print("outfilename: " + os.path.basename(outfilename))
+
+            cube, errorcode = make_gridded_files(
+                src_dir, diag_dic, time_cons, var, syr, eyr
+            )
+            if errorcode == 1:
+                var_error = f"{var_error} ERROR: {var}\n"
+                outfile_error = outfile_error + outfilename + "\n"
                 continue
 
-            try:
-                cube = make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr)
-                if L_JULES_ROSE:
-                    cube.attributes["contact"] = CONFIG_ARGS["OUT_INFO"][
-                        "contact_email"
-                    ]
-                    cube.attributes["institution"] = CONFIG_ARGS["OUT_INFO"][
-                        "institution"
-                    ]
-                    comment = CONFIG_ARGS["OUT_INFO"]["comment"]
-                    cube.attributes["comment"] = (
-                        comment
-                        + "rose-suite is "
-                        + CONFIG_ARGS["MODEL_INFO"]["suite_id"]
-                    )
-                elif not L_JULES_ROSE:
-                    cube.attributes["contact"] = CONTACT_EMAIL
-                    cube.attributes["institution"] = INSTITUTION
-                    comment = COMMENT
-                    cube.attributes["comment"] = (
-                        COMMENT + "rose-suite is " + MIP_INFO["suite_id"][MIPNAME]
-                    )
-
-                outfilename, varout = write_out_final_cube(
-                    diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname=False
+            if L_JULES_ROSE:
+                cube.attributes["contact"] = CONFIG_ARGS["OUT_INFO"]["contact_email"]
+                cube.attributes["institution"] = CONFIG_ARGS["OUT_INFO"]["institution"]
+                comment = CONFIG_ARGS["OUT_INFO"]["comment"]
+                cube.attributes["comment"] = (
+                    comment + "rose-suite is " + CONFIG_ARGS["MODEL_INFO"]["suite_id"]
                 )
-            except:
-                print("ERROR " + MIPNAME + ": " + var)
-                error = error + " " + var + "\n"
-                outfile_error = outfile_error + outfilename + "\n"
-                if not L_TESTING:
-                    pass
-                else:
-                    raise
+            elif not L_JULES_ROSE:
+                cube.attributes["contact"] = CONTACT_EMAIL
+                cube.attributes["institution"] = INSTITUTION
+                comment = COMMENT
+                cube.attributes["comment"] = (
+                    COMMENT + "rose-suite is " + MIP_INFO["suite_id"][MIPNAME]
+                )
+
+            outfilename, varout = write_out_final_cube(
+                diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname=False
+            )
+
         end_time = time.time()
         elapsed_time = end_time - start_time
         print("Elapsed time:", elapsed_time, "seconds")
+        print("# ##################################")
+        print("")
 
     # show list of broken variables at the end and write out missing files
-    print("THESE variables broke: " + error)
+    print("ERROR: these variables broke: " + var_error)
     retcode = subprocess.call("mkdir -p outinfo", shell=True)
-    with open("outinfo/" + MIPNAME + ".outinfo", "w") as text_file:
-        text_file.write("These variables broke (ERROR): " + error)
+    if retcode != 0:
+        raise OSError(f"Failed to create directory outinfo")
+    with open("outinfo/errors_warnings_" + MIPNAME + ".outinfo", "w") as text_file:
+        text_file.write("These variables broke (ERROR): " + var_error)
         text_file.write("These files are missing (WARNING):\n" + outfile_error)
 
 
@@ -246,82 +315,135 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
     make the gridded jules data
     """
 
-    # read input diagnostics
+    errorcode = 0
+
+    # get input diagnostics
     try:
-        inputdiags = diag_dic[var][0]
+        if READ_JSON:
+            inputdiags = diag_dic[var]["var_name"]
+        else:
+            inputdiags = diag_dic[var][0]
     except:
-        print("check dictionary of variable translations (see diag_dic)")
-        print(var + " is not linked to a specified jules output variable")
-        sys.exit()
-    # print(inputdiags.__class__.__name__)
-    jules_profname = diag_dic[var][4]
-    print(var + ": variable: " + str(inputdiags) + " jules_profile: " + jules_profname)
-    files_in = make_infilename(src_dir, jules_profname, syr, eyr)
+        print("ERROR: check variable translations (either diag_dic or json file)")
+        print("ERROR:" + var + " is not linked to a specified jules output variable")
+        errorcode = 1  # problem with variable name
+        return None, errorcode
+
+    if READ_JSON:
+        jules_profname = diag_dic[var]["jules_profile"]
+    else:
+        jules_profname = diag_dic[var][4]
+
+    print(
+        var
+        + " -- jules variable: "
+        + str(inputdiags)
+        + " -- jules_profile: "
+        + jules_profname
+    )
+    print(var + " -- scenario:", MIP_INFO["in_scenario"][MIPNAME])
+
+    # get input filenames and check they exist
+    files_in, errorcode = make_infilename(src_dir, jules_profname, syr, eyr)
+    if errorcode == 1:  # not all files exist
+        return None, errorcode
+
+    if READ_JSON:  # get pre-processing function
+        process_func = diag_dic.get(var, {}).get("process_func", {})
+        func_name = process_func.get("func")
+        func = globals()[func_name] if func_name is not None else None
+    else:
+        print(diag_dic[var])
+        func = globals()[diag_dic[var][5]]
+
+    if func is not None:
+        print(f"function for pre-processing {func}")
+    else:
+        if inputdiags.__class__.__name__ == "list":
+            print("ERROR: missing function for pre-processing")
+            errorcode = 1  # problem with function name
+            return None, errorcode
+
+    # read jules data
     if inputdiags.__class__.__name__ == "list":
         # more than one variable read and combined together with a defined func
         cubelist = iris.cube.CubeList([])
         for diag_in in inputdiags:
-            cubelist.append(get_jules_cube(diag_in, files_in, time_cons=time_cons))
-        if diag_dic[var][5] is not None:
-            print("function for pre-processing " + diag_dic[var][5])
-        else:
-            sys.exit("MISSING function for pre-processing")
-        func = globals()[diag_dic[var][5]]
-        cube = func(cubelist, var)  # return a cube and then work with it!
+            cube, errorcode = get_jules_cube(
+                diag_in, files_in, MIPNAME, time_cons=time_cons
+            )
+            if errorcode == 1:
+                print(f"ERROR: can't find {diag_in} in {files_in[0]}")
+                return None, errorcode
+            cubelist.append(cube)
+        cube, errorcode = func(cubelist, var)
+        if errorcode == 1:
+            print(f"ERROR: problem with {inputdiags} in {files_in[0]}")
     else:
         # one variable read from the files
-        cube = get_jules_cube(inputdiags, files_in, time_cons=time_cons)
-        if diag_dic[var][5] is not None:
-            print("function for pre-processing: " + diag_dic[var][5])
-            func = globals()[diag_dic[var][5]]
-            cube = func(cube, var)  # return a cube and then work with it!
+        cube, errorcode = get_jules_cube(
+            inputdiags, files_in, MIPNAME, time_cons=time_cons
+        )
+        if errorcode == 1:
+            print(f"ERROR: cant find {inputdiags} in {files_in[0]}")
+            return None, errorcode
+        if func is not None:
+            cube, errorcode = func(cube, var)
+            if errorcode == 1:
+                print(f"ERROR: problem wth {func} for preprocessing")
+                return None, errorcode
 
-    # sort out units and names for jules cube
-    if cube.units != Unit(diag_dic[var][3]):
+    # sort out units for cube
+    if READ_JSON:
+        units_for_cube = Unit(diag_dic[var]["units"])
+    else:
+        units_for_cube = Unit(diag_dic[var][3])
+
+    if cube.units != units_for_cube:
+        cube = conv_360days_to_sec(cube)
         try:
-            cube.convert_units(diag_dic[var][3])
+            cube.convert_units(units_for_cube)
         except:
-            if diag_dic[var][2] is not None:
-                print("multiply cube data by " + str(diag_dic[var][2]))
-                print(var + " units required = " + diag_dic[var][3])
-            if diag_dic[var][2] is not None and diag_dic[var][3] is not None:
-                cube.data = cube.core_data() * diag_dic[var][2]
-                cube.units = Unit(diag_dic[var][3])
-                pass
-            else:
-                if diag_dic[var][3] is not None:
-                    print(
-                        "units are : "
-                        + str(cube.units)
-                        + " required: "
-                        + diag_dic[var][3]
-                    )
-                else:
-                    print("units are : " + str(cube.units) + " diag_dic is broken")
-                print("fix units/scaling in get_var_dict for " + var)
-                raise
-    if diag_dic[var][1] is not None:  # change variable long name
-        cube.long_name = diag_dic[var][1]
+            print(
+                f"ERROR: {var}: units are: {str(cube.units)}, required: {units_for_cube}"
+            )
+            return None, errorcode
+
+    # change variable long name
+    if READ_JSON:
+        longname_for_cube = diag_dic[var]["long_name"]
+    else:
+        longname_for_cube = diag_dic[var][1]
+
+    if longname_for_cube is not None:
+        cube.long_name = longname_for_cube
 
     # sort out vegetation fractions when need to separate them
-    if diag_dic[var][0] == "frac" and var not in [
+    if READ_JSON:
+        fracname = diag_dic[var]["var_name"]
+    else:
+        fracname = diag_dic[var][0]
+
+    if fracname == "frac" and var not in [
         "landCoverFrac",
         "pft-pft",
         "pft-pft_annual",
         "frac_annual",
     ]:
-        cube = select_vegfrac(cube, var)
+        cube, errorcode = select_vegfrac(cube, var)
+        if errorcode == 1:
+            print(f"ERROR: problem with select_vegfrac function")
+            return None, errorcode
 
-    # need to expand grids to global (not done for imogen, maybe wont bother)
-    if "IMOGEN" not in MIPNAME.upper():
-        cube = expand_to_global(cube)
+    # expand grids to global (not coded for imogen)
+    cube = expand_to_global(cube, MIPNAME)
 
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
 # #############################################################################
-def define_syr_eyr_output(var):
+def define_syr_eyr_output(var, mip_name):
     """
     define start and end year array for output data
     determine whether we want all data for variable in one file
@@ -330,26 +452,26 @@ def define_syr_eyr_output(var):
     if L_JULES_ROSE:
         syrall = [int(CONFIG_ARGS["MODEL_INFO"]["start_year"])]
         eyrall = [int(CONFIG_ARGS["MODEL_INFO"]["end_year"])]
-    elif not L_JULES_ROSE:
-        syrall = [int(MIP_INFO["start_year"][MIPNAME])]
-        eyrall = [int(MIP_INFO["end_year"][MIPNAME])]
+    else:  # not L_JULES_ROSE:
+        syrall = [int(MIP_INFO["start_year"][mip_name])]
+        eyrall = [int(MIP_INFO["end_year"][mip_name])]
     l_alltimes_in_one_file = True
 
     if L_TESTING:
         eyrall = [syrall[0] + 11]
 
+    mip_name = mip_name.upper()
     if "daily" in var:
-        if "CMIP" in MIPNAME.upper():
-            syrall, eyrall = cmip_func.define_years_daily_cmip()
-        elif "ISIMIP2B" in MIPNAME.upper():
+        if "CMIP" in mip_name:
+            syrall, eyrall = cmip_func.define_years_daily_cmip(syrall, eyrall)
+        elif "ISIMIP2" in mip_name:
             syrall, eyrall = isimip_func.define_years_daily_isimip2b()
-        elif "crujra" in MIPNAME.lower():
+        elif "CRUJRA" in mip_name:
             syrall, eyrall = isimip_func.define_years_daily_wrpmip()
         else:
             syrall = [-1]
             eyrall = [-1]
-            print("need to define how to split daily data")
-            sys.exit("need to define how to split daily data")
+            raise ValueError("need to define how to split daily data")
         l_alltimes_in_one_file = False  # split output files for daily data
 
     return syrall, eyrall, l_alltimes_in_one_file
@@ -428,10 +550,18 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
                     + ".nc"
                     for year in years
                 ]
-    print("First input file:")
-    print(files_in[0])
+    print(f"First input file: {files_in[0]}")
 
-    return files_in
+    # check files exist
+    errorcode = 0
+    if isinstance(files_in, list):
+        for file in files_in:
+            if not os.path.isfile(file):
+                print(f"ERROR: The file {file} does not exist, there may be others.")
+                errorcode = 1
+                break
+
+    return files_in, errorcode
 
 
 # #############################################################################
@@ -471,7 +601,7 @@ def make_outfilename(out_dir, outprofile, var, syr, eyr):
                 + outprofile
                 + ".nc"
             )
-    elif "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower():
+    elif "ISIMIP" in MIPNAME.upper() or "CRUJRA" in MIPNAME.upper():
         outfilename = isimip_func.make_outfilename_isimip(
             out_dir, outprofile, var, syr, eyr
         )
@@ -492,34 +622,35 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
     write out cube
     """
     # print stats if interested
-    if L_TESTING:
-        if not l_onlymakefname:
-            # this realises lazy data
-            try:
-                print(cube)
-            except:
-                print("error in print cube statement")
-            print("lazy data still? ", cube.has_lazy_data())
+    if L_TESTING and not l_onlymakefname:
+        print(cube)
+        print("lazy data still? ", cube.has_lazy_data())
 
     # sort out varout and outprofile
     varout, outprofile = sort_varout_outprofile_name(var)
     if "CMIP" in MIPNAME.upper():
-        outprofile = diag_dic[var][6]
+        if READ_JSON:
+            outprofile = diag_dic[var]["cmip_profile"]
+        else:
+            outprofile = diag_dic[var][6]
 
     if not l_onlymakefname:
         iris.coord_categorisation.add_year(cube, "time")
         if np.min(cube.coord("year").points) != syr:
             print("start years", np.min(cube.coord("year").points), syr)
-            sys.exit("start years in data and filenames are incompatible")
+            raise ValueError(
+                "ERROR: start years in data and filenames are incompatible"
+            )
         if np.max(cube.coord("year").points) != eyr:
             print("end years", np.max(cube.coord("year").points), eyr)
-            sys.exit("end years in data and filenames are incompatible")
+            raise ValueError("ERROR: end years in data and filenames are incompatible")
         cube.remove_coord("year")
         fill_value = np.float32(
             1.0e20
         )  # this might need to change with different mips?
+
         # sort out formatting of ISIMIP output
-        if "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower():
+        if "ISIMIP" in MIPNAME.upper() or "CRUJRA" in MIPNAME.upper():
             cube = isimip_func.sort_isimip_cube(cube, outprofile)
 
     outfilename = make_outfilename(out_dir, outprofile, varout, syr, eyr)
@@ -547,19 +678,22 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
         else:
             divide_files = False
             chunksizes = define_chunksizes(cube)
-            print("cube should still have lazy data", cube.has_lazy_data())
+            # print("cube should still have lazy data", cube.has_lazy_data())
+
             coord_names = [coord.name() for coord in cube.coords()]
-            if "depth" in coord_names:
-                if len(cube.coord("depth").points) > 10:
-                    print(">10 soil levels which means files are very big")
+
+            if "depth" in coord_names and len(cube.coord("depth").points) > 10:
+                print(">10 soil levels which means files are very big")
+                divide_files = True  # divide into separate files
+
+            if "sclayer" in coord_names and len(cube.coord("sclayer").points) > 10:
+                print(">10 soil bgc levels which means files can be very big")
+                if func == "layered_soilbgc_func":
                     divide_files = True  # divide into separate files
-            if "sclayer" in coord_names:
-                if len(cube.coord("sclayer").points) > 10:
-                    print(">10 soil bgc levels which means files can be very big")
-                    if diag_dic[var][5] == "layered_soilbgc_func":
-                        divide_files = True  # divide into separate files
+
             if "frac_name" in coord_names:
                 cube.remove_coord("frac_name")
+
             if not L_TESTING:
                 if divide_files:
                     subtimes = 10  # change this in anger
@@ -598,13 +732,15 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                         contiguous=False,
                         complevel=9,
                     )
+
                 if "ISIMIP2" in MIPNAME.upper():
                     retcode = subprocess.call(
                         "mv " + outfilename + " " + outfilename + "4", shell=True
                     )
                     if retcode != 0:
-                        print("mv " + outfilename + " " + outfilename + "4")
-                        sys.exit("mv broken")
+                        print("ERROR: mv " + outfilename + " " + outfilename + "4")
+                        raise RuntimeError("mv command failed")
+
                 if "ISIMIP3" in MIPNAME.upper():
                     isimip_func.rename_cfcompliant_to_isimip(outfilename, cube)
 
@@ -613,21 +749,28 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
 
 # #############################################################################
 # #############################################################################
-def expand_to_global(cube):
+def expand_to_global(cube, mip_name):
     """
-    define new cube with global grid for output
+    Define new cube with global grid for output
     """
-    if "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower():
-        latitude, longitude, nlat, nlon = isimip_func.make_global_grid_0p5()
-    elif "CMIP" in MIPNAME.upper() or "TRENDY" in MIPNAME.upper():
-        latitude, longitude, nlat, nlon = cmip_func.make_global_grid_n96e()
-    else:
-        sys.exit("add definition of the full global grid in expand_to_global")
-    cube_fullgrid = Cube(
-        np.zeros((nlat, nlon), np.float32),
-        dim_coords_and_dims=[(latitude, 0), (longitude, 1)],
-    )
-    cube = cube.regrid(cube_fullgrid, iris.analysis.Nearest(extrapolation_mode="mask"))
+    mip_name = mip_name.upper()
+    if "IMOGEN" not in mip_name:
+        if "ISIMIP" in mip_name or "CRUJRA" in mip_name:
+            latitude, longitude, nlat, nlon = isimip_func.make_global_grid_0p5()
+        elif "CMIP" in mip_name or "TRENDY" in mip_name:
+            latitude, longitude, nlat, nlon = cmip_func.make_global_grid_n96e()
+        else:
+            raise ValueError(
+                "add definition of the full global grid in expand_to_global"
+            )
+
+        cube_fullgrid = Cube(
+            np.zeros((nlat, nlon), np.float32),
+            dim_coords_and_dims=[(latitude, 0), (longitude, 1)],
+        )
+        cube = cube.regrid(
+            cube_fullgrid, iris.analysis.Nearest(extrapolation_mode="mask")
+        )
     return cube
 
 
@@ -637,10 +780,10 @@ def add_soil_info(cube):
     """
     add soil depth information
     """
-    if len(cube.coord("soil").points) == 4:  # standard jules
-        cube.coord("soil").points = [0.05, 0.225, 0.675, 2.0]
-        cube.coord("soil").bounds = [[0.0, 0.1], [0.1, 0.35], [0.35, 1.0], [1.0, 3.0]]
-    elif len(cube.coord("soil").points) == 14:  # ejb modified jules
+    soil_coord = cube.coord("soil")
+    if len(soil_coord.points) == 4:  # standard jules
+        dzsoil_io = [0.1, 0.25, 0.65, 2.0]
+    elif len(soil_coord.points) == 14:
         dzsoil_io = (
             0.1,
             0.2,
@@ -657,14 +800,7 @@ def add_soil_info(cube):
             3.0,
             3.0,
         )
-        bottom_of_layer = np.cumsum(dzsoil_io)
-        top_of_layer = np.array([0.0])
-        top_of_layer = np.append(top_of_layer, np.cumsum(dzsoil_io)[:-1])
-        bounds = np.vstack((top_of_layer, bottom_of_layer))
-        bounds = np.transpose(bounds)
-        cube.coord("soil").points = calc_mid_depth(bottom_of_layer)
-        cube.coord("soil").bounds = bounds
-    elif len(cube.coord("soil").points) == 20:
+    elif len(soil_coord.points) == 20:
         dzsoil_io = (
             0.05000000,
             0.09012505,
@@ -687,18 +823,17 @@ def add_soil_info(cube):
             0.61081623,
             0.63803647,
         )
-        bottom_of_layer = np.cumsum(dzsoil_io)
-        top_of_layer = np.array([0.0])
-        top_of_layer = np.append(top_of_layer, np.cumsum(dzsoil_io)[:-1])
-        bounds = np.vstack((top_of_layer, bottom_of_layer))
-        bounds = np.transpose(bounds)
-        cube.coord("soil").points = calc_mid_depth(bottom_of_layer)
-        cube.coord("soil").bounds = bounds
     else:
-        print("look in add_soil_info - check the relevant information is coded")
-        sys.exit("need depth coordinates to be set properly")
-    cube.coord("soil").units = "m"
-    cube.coord("soil").rename("depth")
+        raise ValueError("need depth coordinates to be set properly")
+
+    bottom_of_layer = np.cumsum(dzsoil_io)
+    top_of_layer = np.append([0.0], bottom_of_layer[:-1])
+    bounds = np.column_stack((top_of_layer, bottom_of_layer))
+    soil_coord.points = calc_mid_depth(bottom_of_layer)
+    soil_coord.bounds = bounds
+
+    soil_coord.units = "m"
+    soil_coord.rename("depth")
     cube.coord("depth").long_name = "depth of middle of soil layer"
 
     return cube
@@ -706,25 +841,27 @@ def add_soil_info(cube):
 
 # #############################################################################
 # #############################################################################
-def get_jules_cube(diag_in, files_in, time_cons=None):
+def get_jules_cube(diag_in, files_in, mip_name, time_cons=None):
     """
     read and pre-process jules cube
     """
-    if USE_JULES_PY:
-        print("load cube using jules load for " + diag_in)
-    else:
-        print("load cube using jules_xarray load for " + diag_in)
+    errorcode = 0
+
+    load_method = "jules load" if USE_JULES_PY else "jules_xarray load"
+    print(f"load cube using {load_method} for {diag_in}")
+
     variable_cons = iris.Constraint(cube_func=(lambda c: c.var_name == diag_in))
 
-    if "IMOGEN" in MIPNAME.upper():
+    if "IMOGEN" in mip_name.upper():
         # read ensembles for imogen
         try:
             cube = imogen_func.read_ensemble(
                 files_in, variable_cons, time_cons, diag_in
             )
         except:
-            print(diag_in + " not available in " + files_in[0])
-            raise
+            errorcode = 1
+            return None, errorcode
+            # raise ValueError(f"{diag_in} not available in {files_in[0]}")
     else:
         # any mips which are not imogen ensembles
         try:
@@ -738,8 +875,10 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
             else:
                 cube = jules_xarray.load(files_in, variable_cons & time_cons)
         except:
-            print(diag_in + " not available in " + files_in[0])
-            raise
+            errorcode = 1
+            return None, errorcode
+        # raise ValueError(diag_in + " not available in " + files_in[0])
+
         if isinstance(cube, iris.cube.CubeList):
             for ijk in np.arange(0, int(len(cube))):
                 for key in list(cube[ijk].attributes.keys()):
@@ -749,406 +888,21 @@ def get_jules_cube(diag_in, files_in, time_cons=None):
             cube = cube.concatenate_cube()
 
     # sort out coordinates
-    all_coord_names = [coord.name() for coord in cube.coords()]
-    if "type" in all_coord_names:
-        cube = add_tile_info(cube, "type")
-    if "tile" in all_coord_names:
-        cube = add_tile_info(cube, "tile")
-    if "pft" in all_coord_names:
-        cube = add_tile_info(cube, "pft")
-    if "soil" in all_coord_names:
-        cube = add_soil_info(cube)
+    for coord_name in ["type", "tile", "pft", "soil"]:
+        if coord_name in [coord.name() for coord in cube.coords()]:
+            cube = (
+                add_tile_info(cube, coord_name)
+                if coord_name != "soil"
+                else add_soil_info(cube)
+            )
+
     # might need these for TRENDY
     # if var == "tsl":
     #    cube.coord("soil").long_name = "stlayer"
     # if var == "msl":
     #    cube.coord("soil").long_name = "smlayer"
 
-    return cube
-
-
-# #############################################################################
-# #############################################################################
-def tws_broken_func(cubelist, var):
-    """
-    total water mass
-    (-1 * depth to water table) * water density +
-    canopy water + snow + soil moisture
-    should check that the input cubes are the variables expected.
-    """
-    # print([cube.units for cube in cubelist])
-    # which element of cubelist is depth to water table? - could select by units
-    watertabledepthname = "zw"
-    idx = [i for i, cube in enumerate(cubelist) if cube.var_name == watertabledepthname]
-    try:
-        zw_cube = cubelist[idx[0]]
-    except:
-        print("name of watertabledepth is not recognised")
-        raise
-    water_density = 1000.0  # kg m-3
-    zw_cube = zw_cube * water_density * (-1.0)
-    zw_cube.units = Unit("kg m-2")
-
-    cubelist_minuszw = iris.cube.CubeList([])
-    for cube in cubelist:
-        if cube.var_name != watertabledepthname:
-            cubelist_minuszw.append(cube)
-    cube = sum_func(cubelist_minuszw, var)
-
-    return cube + zw_cube
-
-
-# #############################################################################
-# #############################################################################
-def burntarea_func(cube, var):
-    """
-    converts units from "fraction of land per second"
-    to "% of land per month"
-    """
-    cube.data = cube.core_data() * 30.0 * 86400.0 * 100.0
-    cube.units = Unit("%")
-    return cube
-
-
-# #############################################################################
-# #############################################################################
-def burntarea_pftfunc(cube, var):
-    """
-    converts units from "fraction of pft per second"
-    to "% of land per month"
-    """
-    cube.data = cube.core_data() * 30.0 * 86400.0 * 100.0
-    cube.units = Unit("%")
-    return cube
-
-
-# #############################################################################
-# #############################################################################
-def fracweight_func(cubelist, var):
-    """
-    weight by fractional cover
-    """
-    # find out how many pfts
-    npft = np.array([])
-    for cube in cubelist:
-        npft = np.append(
-            npft,
-            [len(coord.points) for coord in cube.coords() if coord.name() == "vegtype"],
-        )
-    npft = np.min(npft)
-
-    # which element of cubelist is landcover fraction?
-    fracname = "frac"
-    idx = [i for i, cube in enumerate(cubelist) if cube.var_name == fracname]
-    try:
-        weights = cubelist[idx[0]]
-    except:
-        print("name of landcover fraction is not recognised")
-        raise
-    weights = weights.extract(
-        iris.Constraint(vegtype=lambda cell: cell.point < npft + 0.5)
-    )
-    print(weights)
-    print(npft)
-
-    cubelist_minusfrac = iris.cube.CubeList([])
-    for cube in cubelist:
-        if cube.var_name != fracname:
-            cubelist_minusfrac.append(cube)
-    print(cubelist_minusfrac)
-    cube = sum_func(cubelist_minusfrac, var)
-    cube = cube.collapsed("vegtype", iris.analysis.SUM, weights=weights.core_data())
-    return cube
-
-
-# #############################################################################
-# #############################################################################
-def top10cm_func(cube, var):
-    """ "
-    define mean value in top 10cm of soil
-    """
-    # need to put lambda functions here
-    if (
-        cube.coord("depth").bounds[0, 1] == 0.1
-        and cube.coord("depth").points[0] == 0.05
-    ):
-        cube = cube.extract(iris.Constraint(depth=lambda cell: cell == 0.05))
-    else:
-        sys.exit("need to sort top 10cm soil variables")
-    return cube
-
-
-# #############################################################################
-# #############################################################################
-def minus_func(cubelist, var):
-    """
-    subtract from first element in cubelist
-    """
-    out_cube = cubelist[0]
-    for cube in cubelist[1:]:
-        out_cube = out_cube - cube
-    return out_cube
-
-
-# #############################################################################
-# #############################################################################
-def sth_func(cubelist, var):
-    """
-    get water content in a layer in kg m-2 from fraction of saturation
-    and saturated watercontent
-    """
-    soil_thick = (
-        cubelist[0].coord("depth").bounds[:, 1]
-        - cubelist[0].coord("depth").bounds[:, 0]
-    )
-    soil_thick = np.array(soil_thick)
-    # print(len(soil_thick), cubelist[0].core_data().shape)
-    soil_thick = np.broadcast_to(soil_thick[0], cubelist[0].core_data().shape)
-    out_cube = cubelist[0] * cubelist[1] * soil_thick * 1000.0
-    out_cube.units = "kg m-2"
-    return out_cube
-
-
-# #############################################################################
-# #############################################################################
-def nbp_func(cubelist, var):
-    """
-    should check that the input cubes are the variables expected.
-    assumes first cube is npp and all others are loss terms
-    """
-    for i, cube in enumerate(cubelist):
-        all_coord_names = [coord.name() for coord in cube.coords()]
-        if "sclayer" in all_coord_names:
-            cube = cube.collapsed("sclayer", iris.analysis.SUM)
-        if cube.var_name in [
-            "resp_s_to_atmos_gb",
-            "WP_fast_out",
-            "WP_med_out",
-            "WP_slow_out",
-            "npp_n_gb",
-            "harvest_gb",
-            "npp_gb",
-            "veg_c_fire_emission_gb",
-            "burnt_carbon_dpm",
-            "burnt_carbon_rpm",
-        ]:
-            if cube.units != Unit("kg m-2 s-1"):
-                if "360" in str(cube.units):
-                    print(
-                        "nbp_func: units from " + str(cube.units) + " " + cube.var_name
-                    )
-                    cube.data = cube.core_data() * 1.0 / (86400.0 * 360.0)
-                    cube.units = "kg m-2 s-1"
-                else:
-                    sys.exit("problem with units in nbp_func")
-            if cubelist[0].var_name != "npp_n_gb":
-                if cubelist[0].var_name != "npp_gb":
-                    sys.exit("check nbp function - cubes in wrong order")
-            cubelist[i] = cube
-
-    if len(cubelist) != 9:
-        sys.exit(
-            "check nbp function - wrong number of cubes - have we added fire or not?"
-        )
-
-    out_cube = minus_func(cubelist, var)
-    out_cube.units = "kg m-2 s-1"
-    return out_cube
-
-
-# #############################################################################
-# #############################################################################
-def reco_func(cubelist, var):
-    """
-    convert units and add cubes in cubelist
-    """
-    for i, cube in enumerate(cubelist):
-        if cube.units != Unit("kg m-2 s-1"):
-            if "360" in str(cube.units):
-                print("reco_func: units from " + str(cube.units) + " " + cube.var_name)
-                cube.data = cube.core_data() * 1.0 / (86400.0 * 360.0)
-                cube.units = "kg m-2 s-1"
-            else:
-                sys.exit("problem with units in reco_func")
-        cubelist[i] = cube
-
-    out_cube = sum_func(cubelist, var)
-    return out_cube
-
-
-# #############################################################################
-# #############################################################################
-def nee_func(cubelist, var):
-    """
-    should check that the input cubes are the variables expected.
-    assumes first cube is npp and all others are loss terms
-    """
-    for i, cube in enumerate(cubelist):
-        if cube.var_name in ["resp_s_to_atmos_gb", "npp_n_gb"]:
-            all_coord_names = [coord.name() for coord in cube.coords()]
-            if "sclayer" in all_coord_names:
-                cube = cube.collapsed("sclayer", iris.analysis.SUM)
-            if cube.units != Unit("kg m-2 s-1"):
-                if "360" in str(cube.units):
-                    print(
-                        "nee_func: units from " + str(cube.units) + " " + cube.var_name
-                    )
-                    cube.data = cube.core_data() * 1.0 / (86400.0 * 360.0)
-                    cube.units = "kg m-2 s-1"
-                else:
-                    sys.exit("problem with units in nee_func")
-            if cubelist[0].var_name != "npp_n_gb":
-                if cubelist[0].var_name != "npp_gb":
-                    sys.exit("check nbp function - cubes in wrong order")
-            cubelist[i] = cube
-
-    if len(cubelist) != 2:
-        sys.exit("check nee function - wrong number of cubes")
-
-    out_cube = minus_func(cubelist, var)
-    out_cube.units = "kg m-2 s-1"
-    return out_cube
-
-
-# #############################################################################
-# #############################################################################
-def sum_func(cubelist, var):
-    """
-    add cubes in cubelist
-    """
-    out_cube = cubelist[0]
-    all_coord_names = [coord.name() for coord in out_cube.coords()]
-    if "sclayer" in all_coord_names:
-        out_cube = out_cube.collapsed("sclayer", iris.analysis.SUM)
-    for cube in cubelist[1:]:
-        all_coord_names = [coord.name() for coord in cube.coords()]
-        if "sclayer" in all_coord_names:
-            cube = cube.collapsed("sclayer", iris.analysis.SUM)
-        out_cube = out_cube + cube
-    return out_cube
-
-
-# #############################################################################
-# #############################################################################
-def mult_func(cubelist, var):
-    """
-    multiply cubes in cubelist
-    """
-    out_cube = cubelist[0]
-    for cube in cubelist[1:]:
-        out_cube = out_cube * cube
-    return out_cube
-
-
-# #############################################################################
-# #############################################################################
-def div_func(cubelist, var):
-    """
-    divide cubes in cubelist
-    """
-    out_cube = cubelist[0] / cubelist[1]
-
-    return out_cube
-
-
-# #############################################################################
-# #############################################################################
-def rflow_func(cube, var):
-    """
-    used to convert river flow (kg/m2/s) to discharge (m3/s)
-    for a specific point need to multiply by area of grid cell
-    """
-    cube_area = cube.copy()
-    if cube_area.coord("latitude").bounds is None:
-        cube_area.coord("latitude").guess_bounds()
-        cube_area.coord("longitude").guess_bounds()
-    # area of grid cells
-    area_weights = iris.analysis.cartography.area_weights(cube_area)
-    # 1000 kg/s = 1 m3/sec
-    cube = cube / 1000.0 * area_weights
-    cube.units = "m3 s-1"
-    return cube
-
-
-# #############################################################################
-# #############################################################################
-def annmax_func(cube, var):
-    """
-    used e.g for annual maximum thaw depth
-    """
-    iris.coord_categorisation.add_year(cube, "time")
-    cube = cube.aggregated_by("year", iris.analysis.MAX)
-    cube.remove_coord("year")
-    return cube
-
-
-# #############################################################################
-# #############################################################################
-def layered_soilbgc_func(cube, var):
-    """
-    used for outputting cs/ns/rh into layers
-    """
-    all_coord_names = [coord.name() for coord in cube.coords()]
-    if "sclayer" in all_coord_names and "scpool" in all_coord_names:
-        cube = cube.collapsed("scpool", iris.analysis.SUM)
-    cube.coord("sclayer").rename("depth")
-    return cube
-
-
-# #############################################################################
-# #############################################################################
-def soilbgc_pool_func(cube, var):
-    """
-    used for outputting cs/ns as pools
-    """
-    all_coord_names = [coord.name() for coord in cube.coords()]
-    if "sclayer" in all_coord_names:
-        cube = cube.collapsed("sclayer", iris.analysis.SUM)
-    return cube
-
-
-# #############################################################################
-# #############################################################################
-def conv360_func(cubelist, var):
-    """
-    used to add N fluxes with different units
-    """
-    cubelist_sameunits = iris.cube.CubeList([])
-    for cube in cubelist:
-        print(cube.units.__str__())
-        if "360" in cube.units.__str__():
-            cube = cube / (86400.0 * 360.0)
-            cube.units = "kg/m2/s"
-        cubelist_sameunits.append(cube)
-    cube = sum_func(cubelist_sameunits, var)
-    return cube
-
-
-# #############################################################################
-# #############################################################################
-def rhums_func(cubeList, var):
-    """
-    calculate relative humidity from specific humidity
-    inputs are 1.5m q, 1.5m T and p*
-    http://www.eol.ucar.edu/projects/ceop/dm/documents/refdata_report/eqns.html
-    """
-    q1p5m = cubeList[0]
-    t1p5m = cubeList[1]
-    t1p5m.convert_units("celsius")
-    pstar = cubeList[2]
-    pstar.convert_units("mbar")
-
-    # convert q1p5m to vapour pressure in millibars
-    vp = q1p5m * pstar / (0.378 * q1p5m + 0.622)
-    # saturated vapor pressure = svp
-    svp = iris.analysis.maths.exp((17.26938818 * t1p5m) / (237.3 + t1p5m)) * 6.1078
-    # calculate relative humidity
-    hurs = vp / svp * 100.0
-    hurs.core_data()[hurs.core_data() > 100.0] = 100.0
-    hurs.core_data()[hurs.core_data() < 0.0] = 0.0
-    hurs.units = Unit("%")
-
-    return hurs
+    return cube, errorcode
 
 
 # #############################################################################
@@ -1197,15 +951,9 @@ def calc_mid_depth(bottom_of_layer):
     """
     given bottom_of_layer of soil layers calculate the middle of each layer
     """
-    mid_depth = np.zeros(len(bottom_of_layer))
-    for idim, bot_depth in enumerate(bottom_of_layer):
-        if idim == 0:
-            mid_depth[idim] = bot_depth / 2.0
-        if idim > 0:
-            mid_depth[idim] = (
-                bottom_of_layer[idim - 1]
-                + (bot_depth - bottom_of_layer[idim - 1]) / 2.0
-            )
+    mid_depth = np.zeros_like(bottom_of_layer)
+    mid_depth[0] = bottom_of_layer[0] / 2.0
+    mid_depth[1:] = bottom_of_layer[:-1] + np.diff(bottom_of_layer) / 2.0
 
     return mid_depth
 
@@ -1213,31 +961,30 @@ def calc_mid_depth(bottom_of_layer):
 # #############################################################################
 # #############################################################################
 def define_chunksizes(cube):
-    """ "
+    """
     define the chunksizes for the output file
     """
-    data_shape = False
     chunksizes = None
     all_coord_names = [coord.name() for coord in cube.coords()]
     ndims = len(cube.shape)
     ndims_orig = ndims
-    if "realization" in all_coord_names and ndims_orig == len(all_coord_names):
-        ndims = ndims - 1
-    if ndims == 3:
-        chunksizes = [1, cube.shape[-2], cube.shape[-1]]
-    elif ndims == 4:
-        chunksizes = [1, cube.shape[-3], cube.shape[-2], cube.shape[-1]]
-    elif ndims == 5:  # hmm makes a big file
-        chunksizes = [1, cube.shape[-4], cube.shape[-3], cube.shape[-2], cube.shape[-1]]
+
+    has_realization = "realization" in all_coord_names and ndims_orig == len(
+        all_coord_names
+    )
+    if has_realization:
+        ndims -= 1
+
+    if 2 < ndims < 6:
+        chunksizes = [1] * ndims
+        chunksizes[-3:] = cube.shape[-3:]
     else:
-        data_shape = True
         print("chunksizes are undefined set to shape of data")
-    if "realization" in all_coord_names and ndims_orig == len(all_coord_names):
-        if chunksizes is not None:
-            chunksizes = np.append([1], chunksizes)
-    if data_shape:
-        if len(cube.shape) == 2:
-            chunksizes = [cube.shape[0], cube.shape[1]]
+        chunksizes = list(cube.shape)
+
+    if has_realization and chunksizes:
+        chunksizes = [1] + chunksizes
+
     return chunksizes
 
 

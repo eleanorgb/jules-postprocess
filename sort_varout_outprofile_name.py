@@ -20,7 +20,7 @@ def sort_varout_outprofile_name(var):
         elif "total" in var:
             varout = varout+"-total"
     elif "npp" in var:
-        varout = "npp_noNlimitation"
+        varout = "npp_nonlimitation"
         if "pft" in var:
             varout = varout+"-pft"
         elif "total" in var:
@@ -28,11 +28,11 @@ def sort_varout_outprofile_name(var):
     if "ecoatmflux" in var and "_nlim" in var and "ISIMIP" in MIPNAME:
         varout = "ecoatmflux"  #npp is different in Nitrogen/non-Nitrogen cases
     elif "ecoatmflux" in var and "ISIMIP" in MIPNAME:
-        varout = "ecoatmflux_noNlimitation"  #npp different in N/non-N cases
+        varout = "ecoatmflux_nonlimitation"  #npp different in N/non-N cases
     if "nbp" in var and "_nlim" in var and "ISIMIP" in MIPNAME:
         varout = "nbp"  #npp is different in Nitrogen/non-Nitrogen cases
     elif "nbp" in var and "ISIMIP" in MIPNAME:
-        varout = "nbp_noNlimitation"  #npp different in N/non-N cases
+        varout = "nbp_nonlimitation"  #npp different in N/non-N cases
     if "nbp" in var and "_nlim" in var and "CMIP" in MIPNAME:
         varout = "nbp"  # npp different in N/non-N cases
         if "pft" in var:
@@ -40,7 +40,7 @@ def sort_varout_outprofile_name(var):
         elif "total" in var:
             varout = varout+"-total"
     elif "nbp" in var and "CMIP" in MIPNAME:
-        varout = "nbp_noNlimitation"   # npp different in N/non-N cases
+        varout = "nbp_nonlimitation"   # npp different in N/non-N cases
         if "pft" in var:
             varout = varout+"-pft"
         elif "total" in var:
@@ -62,7 +62,7 @@ def sort_varout_outprofile_name(var):
             elif "total" in var:
                 varout = varout+"-total"
         elif "npp" in var:
-            varout = "npp_noNlimitation"
+            varout = "npp_nonlimitation"
             if "pft" in var:
                 varout = varout+"-pft"
             elif "tiles" in var:
