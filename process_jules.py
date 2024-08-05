@@ -341,8 +341,12 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         + " -- jules_profile: "
         + jules_profname
     )
-    print(var + " -- scenario:", MIP_INFO["in_scenario"][MIPNAME])
+    if L_JULES_ROSE:
+        print(var + " -- ", CONFIG_ARGS["MODEL_INFO"]["climate_scenario"])
+    else:
+        print(var + " -- scenario:", MIP_INFO["in_scenario"][MIPNAME])
 
+ 
     # get input filenames and check they exist
     files_in, errorcode = make_infilename(src_dir, jules_profname, syr, eyr)
     if errorcode == 1:  # not all files exist
