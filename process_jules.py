@@ -74,9 +74,10 @@ if not L_JULES_ROSE:
         import IMOGEN6_variables
 
 if L_JULES_ROSE:
-    import suite_postprocessed_variables
+    if not READ_JSON:
+        import suite_postprocessed_variables
 
-    diag_dic = suite_postprocessed_variables.get_var_dict()
+        diag_dic = suite_postprocessed_variables.get_var_dict()
 
 if not L_JULES_ROSE:
     CONTACT_EMAIL = "eleanor.burke@metoffice.gov.uk"  # dont use my email!
@@ -682,7 +683,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
         else:
             divide_files = False
             chunksizes = define_chunksizes(cube)
-            # print("cube should still have lazy data", cube.has_lazy_data())
+            print("cube should still have lazy data", cube.has_lazy_data())
 
             coord_names = [coord.name() for coord in cube.coords()]
 
@@ -881,7 +882,7 @@ def get_jules_cube(diag_in, files_in, mip_name, time_cons=None):
         except:
             errorcode = 1
             return None, errorcode
-        # raise ValueError(diag_in + " not available in " + files_in[0])
+        # raise ValueError(diag_in + " not working for " + files_in[0])
 
         if isinstance(cube, iris.cube.CubeList):
             for ijk in np.arange(0, int(len(cube))):
@@ -988,6 +989,9 @@ def define_chunksizes(cube):
 
     if has_realization and chunksizes:
         chunksizes = [1] + chunksizes
+
+    if 'time' == [coord.name() for coord in cube.coords()][0]:
+        chunksizes[0] = 1
 
     return chunksizes
 
