@@ -6,7 +6,7 @@ sometimes needs lots of memory - run on spice
 """
 
 USE_JULES_PY = False  # false - trying a quicker way of reading data
-READ_JSON = True  # true - trying to read from json file
+READ_JSON = False  # true - trying to read from json file
 
 import time
 import os
@@ -353,13 +353,15 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
     if errorcode == 1:  # not all files exist
         return None, errorcode
 
+    func = None
     if READ_JSON:  # get pre-processing function
         process_func = diag_dic.get(var, {}).get("process_func", {})
         func_name = process_func.get("func")
         func = globals()[func_name] if func_name is not None else None
     else:
         print(diag_dic[var])
-        func = globals()[diag_dic[var][5]]
+        if diag_dic[var][5] is not None:
+            func = globals()[diag_dic[var][5]]
 
     if func is not None:
         print(f"function for pre-processing {func}")
