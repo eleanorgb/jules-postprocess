@@ -197,7 +197,7 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
         return outfilename, errorcode
 
     if not L_JULES_ROSE:
-        if diag_dic[f"{var}_{outprofile}"]["cmip_varname"] is not None:
+        if diag_dic[key]["cmip_varname"] is not None:
             outfilename = (
                 out_dir
                 + "/"
@@ -205,7 +205,7 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
                 + "_"
                 + MIP_INFO["out_scenario"][MIPNAME]
                 + "_"
-                + diag_dic[f"{var}_{outprofile}"]["cmip_varname"]
+                + diag_dic[key]["cmip_varname"]
                 + "_"
                 + outprofile
                 + "_"
@@ -215,7 +215,7 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
                 + ".nc"
             )
     else:
-        if diag_dic[f"{var}_{outprofile}"]["cmip_varname"] is not None:
+        if diag_dic[key]["cmip_varname"] is not None:
             outfilename = (
                 out_dir
                 + "/"
@@ -225,7 +225,7 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
                 + "_"
                 + CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]
                 + "_"
-                + diag_dic[f"{var}_{outprofile}"]["cmip_varname"]
+                + diag_dic[key]["cmip_varname"]
                 + "_"
                 + outprofile
                 + "_"
@@ -235,7 +235,7 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
                 + ".nc"
             )
         else:
-            print(f"ERROR: cmip_varname for {var}_{outprofile} is none in diag_dic")
+            print(f"ERROR: cmip_varname for {var}, {outprofile} is none in diag_dic")
             errorcode = 1
 
     return outfilename, errorcode
