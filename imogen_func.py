@@ -185,6 +185,17 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
     """
     errorcode = 0
     outfilename = ""
+
+    if outprofile is not "monthly":
+        key = f"{var}_{outprofile}"
+    else:
+        key = var
+
+    if not key in diag_dic.keys():
+        print(f"ERROR: {key} not in diag_dic")
+        errorcode = 1
+        return outfilename, errorcode
+
     if not L_JULES_ROSE:
         if diag_dic[f"{var}_{outprofile}"]["cmip_varname"] is not None:
             outfilename = (
