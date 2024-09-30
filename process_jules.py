@@ -63,15 +63,19 @@ global MIPNAME, L_TESTING, L_JULES_ROSE
 MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
 # #########################################################################
 
+if "imogen" in MIPNAME.lower():
+    READ_JSON = True
+
 if not L_JULES_ROSE:
     if not READ_JSON:
         import ISIMIP2_variables
         import ISIMIP3_variables
         import CMIP_variables
         import TRENDY_variables
-        import IMOGEN_variables
-        import IMOGENvariant_variables
-        import IMOGEN6_variables
+
+        # import IMOGEN_variables
+        # import IMOGENvariant_variables
+        # import IMOGEN6_variables
 
 if L_JULES_ROSE:
     if not READ_JSON:
@@ -138,6 +142,8 @@ def get_diag_for_output(mip):
     if READ_JSON:  # newer version
         if "ISIMIP3" in MIPNAME.upper():
             json_file = "ISIMIP3_variables.json"
+        elif "imogen" in MIPNAME.lower():
+            json_file = "imogen6_variables.json"
         else:
             json_file = mip + "_variables.json"
         try:
@@ -157,12 +163,12 @@ def get_diag_for_output(mip):
                 diag_dic = ISIMIP3_variables.get_var_dict()
             elif "CMIP" in mip:
                 diag_dic = CMIP_variables.get_var_dict()
-            elif "IMOGEN5variant" in mip:
-                diag_dic = IMOGENvariant_variables.get_var_dict()
-            elif "IMOGEN5" in mip:
-                diag_dic = IMOGEN_variables.get_var_dict()
-            elif "IMOGEN6" in mip:
-                diag_dic = IMOGEN6_variables.get_var_dict()
+            # elif "IMOGEN5variant" in mip:
+            #     diag_dic = IMOGENvariant_variables.get_var_dict()
+            # elif "IMOGEN5" in mip:
+            #     diag_dic = IMOGEN_variables.get_var_dict()
+            # elif "IMOGEN6" in mip:
+            #     diag_dic = IMOGEN6_variables.get_var_dict()
             elif "TRENDY" in mip:
                 diag_dic = TRENDY_variables.get_var_dict()
             else:
@@ -250,18 +256,25 @@ def main():
                 time_cons = None
 
             # first call to define filenames - check file exists or not
-            outfilename, varout = write_out_final_cube(
+            outfilename, varout, errorcode = write_out_final_cube(
                 diag_dic, None, var, out_dir, syr, eyr, l_onlymakefname=True
             )
 
-            if "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower():
+            if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
                 outfilename = isimip_func.sort_outfilename_isimip(
                     outfilename, var, varout
                 )
 
             # if file exists do nothing unless L_BACKFILL_MISSING_FILES is false.
-            if os.path.exists(outfilename) and bool(L_BACKFILL_MISSING_FILES):
+            if (
+                os.path.exists(outfilename)
+                and bool(L_BACKFILL_MISSING_FILES)
+                and errorcode == 0
+            ):
                 print("file exists: " + os.path.basename(outfilename))
+                continue
+            elif len(outfilename) == 0:
+                print("ERROR: outfilename is empty  look for previous error")
                 continue
             else:
                 print("outfilename: " + os.path.basename(outfilename))
@@ -289,7 +302,7 @@ def main():
                     COMMENT + "rose-suite is " + MIP_INFO["suite_id"][MIPNAME]
                 )
 
-            outfilename, varout = write_out_final_cube(
+            outfilename, varout, errorcode = write_out_final_cube(
                 diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname=False
             )
 
@@ -332,6 +345,9 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
 
     if READ_JSON:
         jules_profname = diag_dic[var]["jules_profile"]
+        # jules_profname should be a list here
+        if len(jules_profname) == 1:
+            jules_profname = jules_profname[0]
     else:
         jules_profname = diag_dic[var][4]
 
@@ -340,14 +356,16 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         + " -- jules variable: "
         + str(inputdiags)
         + " -- jules_profile: "
-        + jules_profname
+        + ", ".join(jules_profname)
+        if isinstance(jules_profname, list)
+        else jules_profname
     )
+
     if L_JULES_ROSE:
         print(var + " -- ", CONFIG_ARGS["MODEL_INFO"]["climate_scenario"])
     else:
         print(var + " -- scenario:", MIP_INFO["in_scenario"][MIPNAME])
 
- 
     # get input filenames and check they exist
     files_in, errorcode = make_infilename(src_dir, jules_profname, syr, eyr)
     if errorcode == 1:  # not all files exist
@@ -508,60 +526,69 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
     # only files between start_year and end_year
     # CONFIG_ARGS = config_parse_args(MIPNAME)
     years = [str(year) for year in np.arange(syr, eyr + 1)]
-    if "IMOGEN" in MIPNAME.upper():
-        files_in = imogen_func.make_infilename_imogen(src_dir, jules_profname, years)
+    if "imogen" in MIPNAME.lower():
+        files_in, errorcode = imogen_func.make_infilename_imogen(
+            src_dir, jules_profname, years
+        )
+        if errorcode == 1:
+            return files_in, errorcode
     else:
         if not L_JULES_ROSE:
-            files_in = [
-                src_dir
-                + MIP_INFO["run_name"][MIPNAME]
-                + MIP_INFO["in_scenario"][MIPNAME]
-                + "."
-                + jules_profname
-                + "."
-                + year
-                + ".nc"
-                for year in years
-            ]
-        elif L_JULES_ROSE:
-            if (
-                "isimip" in CONFIG_ARGS["MODEL_INFO"]["mipname"]
-                or "crujra" in CONFIG_ARGS["MODEL_INFO"]["mipname"]
-            ):
-                files_in = [
-                    src_dir
-                    + CONFIG_ARGS["MODEL_INFO"]["mipname"]
-                    + "_"
-                    + CONFIG_ARGS["MODEL_INFO"]["configname"]
-                    + "_"
-                    + CONFIG_ARGS["MODEL_INFO"]["driving_model"]
-                    + "_"
-                    + CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]
-                    + "."
-                    + jules_profname
-                    + "."
-                    + year
-                    + ".nc"
-                    for year in years
-                ]
+            if isinstance(jules_profname, list):
+                for profname in jules_profname:
+                    files_in.extend(
+                        [
+                            f"{src_dir}{MIP_INFO['run_name'][MIPNAME]}{MIP_INFO['in_scenario'][MIPNAME]}.{profname}.{year}.nc"
+                            for year in years
+                        ]
+                    )
             else:
                 files_in = [
-                    src_dir
-                    + CONFIG_ARGS["MODEL_INFO"]["driving_model"]
-                    + "_"
-                    + CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]
-                    + "."
-                    + jules_profname
-                    + "."
-                    + year
-                    + ".nc"
+                    f"{src_dir}{MIP_INFO['run_name'][MIPNAME]}{MIP_INFO['in_scenario'][MIPNAME]}.{jules_profname}.{year}.nc"
                     for year in years
                 ]
+        elif L_JULES_ROSE:
+            if (
+                "isimip" in CONFIG_ARGS["MODEL_INFO"]["mipname"].lower()
+                or "crujra" in CONFIG_ARGS["MODEL_INFO"]["mipname"].lower()
+            ):
+                if isinstance(jules_profname, list):
+                    for profname in jules_profname:
+                        files_in.extend(
+                            [
+                                f"{src_dir}{CONFIG_ARGS['MODEL_INFO']['mipname'].lower()}_{CONFIG_ARGS['MODEL_INFO']['configname']}_{CONFIG_ARGS['MODEL_INFO']['driving_model']}_{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}.{profname}.{year}.nc"
+                                for year in years
+                            ]
+                        )
+                else:
+                    files_in = [
+                        f"{src_dir}{CONFIG_ARGS['MODEL_INFO']['mipname'].lower()}_{CONFIG_ARGS['MODEL_INFO']['configname']}_{CONFIG_ARGS['MODEL_INFO']['driving_model']}_{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}.{jules_profname}.{year}.nc"
+                        for year in years
+                    ]
+            else:
+                if isinstance(jules_profname, list):
+                    for profname in jules_profname:
+                        files_in.extend(
+                            [
+                                f"{src_dir}{CONFIG_ARGS['MODEL_INFO']['driving_model']}_{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}.{profname}.{year}.nc"
+                                for year in years
+                            ]
+                        )
+                else:
+                    files_in = [
+                        f"{src_dir}{CONFIG_ARGS['MODEL_INFO']['driving_model']}_{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}.{jules_profname}.{year}.nc"
+                        for year in years
+                    ]
+
     print(f"First input file: {files_in[0]}")
 
     # check files exist
     errorcode = 0
-    if isinstance(files_in, list):
+    if not isinstance(files_in, list):
+        if not os.path.isfile(files_in):
+            print(f"ERROR: The file {files_in} does not exist.")
+            errorcode = 1
+    else:
         for file in files_in:
             if not os.path.isfile(file):
                 print(f"ERROR: The file {file} does not exist, there may be others.")
@@ -573,10 +600,11 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
 
 # #############################################################################
 # #############################################################################
-def make_outfilename(out_dir, outprofile, var, syr, eyr):
+def make_outfilename(out_dir, outprofile, var, syr, eyr, diag_dic):
     """
     make filename of outfilename
     """
+    errorcode = 0
     if "CMIP" in MIPNAME.upper():
         outfilename = cmip_func.make_outfilename_cmip(
             out_dir, outprofile, var, syr, eyr
@@ -608,18 +636,17 @@ def make_outfilename(out_dir, outprofile, var, syr, eyr):
                 + outprofile
                 + ".nc"
             )
-    elif "ISIMIP" in MIPNAME.upper() or "CRUJRA" in MIPNAME.upper():
+    elif "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
         outfilename = isimip_func.make_outfilename_isimip(
             out_dir, outprofile, var, syr, eyr
         )
-    elif "IMOGEN" in MIPNAME.upper():
-        outfilename = imogen_func.make_outfilename_imogen(
-            out_dir, outprofile, var, syr, eyr
+    elif "imogen" in MIPNAME.lower():
+        outfilename, errorcode = imogen_func.make_outfilename_imogen(
+            out_dir, outprofile, var, syr, eyr, diag_dic
         )
-
     else:
         sys.exit("need outfilename for " + MIPNAME)
-    return outfilename
+    return outfilename, errorcode
 
 
 # #############################################################################
@@ -628,6 +655,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
     """
     write out cube
     """
+    errorcode = 0
     # print stats if interested
     if L_TESTING and not l_onlymakefname:
         print(cube)
@@ -635,7 +663,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
 
     # sort out varout and outprofile
     varout, outprofile = sort_varout_outprofile_name(var)
-    if "CMIP" in MIPNAME.upper():
+    if "cmip" in MIPNAME.lower():
         if READ_JSON:
             outprofile = diag_dic[var]["cmip_profile"]
         else:
@@ -657,10 +685,14 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
         )  # this might need to change with different mips?
 
         # sort out formatting of ISIMIP output
-        if "ISIMIP" in MIPNAME.upper() or "CRUJRA" in MIPNAME.upper():
+        if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
             cube = isimip_func.sort_isimip_cube(cube, outprofile)
 
-    outfilename = make_outfilename(out_dir, outprofile, varout, syr, eyr)
+    outfilename, errorcode = make_outfilename(
+        out_dir, outprofile, varout, syr, eyr, diag_dic
+    )
+    if errorcode == 1:
+        return outfilename, varout, errorcode
 
     if not l_onlymakefname:
         cube.var_name = varout
@@ -751,7 +783,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                 if "ISIMIP3" in MIPNAME.upper():
                     isimip_func.rename_cfcompliant_to_isimip(outfilename, cube)
 
-    return outfilename, varout
+    return outfilename, varout, errorcode
 
 
 # #############################################################################
@@ -859,8 +891,8 @@ def get_jules_cube(diag_in, files_in, mip_name, time_cons=None):
 
     variable_cons = iris.Constraint(cube_func=(lambda c: c.var_name == diag_in))
 
-    if "IMOGEN" in mip_name.upper():
-        # read ensembles for imogen
+    if "imogen" in mip_name.lower() and "ens" in mip_name.lower():
+        # read ensembles for imogen if available
         try:
             cube = imogen_func.read_ensemble(
                 files_in, variable_cons, time_cons, diag_in
@@ -992,7 +1024,7 @@ def define_chunksizes(cube):
     if has_realization and chunksizes:
         chunksizes = [1] + chunksizes
 
-    if 'time' == [coord.name() for coord in cube.coords()][0]:
+    if "time" == [coord.name() for coord in cube.coords()][0]:
         chunksizes[0] = 1
 
     return chunksizes
