@@ -97,7 +97,6 @@ def add_ensemble(imodel_dict, drive_model, cube):
     # BEGIN add our own realization coordinate if it doesn't already exist.
     if not cube.coords("realization"):
         realization = imodel_dict[drive_model]
-        print(drive_model, imodel_dict)
         ensemble_coord = icoords.AuxCoord(
             realization, standard_name="realization", var_name="realization"
         )
@@ -139,6 +138,7 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
         # END add our own realization coordinate if it doesn't already exist.
         # #####################################################################
 
+    keyall = []
     cubeall = iris.cube.CubeList([])
     imodel_dict = imodel_dict_cmip5
     try:
@@ -186,8 +186,11 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
                 cube.remove_coord("longitude")
 
             cube = add_ensemble(imodel_dict, key, cube)
+            keyall.append(key)
             cubeall.append(cube)
+    sel_dict = {"model: " + key: imodel_dict[key] for key in keyall if key in imodel_dict}
     cubeall = cubeall.merge_cube()
+    cubeall.attributes = sel_dict
     coord_names = [coord.name() for coord in cubeall.coords()]
     if "latitude" in coord_names:
         cubeall.coord("latitude").guess_bounds()
@@ -210,7 +213,7 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
     errorcode = 0
     outfilename = ""
 
-    if outprofile is not "monthly":
+    if outprofile != "monthly":
         key = f"{var}_{outprofile}"
     else:
         key = var
