@@ -12,6 +12,8 @@ import numpy as np
 from read_input import parse_args
 from read_input import config_parse_args
 from read_input import read_mip_info_no_rose
+import jules_xarray
+from process_jules import USE_JULES_PY
 
 sys.path.append("/home/h03/hadea/bin")
 import jules
@@ -86,9 +88,27 @@ imodel_dict_cmip6 = {
     "UKESM1-0-LL": 18,
 }
 
+def add_ensemble(imodel_dict, drive_model, cube):
+    """
+    Add our own realization coordinate if it doesn't already exist
+    Also add time coordinate year and transfer time to middle of period
+    """
+    # #####################################################################
+    # BEGIN add our own realization coordinate if it doesn't already exist.
+    if not cube.coords("realization"):
+        realization = imodel_dict[drive_model]
+        print(drive_model, imodel_dict)
+        ensemble_coord = icoords.AuxCoord(
+            realization, standard_name="realization", var_name="realization"
+        )
+        cube.add_aux_coord(ensemble_coord)
+    for key in list(cube.attributes.keys()):
+        del cube.attributes[key]
+    return cube
 
+    
 # #############################################################################
-def read_ensemble(files_in, variable_cons, time_cons, diag_in):
+def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
     """
     Read imogen ensembles defined by imodel_dict
     """
@@ -127,26 +147,30 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in):
     except:
         if "imogen6" in CONFIG_ARGS["MODEL_INFO"]["mipname"].lower():
             imodel_dict = imodel_dict_cmip6
-    print(imodel_dict)
     keys = imodel_dict.keys()
     for key in keys:
         files_read = list()
-        files_tmp = [f.replace("*", key) for f in files_in]
+        if drive_model is None:
+            files_tmp = [f.replace("*", key) for f in files_in]
+        else:
+            files_tmp = [f.replace(drive_model, key) for f in files_in]
         files_tmp = [glob.glob(f) for f in files_tmp]
         files_read = [f for f in files_tmp if f]
         files_read = [f for sublist in files_read for f in sublist]
-        # print(files_read)
-        try:
-            cube = jules.load(
-                files_read,
-                variable_cons & time_cons,
-                missingdata=np.ma.masked,
-                callback=model_ensemble_callback,
-            )
-            for ijk, icube in enumerate(cube):
-                if ijk > 0:
-                    cube[ijk].coord("time").convert_units(cube[0].coord("time").units)
-            cube = cube.concatenate_cube()
+        if len(files_read) > 0:
+            if USE_JULES_PY:
+                cube = jules.load(
+                    files_read,
+                    variable_cons & time_cons,
+                    missingdata=np.ma.masked,
+                    callback=model_ensemble_callback,
+                )
+                for ijk, icube in enumerate(cube):
+                    if ijk > 0:
+                        cube[ijk].coord("time").convert_units(cube[0].coord("time").units)
+                cube = cube.concatenate_cube()
+            else:
+                cube = jules_xarray.load(files_read,variable_cons & time_cons)
             coord_names = [coord.name() for coord in cube.coords()]
             if "scpool" in coord_names:
                 cube = cube.collapsed("scpool", iris.analysis.SUM)
@@ -160,9 +184,9 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in):
                 cube = cube.collapsed(["latitude", "longitude"], iris.analysis.MEAN)
                 cube.remove_coord("latitude")
                 cube.remove_coord("longitude")
+
+            cube = add_ensemble(imodel_dict, key, cube)
             cubeall.append(cube)
-        except:
-            continue
     cubeall = cubeall.merge_cube()
     coord_names = [coord.name() for coord in cubeall.coords()]
     if "latitude" in coord_names:

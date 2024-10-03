@@ -128,7 +128,7 @@ def define_inout_paths():
     try:
         retcode = subprocess.call("mkdir -p " + out_dir, shell=True)
         if retcode != 0:
-            raise OSError(f"Failed to create directory {out_dir}")
+            raise OSError(f"ERROR: Failed to create directory {out_dir}")
     except OSError as e:
         print(e)
         raise
@@ -150,9 +150,9 @@ def get_diag_for_output(mip):
             with open(json_file, "r") as json_file:
                 diag_dic = json.load(json_file)
         except FileNotFoundError:
-            raise FileNotFoundError(f"File {json_file} not found.")
+            raise FileNotFoundError(f"ERROR: File {json_file} not found.")
         except json.JSONDecodeError:
-            raise json.JSONDecodeError(f"Error decoding JSON from file {json_file}.")
+            raise json.JSONDecodeError(f"ERROR: problem decoding JSON from file {json_file}.")
     else:  # older version
         if L_JULES_ROSE:
             diag_dic = suite_postprocessed_variables.get_var_dict()
@@ -244,7 +244,7 @@ def main():
         for i, syr in enumerate(syrall):  # loop through all years
             eyr = eyrall[i]
             print(
-                "start year: " + str(syr) + "  end year: " + str(eyr) + " for: " + var
+                "INFO: start year: " + str(syr) + "  end year: " + str(eyr) + " for: " + var
             )
 
             if not l_alltimes_in_one_file:
@@ -271,13 +271,13 @@ def main():
                 and bool(L_BACKFILL_MISSING_FILES)
                 and errorcode == 0
             ):
-                print("file exists: " + os.path.basename(outfilename))
+                print("INFO: file exists: " + os.path.basename(outfilename))
                 continue
             elif len(outfilename) == 0:
                 print("ERROR: outfilename is empty  look for previous error")
                 continue
             else:
-                print("outfilename: " + os.path.basename(outfilename))
+                print("INFO: outfilename: " + os.path.basename(outfilename))
 
             cube, errorcode = make_gridded_files(
                 src_dir, diag_dic, time_cons, var, syr, eyr
@@ -305,10 +305,11 @@ def main():
             outfilename, varout, errorcode = write_out_final_cube(
                 diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname=False
             )
+            print(f"SUCCESS: {var} written to {outfilename}")
 
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print("Elapsed time:", elapsed_time, "seconds")
+        print("INFO: elapsed time:", elapsed_time, "seconds")
         print("# ##################################")
         print("")
 
@@ -351,20 +352,14 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
     else:
         jules_profname = diag_dic[var][4]
 
-    print(
-        var
-        + " -- jules variable: "
-        + str(inputdiags)
-        + " -- jules_profile: "
-        + ", ".join(jules_profname)
-        if isinstance(jules_profname, list)
-        else jules_profname
-    )
+    print(f"INFO: {var} -- jules variable: {str(inputdiags)} -- jules_profile: {', '.join(jules_profname) if isinstance(jules_profname, list) else jules_profname}")
 
     if L_JULES_ROSE:
-        print(var + " -- ", CONFIG_ARGS["MODEL_INFO"]["climate_scenario"])
+        print(f"INFO: {var} -- {CONFIG_ARGS['MODEL_INFO']['climate_scenario']}")
+        drive_model = CONFIG_ARGS["MODEL_INFO"]["driving_model"]
     else:
-        print(var + " -- scenario:", MIP_INFO["in_scenario"][MIPNAME])
+        print(f"INFO: {var} -- scenario: {MIP_INFO['in_scenario'][MIPNAME]}")
+        drive_model = None
 
     # get input filenames and check they exist
     files_in, errorcode = make_infilename(src_dir, jules_profname, syr, eyr)
@@ -377,12 +372,12 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         func_name = process_func.get("func")
         func = globals()[func_name] if func_name is not None else None
     else:
-        print(diag_dic[var])
+        print("INFO:" + diag_dic[var])
         if diag_dic[var][5] is not None:
             func = globals()[diag_dic[var][5]]
 
     if func is not None:
-        print(f"function for pre-processing {func}")
+        print(f"INFO: function for pre-processing {func}")
     else:
         if inputdiags.__class__.__name__ == "list":
             print("ERROR: missing function for pre-processing")
@@ -395,7 +390,7 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         cubelist = iris.cube.CubeList([])
         for diag_in in inputdiags:
             cube, errorcode = get_jules_cube(
-                diag_in, files_in, MIPNAME, time_cons=time_cons
+                diag_in, files_in, MIPNAME, drive_model, time_cons=time_cons
             )
             if errorcode == 1:
                 print(f"ERROR: can't find {diag_in} in {files_in[0]}")
@@ -407,7 +402,7 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
     else:
         # one variable read from the files
         cube, errorcode = get_jules_cube(
-            inputdiags, files_in, MIPNAME, time_cons=time_cons
+            inputdiags, files_in, MIPNAME, drive_model, time_cons=time_cons
         )
         if errorcode == 1:
             print(f"ERROR: cant find {inputdiags} in {files_in[0]}")
@@ -556,13 +551,27 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
                     for profname in jules_profname:
                         files_in.extend(
                             [
-                                f"{src_dir}{CONFIG_ARGS['MODEL_INFO']['mipname'].lower()}_{CONFIG_ARGS['MODEL_INFO']['configname']}_{CONFIG_ARGS['MODEL_INFO']['driving_model']}_{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}.{profname}.{year}.nc"
+                                (
+                                    f"{src_dir}"
+                                    f"{CONFIG_ARGS['MODEL_INFO']['mipname'].lower()}_"
+                                    f"{CONFIG_ARGS['MODEL_INFO']['configname']}_"
+                                    f"{CONFIG_ARGS['MODEL_INFO']['driving_model']}_"
+                                    f"{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}."
+                                    f"{profname}.{year}.nc"
+                                )
                                 for year in years
                             ]
                         )
                 else:
                     files_in = [
-                        f"{src_dir}{CONFIG_ARGS['MODEL_INFO']['mipname'].lower()}_{CONFIG_ARGS['MODEL_INFO']['configname']}_{CONFIG_ARGS['MODEL_INFO']['driving_model']}_{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}.{jules_profname}.{year}.nc"
+                        (
+                            f"{src_dir}"
+                            f"{CONFIG_ARGS['MODEL_INFO']['mipname'].lower()}_"
+                            f"{CONFIG_ARGS['MODEL_INFO']['configname']}_"
+                            f"{CONFIG_ARGS['MODEL_INFO']['driving_model']}_"
+                            f"{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}."
+                            f"{jules_profname}.{year}.nc"
+                        )
                         for year in years
                     ]
             else:
@@ -570,17 +579,26 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
                     for profname in jules_profname:
                         files_in.extend(
                             [
-                                f"{src_dir}{CONFIG_ARGS['MODEL_INFO']['driving_model']}_{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}.{profname}.{year}.nc"
+                                (
+                                    f"{src_dir}"
+                                    f"{CONFIG_ARGS['MODEL_INFO']['driving_model']}_"
+                                    f"{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}."
+                                    f"{profname}.{year}.nc"
+                                )
                                 for year in years
                             ]
                         )
                 else:
                     files_in = [
-                        f"{src_dir}{CONFIG_ARGS['MODEL_INFO']['driving_model']}_{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}.{jules_profname}.{year}.nc"
+                        (
+                            f"{src_dir}"
+                            f"{CONFIG_ARGS['MODEL_INFO']['driving_model']}_"
+                            f"{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}."
+                            f"{jules_profname}.{year}.nc"
+                        )
                         for year in years
                     ]
-
-    print(f"First input file: {files_in[0]}")
+            print(f"INFO: First input file: {files_in[0]}")
 
     # check files exist
     errorcode = 0
@@ -659,7 +677,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
     # print stats if interested
     if L_TESTING and not l_onlymakefname:
         print(cube)
-        print("lazy data still? ", cube.has_lazy_data())
+        print("INFO: lazy data still? ", cube.has_lazy_data())
 
     # sort out varout and outprofile
     varout, outprofile = sort_varout_outprofile_name(var)
@@ -672,12 +690,12 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
     if not l_onlymakefname:
         iris.coord_categorisation.add_year(cube, "time")
         if np.min(cube.coord("year").points) != syr:
-            print("start years", np.min(cube.coord("year").points), syr)
+            print("INFO: start years", np.min(cube.coord("year").points), syr)
             raise ValueError(
                 "ERROR: start years in data and filenames are incompatible"
             )
         if np.max(cube.coord("year").points) != eyr:
-            print("end years", np.max(cube.coord("year").points), eyr)
+            print("INFO: end years", np.max(cube.coord("year").points), eyr)
             raise ValueError("ERROR: end years in data and filenames are incompatible")
         cube.remove_coord("year")
         fill_value = np.float32(
@@ -695,7 +713,11 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
         return outfilename, varout, errorcode
 
     if not l_onlymakefname:
-        cube.var_name = varout
+        if "imogen" in MIPNAME.lower():
+            if READ_JSON:
+                cube.var_name = diag_dic[var]["cmip_varname"]
+        else:
+            cube.var_name = varout
         # might have to do some work ISIMIP2 output files
         # https://www.isimip.org/protocol/preparing-simulation-files/
         # quality-check-of-your-simulation-data
@@ -717,16 +739,16 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
         else:
             divide_files = False
             chunksizes = define_chunksizes(cube)
-            print("cube should still have lazy data", cube.has_lazy_data())
+            print("INFO: cube should still have lazy data", cube.has_lazy_data())
 
             coord_names = [coord.name() for coord in cube.coords()]
 
             if "depth" in coord_names and len(cube.coord("depth").points) > 10:
-                print(">10 soil levels which means files are very big")
+                print("INFO: >10 soil levels which means files are very big")
                 divide_files = True  # divide into separate files
 
             if "sclayer" in coord_names and len(cube.coord("sclayer").points) > 10:
-                print(">10 soil bgc levels which means files can be very big")
+                print("INFO: >10 soil bgc levels which means files can be very big")
                 if diag_dic[var][5] == "layered_soilbgc_func":
                     divide_files = True  # divide into separate files
 
@@ -740,7 +762,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                     for i in range(0, len(cube.coord("time").points), subtimes):
                         cube_count = cube_count + 1
                         cubeout = cube[i : i + subtimes].copy()
-                        print("lazy data still? ", cubeout.has_lazy_data())
+                        print("INFO: lazy data still? ", cubeout.has_lazy_data())
                         if "latitude" in coord_names or "lat" in coord_names:
                             cubeout.data.mask[np.isnan(cubeout.data)] = (
                                 True  # breaks lazy data
@@ -880,22 +902,22 @@ def add_soil_info(cube):
 
 # #############################################################################
 # #############################################################################
-def get_jules_cube(diag_in, files_in, mip_name, time_cons=None):
+def get_jules_cube(diag_in, files_in, mip_name, drive_model, time_cons=None):
     """
     read and pre-process jules cube
     """
     errorcode = 0
 
     load_method = "jules load" if USE_JULES_PY else "jules_xarray load"
-    print(f"load cube using {load_method} for {diag_in}")
+    print(f"INFO: load cube using {load_method} for {diag_in}")
 
     variable_cons = iris.Constraint(cube_func=(lambda c: c.var_name == diag_in))
 
-    if "imogen" in mip_name.lower() and "ens" in mip_name.lower():
+    if "imogen" in mip_name.lower(): # and "ens" in mip_name.lower():
         # read ensembles for imogen if available
         try:
             cube = imogen_func.read_ensemble(
-                files_in, variable_cons, time_cons, diag_in
+                files_in, variable_cons, time_cons, diag_in, drive_model
             )
         except:
             errorcode = 1
@@ -1018,7 +1040,7 @@ def define_chunksizes(cube):
         chunksizes = [1] * ndims
         chunksizes[-3:] = cube.shape[-3:]
     else:
-        print("chunksizes are undefined set to shape of data")
+        print("ERROR: chunksizes are undefined set to shape of data")
         chunksizes = list(cube.shape)
 
     if has_realization and chunksizes:

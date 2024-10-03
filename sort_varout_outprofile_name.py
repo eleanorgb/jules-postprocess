@@ -25,21 +25,21 @@ def sort_varout_outprofile_name(var):
             varout = varout+"-pft"
         elif "total" in var:
             varout = varout+"-total"
-    if "ecoatmflux" in var and "_nlim" in var and "ISIMIP" in MIPNAME:
+    if "ecoatmflux" in var and "_nlim" in var and "isimip" in MIPNAME.lower():
         varout = "ecoatmflux"  #npp is different in Nitrogen/non-Nitrogen cases
-    elif "ecoatmflux" in var and "ISIMIP" in MIPNAME:
+    elif "ecoatmflux" in var and "isimip" in MIPNAME.lower():
         varout = "ecoatmflux_nonlimitation"  #npp different in N/non-N cases
-    if "nbp" in var and "_nlim" in var and "ISIMIP" in MIPNAME:
+    if "nbp" in var and "_nlim" in var and "isimip" in MIPNAME.lower():
         varout = "nbp"  #npp is different in Nitrogen/non-Nitrogen cases
-    elif "nbp" in var and "ISIMIP" in MIPNAME:
+    elif "nbp" in var and "isimip" in MIPNAME.lower():
         varout = "nbp_nonlimitation"  #npp different in N/non-N cases
-    if "nbp" in var and "_nlim" in var and "CMIP" in MIPNAME:
+    if "nbp" in var and "_nlim" in var and "cmip" in MIPNAME.lower():
         varout = "nbp"  # npp different in N/non-N cases
         if "pft" in var:
             varout = varout+"-pft"
         elif "total" in var:
             varout = varout+"-total"
-    elif "nbp" in var and "CMIP" in MIPNAME:
+    elif "nbp" in var and "cmip" in MIPNAME.lower():
         varout = "nbp_nonlimitation"   # npp different in N/non-N cases
         if "pft" in var:
             varout = varout+"-pft"
