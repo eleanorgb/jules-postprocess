@@ -106,6 +106,7 @@ def define_inout_paths():
         if "CMIP" in MIPNAME.upper():
             out_dir = (
                 out_dir
+                + "/"
                 + CONFIG_ARGS["MODEL_INFO"]["suite_id"]
                 + "_"
                 + CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]
@@ -623,7 +624,7 @@ def make_outfilename(out_dir, outprofile, var, syr, eyr, diag_dic):
     make filename of outfilename
     """
     errorcode = 0
-    if "CMIP" in MIPNAME.upper():
+    if "CMIP" in MIPNAME.upper() and "IMOGEN" not in MIPNAME.upper():
         outfilename = cmip_func.make_outfilename_cmip(
             out_dir, outprofile, var, syr, eyr
         )
@@ -681,7 +682,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
 
     # sort out varout and outprofile
     varout, outprofile = sort_varout_outprofile_name(var)
-    if "cmip" in MIPNAME.lower():
+    if "cmip" in MIPNAME.lower() and not "imogen" in MIPNAME.lower():
         if READ_JSON:
             outprofile = diag_dic[var]["cmip_profile"]
         else:
@@ -689,13 +690,19 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
 
     if not l_onlymakefname:
         iris.coord_categorisation.add_year(cube, "time")
-        if np.min(cube.coord("year").points) != syr:
-            print("INFO: start years", np.min(cube.coord("year").points), syr)
+        syr_data = int(np.min(cube.coord("year").points))
+        if (cube.coord("year").points[1]-cube.coord("year").points[0])/2. > 0.9:
+            syr_data = int(syr_data-(cube.coord("year").points[1]-cube.coord("year").points[0])/2.)
+        if  syr_data != syr:
+            print("INFO: start years", syr_data, syr)
             raise ValueError(
                 "ERROR: start years in data and filenames are incompatible"
             )
-        if np.max(cube.coord("year").points) != eyr:
-            print("INFO: end years", np.max(cube.coord("year").points), eyr)
+        eyr_data = int(np.max(cube.coord("year").points))
+        if (abs(cube.coord("year").points[-1]-cube.coord("year").points[-2])/2.) > 0.9:
+            eyr_data = int(eyr_data-(cube.coord("year").points[-1]-cube.coord("year").points[-2])/2.)
+        if eyr_data != eyr:
+            print("INFO: end years", eyr_data, eyr)
             raise ValueError("ERROR: end years in data and filenames are incompatible")
         cube.remove_coord("year")
         fill_value = np.float32(

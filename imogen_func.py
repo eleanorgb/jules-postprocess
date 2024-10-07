@@ -213,10 +213,14 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
     errorcode = 0
     outfilename = ""
 
-    if outprofile != "monthly":
+    if outprofile not in ["monthly"]:
         key = f"{var}_{outprofile}"
+        outprofile = outprofile+"_"
     else:
         key = var
+
+    # remove timestep of data from output filename        
+    outprofile=""
 
     if not key in diag_dic.keys():
         print(f"ERROR: {key} not in diag_dic")
@@ -235,7 +239,6 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
                 + diag_dic[key]["cmip_varname"]
                 + "_"
                 + outprofile
-                + "_"
                 + str(syr)
                 + "_"
                 + str(eyr)
@@ -255,7 +258,6 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
                 + diag_dic[key]["cmip_varname"]
                 + "_"
                 + outprofile
-                + "_"
                 + str(syr)
                 + "_"
                 + str(eyr)
