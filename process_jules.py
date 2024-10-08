@@ -383,7 +383,10 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         func_name = process_func.get("func")
         func = globals()[func_name] if func_name is not None else None
     else:
-        print("INFO:" + diag_dic[var])
+        if isinstance(diag_dic[var], str):
+            print("INFO: " + diag_dic[var])
+        else:
+            print("INFO: " + ', '.join(map(str, diag_dic[var])))
         if diag_dic[var][5] is not None:
             func = globals()[diag_dic[var][5]]
 
