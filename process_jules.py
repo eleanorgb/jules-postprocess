@@ -21,6 +21,7 @@ import iris.coord_categorisation
 from iris.time import PartialDateTime
 from iris.cube import Cube
 from cf_units import Unit
+from cftime import num2date
 from landcover_types import select_vegfrac
 from landcover_types import add_tile_info
 from sel_diags_test import sel_diags_test
@@ -153,7 +154,9 @@ def get_diag_for_output(mip):
         except FileNotFoundError:
             raise FileNotFoundError(f"ERROR: File {json_file} not found.")
         except json.JSONDecodeError:
-            raise json.JSONDecodeError(f"ERROR: problem decoding JSON from file {json_file}.")
+            raise json.JSONDecodeError(
+                f"ERROR: problem decoding JSON from file {json_file}."
+            )
     else:  # older version
         if L_JULES_ROSE:
             diag_dic = suite_postprocessed_variables.get_var_dict()
@@ -245,7 +248,12 @@ def main():
         for i, syr in enumerate(syrall):  # loop through all years
             eyr = eyrall[i]
             print(
-                "INFO: start year: " + str(syr) + "  end year: " + str(eyr) + " for: " + var
+                "INFO: start year: "
+                + str(syr)
+                + "  end year: "
+                + str(eyr)
+                + " for: "
+                + var
             )
 
             if not l_alltimes_in_one_file:
@@ -353,7 +361,9 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
     else:
         jules_profname = diag_dic[var][4]
 
-    print(f"INFO: {var} -- jules variable: {str(inputdiags)} -- jules_profile: {', '.join(jules_profname) if isinstance(jules_profname, list) else jules_profname}")
+    print(
+        f"INFO: {var} -- jules variable: {str(inputdiags)} -- jules_profile: {', '.join(jules_profname) if isinstance(jules_profname, list) else jules_profname}"
+    )
 
     if L_JULES_ROSE:
         print(f"INFO: {var} -- {CONFIG_ARGS['MODEL_INFO']['climate_scenario']}")
@@ -691,16 +701,24 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
     if not l_onlymakefname:
         iris.coord_categorisation.add_year(cube, "time")
         syr_data = int(np.min(cube.coord("year").points))
-        if (cube.coord("year").points[1]-cube.coord("year").points[0])/2. > 0.9:
-            syr_data = int(syr_data-(cube.coord("year").points[1]-cube.coord("year").points[0])/2.)
-        if  syr_data != syr:
+        if (cube.coord("year").points[1] - cube.coord("year").points[0]) / 2.0 > 0.9:
+            syr_data = int(
+                syr_data
+                - (cube.coord("year").points[1] - cube.coord("year").points[0]) / 2.0
+            )
+        if syr_data != syr:
             print("INFO: start years", syr_data, syr)
             raise ValueError(
                 "ERROR: start years in data and filenames are incompatible"
             )
         eyr_data = int(np.max(cube.coord("year").points))
-        if (abs(cube.coord("year").points[-1]-cube.coord("year").points[-2])/2.) > 0.9:
-            eyr_data = int(eyr_data-(cube.coord("year").points[-1]-cube.coord("year").points[-2])/2.)
+        if (
+            abs(cube.coord("year").points[-1] - cube.coord("year").points[-2]) / 2.0
+        ) > 0.9:
+            eyr_data = int(
+                eyr_data
+                - (cube.coord("year").points[-1] - cube.coord("year").points[-2]) / 2.0
+            )
         if eyr_data != eyr:
             print("INFO: end years", eyr_data, eyr)
             raise ValueError("ERROR: end years in data and filenames are incompatible")
@@ -766,9 +784,28 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                 if divide_files:
                     subtimes = 10  # change this in anger
                     cube_count = -1
+                    iris.coord_categorisation.add_year(cube, "time")
                     for i in range(0, len(cube.coord("time").points), subtimes):
+                        if "imogen" in MIPNAME.lower():
+                            times = cube.coord("time")[i : i + subtimes]
+                            calendar = cube.coord("time").units.calendar
+                            tmptimes = [
+                                num2date(
+                                    time,
+                                    units=cube.coord("time").units.name,
+                                    calendar=calendar,
+                                )
+                                for time in times.points
+                            ]
+                            years = [date.year for date in tmptimes]
+                            time_cons = iris.Constraint(
+                                year=lambda cell: years[0] <= cell.point
+                                and years[-1] >= cell.point
+                            )
+                            cubeout = cube.extract(time_cons)
+                        else:
+                            cubeout = cube[i : i + subtimes].copy()
                         cube_count = cube_count + 1
-                        cubeout = cube[i : i + subtimes].copy()
                         print("INFO: lazy data still? ", cubeout.has_lazy_data())
                         if "latitude" in coord_names or "lat" in coord_names:
                             cubeout.data.mask[np.isnan(cubeout.data)] = (
@@ -920,7 +957,7 @@ def get_jules_cube(diag_in, files_in, mip_name, drive_model, time_cons=None):
 
     variable_cons = iris.Constraint(cube_func=(lambda c: c.var_name == diag_in))
 
-    if "imogen" in mip_name.lower(): # and "ens" in mip_name.lower():
+    if "imogen" in mip_name.lower():  # and "ens" in mip_name.lower():
         # read ensembles for imogen if available
         try:
             cube = imogen_func.read_ensemble(
