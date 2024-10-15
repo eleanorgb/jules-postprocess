@@ -434,7 +434,7 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         units_for_cube = Unit(diag_dic[var][3])
 
     if cube.units != units_for_cube:
-        cube = conv_360days_to_sec(cube)
+        cube = conv_360days_to_sec(cube, cube.var_name)
         try:
             cube.convert_units(units_for_cube)
         except:
