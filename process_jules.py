@@ -433,29 +433,16 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
     else:
         units_for_cube = Unit(diag_dic[var][3])
 
-    if isinstance(cube, iris.cube.CubeList):
-        for i, single_cube in enumerate(cube):
-            if single_cube.units != units_for_cube:
-                single_cube, _ = conv_360days_to_sec(single_cube, single_cube.var_name)
-                try:
-                    single_cube.convert_units(units_for_cube)
-                except:
-                    print(
-                        f"ERROR: {var}: units are: {str(single_cube.units)}, required: {units_for_cube}"
-                    )
-                    return None, errorcode
-            cube[i] = single_cube
-    else:
-        if cube.units != units_for_cube:
-            cube, _ = conv_360days_to_sec(cube, cube.var_name)
-            try:
-                cube.convert_units(units_for_cube)
-            except:
-                print(
-                    f"ERROR: {var}: units are: {str(cube.units)}, required: {units_for_cube}"
-                )
-                return None, errorcode
-        
+    if cube.units != units_for_cube:
+        cube, _ = conv_360days_to_sec(cube, cube.var_name)
+        try:
+            cube.convert_units(units_for_cube)
+        except:
+            print(
+                f"ERROR: {var}: units are: {str(cube.units)}, required: {units_for_cube}"
+            )
+            return None, errorcode
+
     # change variable long name
     if READ_JSON:
         longname_for_cube = diag_dic[var]["long_name"]
