@@ -6,6 +6,7 @@ from cf_units import Unit
 # #############################################################################
 # #####################################################################
 def conv_360days_to_sec(cube, var):
+    errorcode = 0
     def conv360(cube):
         cube.data = cube.core_data() / (86400.0 * 360.0)
         cube.units = "kg m-2 s-1"
@@ -18,7 +19,7 @@ def conv_360days_to_sec(cube, var):
         for i, c in enumerate(cube):
             if "360" in c.units.__str__():
                 cube[i] = conv360(c)
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
