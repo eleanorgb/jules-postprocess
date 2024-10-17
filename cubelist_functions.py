@@ -132,7 +132,7 @@ def minus_func(cubelist, var):
     if not isinstance(cubelist, iris.cube.CubeList):
         raise ValueError("cubelist must be an instance of iris.cube.CubeList")
 
-    cubelist = conv_360days_to_sec(cubelist, var)
+    cubelist, errorcode = conv_360days_to_sec(cubelist, var)
 
     out_cube = cubelist[0]
     for cube in cubelist[1:]:
@@ -152,7 +152,7 @@ def mult_func(cubelist, var):
     if not isinstance(cubelist, iris.cube.CubeList):
         raise ValueError("cubelist must be an instance of iris.cube.CubeList")
 
-    cubelist = conv_360days_to_sec(cubelist, var)
+    cubelist, errorcode = conv_360days_to_sec(cubelist, var)
 
     out_cube = cubelist[0]
     for cube in cubelist[1:]:
@@ -293,7 +293,7 @@ def div_func(cubelist, var):
     if not isinstance(cubelist, iris.cube.CubeList):
         raise ValueError("cubelist must be an instance of iris.cube.CubeList")
 
-    cubelist = conv_360days_to_sec(cubelist, var)
+    cubelist, errorcode = conv_360days_to_sec(cubelist, var)
 
     if len(cubelist) != 2:
         raise ValueError("cubelist must contain exactly two elements.")
@@ -478,7 +478,7 @@ def sum_func(cubelist, var, collapse_sclayer=True):
             if "sclayer" in [coord.name() for coord in cube.coords()]:
                 cubelist[i] = cube.collapsed("sclayer", iris.analysis.SUM)
 
-    cubelist = conv_360days_to_sec(cubelist, var)
+    cubelist, errorcode = conv_360days_to_sec(cubelist, var)
 
     out_cube = cubelist[0]
     for cube in cubelist[1:]:
