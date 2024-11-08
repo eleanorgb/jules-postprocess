@@ -53,6 +53,7 @@ from cubelist_functions import (
     sth_func,
     layered_soilbgc_func,
     conv_360days_to_sec,
+    neefire_func
 )
 
 warnings.filterwarnings("ignore")
