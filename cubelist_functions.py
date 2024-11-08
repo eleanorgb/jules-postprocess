@@ -7,6 +7,7 @@ from cf_units import Unit
 # #####################################################################
 def conv_360days_to_sec(cube, var):
     errorcode = 0
+
     def conv360(cube):
         cube.data = cube.core_data() / (86400.0 * 360.0)
         cube.units = "kg m-2 s-1"
@@ -214,6 +215,44 @@ def nbp_func(cubelist, var, fire=True):
 
     out_cube, errorcode = minus_func(cubelist_used, var)
     out_cube.units = "kg m-2 s-1"
+    return out_cube, errorcode
+
+
+# #############################################################################
+# #############################################################################
+def neefire_func(cubelist, var):
+    """
+    should check that the input cubes are the variables expected.
+    assumes first cube is npp and all others are loss terms
+    """
+
+    errorcode = 0
+    if not isinstance(cubelist, iris.cube.CubeList):
+        raise ValueError("cubelist must be an instance of iris.cube.CubeList")
+
+    if cubelist[0].var_name != "npp_n_gb":
+        if cubelist[0].var_name != "npp_gb":
+            raise ValueError("check nee function - cubes in wrong order")
+
+    cubelist_used = iris.cube.CubeList([])
+    for i, cube in enumerate(cubelist):
+        if "sclayer" in [coord.name() for coord in cube.coords()]:
+            cube = cube.collapsed("sclayer", iris.analysis.SUM)
+
+        if cube.var_name in [
+            "resp_s_to_atmos_gb",
+            "npp_n_gb",
+            "burnt_carbon_dpm",
+            "burnt_carbon_rpm",
+            "veg_c_fire_emission_gb",
+        ]:
+            cubelist_used.append(cube)
+
+    if len(cubelist_used) != 5:
+        raise ValueError("check neefire function - wrong number of cubes")
+
+    out_cube, errorcode = minus_func(cubelist, var)
+
     return out_cube, errorcode
 
 
