@@ -351,7 +351,7 @@ def make_infilename_imogen(src_dir, jules_profname, years):
         if isinstance(existing_files[0], list):
             existing_files = [file for sublist in existing_files for file in sublist]
 
-    elif len(existing_files) == 0:
+    if len(existing_files) == 0:
         print("ERROR: No input files found of form:")
         if not L_JULES_ROSE:
             print(
