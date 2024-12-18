@@ -53,7 +53,7 @@ from cubelist_functions import (
     sth_func,
     layered_soilbgc_func,
     conv_360days_to_sec,
-    neefire_func
+    neefire_func,
 )
 
 warnings.filterwarnings("ignore")
@@ -371,7 +371,7 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         drive_model = CONFIG_ARGS["MODEL_INFO"]["driving_model"]
     else:
         print(f"INFO: {var} -- scenario: {MIP_INFO['in_scenario'][MIPNAME]}")
-        drive_model = None
+        drive_model = ''
 
     # get input filenames and check they exist
     files_in, errorcode = make_infilename(src_dir, jules_profname, syr, eyr)

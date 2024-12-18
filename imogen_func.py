@@ -148,15 +148,19 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
         if "imogen6" in CONFIG_ARGS["MODEL_INFO"]["mipname"].lower():
             imodel_dict = imodel_dict_cmip6
     keys = imodel_dict.keys()
+
     for key in keys:
         files_read = list()
-        if drive_model is None:
-            files_tmp = [f.replace("*", key) for f in files_in]
+        if len(drive_model) == 0:
+            files_tmp = [f.replace("*", key) if '*' in f else f for f in files_in]
         else:
             files_tmp = [f.replace(drive_model, key) for f in files_in]
         files_tmp = [glob.glob(f) for f in files_tmp]
         files_read = [f for f in files_tmp if f]
-        files_read = [f for sublist in files_read for f in sublist]
+        if isinstance(files_read[0], list):
+            files_read = [f for sublist in files_read for f in sublist]
+        files_read = [f for f in files_read if key in f]
+
         if len(files_read) > 0:
             if USE_JULES_PY:
                 cube = jules.load(
@@ -311,9 +315,7 @@ def make_infilename_imogen(src_dir, jules_profname, years):
                 files_in.extend(
                     [
                         src_dir
-                        + "/"
-                        + CONFIG_ARGS["MODEL_INFO"]["driving_model"]
-                        + "/"
+                        + "/*/*"
                         + CONFIG_ARGS["MODEL_INFO"]["driving_model"]
                         + "_"
                         + CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]
@@ -330,9 +332,7 @@ def make_infilename_imogen(src_dir, jules_profname, years):
         else:
             files_in = [
                 src_dir
-                + "/"
-                + CONFIG_ARGS["MODEL_INFO"]["driving_model"]
-                + "/"
+                + "/*/*"
                 + CONFIG_ARGS["MODEL_INFO"]["driving_model"]
                 + "_"
                 + CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]
@@ -346,9 +346,12 @@ def make_infilename_imogen(src_dir, jules_profname, years):
                 for year in years
             ]
 
-    existing_files = [file for file in files_in if os.path.isfile(file)]
+    existing_files = [glob.glob(file) for file in files_in]
+    if len(existing_files) > 0:
+        if isinstance(existing_files[0], list):
+            existing_files = [file for sublist in existing_files for file in sublist]
 
-    if len(existing_files) == 0:
+    elif len(existing_files) == 0:
         print("ERROR: No input files found of form:")
         if not L_JULES_ROSE:
             print(
