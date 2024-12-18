@@ -628,6 +628,9 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
                 errorcode = 1
                 break
 
+    if len(files_in) == 0:
+        files_in = [""]        
+
     return files_in, errorcode
 
 
