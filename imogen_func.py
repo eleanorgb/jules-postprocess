@@ -142,10 +142,10 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
     cubeall = iris.cube.CubeList([])
     imodel_dict = imodel_dict_cmip5
     try:
-        if "imogen6" in MIP_INFO["model"][MIPNAME].lower():
+        if "imogen" in MIP_INFO["model"][MIPNAME].lower():
             imodel_dict = imodel_dict_cmip6
     except:
-        if "imogen6" in CONFIG_ARGS["MODEL_INFO"]["mipname"].lower():
+        if "imogen" in CONFIG_ARGS["MODEL_INFO"]["mipname"].lower():
             imodel_dict = imodel_dict_cmip6
     keys = imodel_dict.keys()
 
@@ -157,9 +157,10 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
             files_tmp = [f.replace(drive_model, key) for f in files_in]
         files_tmp = [glob.glob(f) for f in files_tmp]
         files_read = [f for f in files_tmp if f]
-        if isinstance(files_read[0], list):
-            files_read = [f for sublist in files_read for f in sublist]
-        files_read = [f for f in files_read if key in f]
+        if len(files_read) > 0:
+            if isinstance(files_read[0], list):
+                files_read = [f for sublist in files_read for f in sublist]
+            files_read = [f for f in files_read if key in f]
 
         if len(files_read) > 0:
             if USE_JULES_PY:
