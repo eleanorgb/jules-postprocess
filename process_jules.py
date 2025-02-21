@@ -714,7 +714,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                 - (cube.coord("year").points[1] - cube.coord("year").points[0]) / 2.0
             )
         if syr_data != syr:
-            print("INFO: start years", syr_data, syr)
+            print("INFO: start years (data, filename)", syr_data, syr)
+            print("ERROR: start years in data and filenames are incompatible")
             raise ValueError(
                 "ERROR: start years in data and filenames are incompatible"
             )
@@ -727,7 +728,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                 - (cube.coord("year").points[-1] - cube.coord("year").points[-2]) / 2.0
             )
         if eyr_data != eyr:
-            print("INFO: end years", eyr_data, eyr)
+            print("INFO: end years  (data, filename)", eyr_data, eyr)
+            print("ERROR: end years in data and filenames are incompatible")
             raise ValueError("ERROR: end years in data and filenames are incompatible")
         cube.remove_coord("year")
         fill_value = np.float32(

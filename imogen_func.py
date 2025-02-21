@@ -25,48 +25,7 @@ if L_JULES_ROSE:
 elif not L_JULES_ROSE:
     MIP_INFO = read_mip_info_no_rose(MIPNAME)
 
-
-imodel_dict_cmip5 = {
-    "cen_bcc_mod_bcc-csm1-1": 1,
-    "cen_ipsl_mod_ipsl-cm5a-lr": 2,
-    "cen_mri_mod_mri-cgcm3": 3,
-    "cen_noaa-gfdl_mod_gfdl-esm2m": 4,
-    "cen_bcc_mod_bcc-csm1-1-m": 5,
-    "cen_ipsl_mod_ipsl-cm5a-mr": 6,
-    "cen_nasa-giss_mod_giss-e2-h": 7,
-    "cen_nsf-doe-ncar_mod_cesm1-bgc": 8,
-    "cen_bnu_mod_bnu-esm": 9,
-    "cen_ipsl_mod_ipsl-cm5b-lr": 10,
-    "cen_nasa-giss_mod_giss-e2-h-cc": 11,
-    "cen_nsf-doe-ncar_mod_cesm1-cam5": 12,
-    "cen_cccma_mod_canesm2": 13,
-    "cen_miroc_mod_miroc-esm": 14,
-    "cen_nasa-giss_mod_giss-e2-r": 15,
-    "cen_nsf-doe-ncar_mod_cesm1-waccm": 16,
-    "cen_cmcc_mod_cmcc-cms": 17,
-    "cen_miroc_mod_miroc-esm-chem": 18,
-    "cen_nasa-giss_mod_giss-e2-r-cc": 19,
-    "cen_cnrm-cerfacs_mod_cnrm-cm5": 20,
-    "cen_miroc_mod_miroc5": 21,
-    "cen_ncar_mod_ccsm4": 22,
-    "cen_csiro-bom_mod_access1-0": 23,
-    "cen_mohc_mod_hadgem2-cc": 24,
-    "cen_ncc_mod_noresm1-m": 25,
-    "cen_csiro-bom_mod_access1-3": 26,
-    "cen_mohc_mod_hadgem2-es": 27,
-    "cen_ncc_mod_noresm1-me": 28,
-    "cen_csiro-qccce_mod_csiro-mk3-6-0": 29,
-    "cen_mpi-m_mod_mpi-esm-lr": 30,
-    "cen_noaa-gfdl_mod_gfdl-cm3": 31,
-    "cen_inm_mod_inmcm4": 32,
-    "cen_mpi-m_mod_mpi-esm-mr": 33,
-    "cen_noaa-gfdl_mod_gfdl-esm2g": 34,
-}
-
-# imodel_dict_cmip5 = {'cen_cnrm-cerfacs_mod_cnrm-cm5':1,
-#              'cen_csiro-bom_mod_access1-3':2,
-#              'cen_ipsl_mod_ipsl-cm5a-lr':3}
-
+# #############################################################################
 imodel_dict_cmip6 = {
     "ACCESS-CM2": 1,
     "ACCESS-ESM1-5": 2,
@@ -150,6 +109,7 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
     keys = imodel_dict.keys()
 
     for key in keys:
+        print("INFO: ensembles - reading files made using patterns from:", key)
         files_read = list()
         if len(drive_model) == 0:
             files_tmp = [f.replace("*", key) if '*' in f else f for f in files_in]
