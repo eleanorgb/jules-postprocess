@@ -11,6 +11,7 @@ READ_JSON = False  # true - trying to read from json file
 import time
 import os
 import sys
+import glob
 import warnings
 import getpass
 import subprocess
@@ -66,6 +67,8 @@ MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
 # #########################################################################
 
 if "imogen" in MIPNAME.lower():
+    READ_JSON = True
+if "isimip" in MIPNAME.lower():
     READ_JSON = True
 
 if not L_JULES_ROSE:
@@ -535,6 +538,10 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
     """
     # only files between start_year and end_year
     # CONFIG_ARGS = config_parse_args(MIPNAME)
+    
+    errorcode = 0
+    files_in = []
+
     years = [str(year) for year in np.arange(syr, eyr + 1)]
     if "imogen" in MIPNAME.lower():
         files_in, errorcode = imogen_func.make_infilename_imogen(
@@ -616,22 +623,16 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
             print(f"INFO: First input file: {files_in[0]}")
 
     # check files exist
-    errorcode = 0
-    if not isinstance(files_in, list):
-        if not os.path.isfile(files_in):
-            print(f"ERROR: The file {files_in} does not exist.")
-            errorcode = 1
-    else:
-        for file in files_in:
-            if not os.path.isfile(file):
-                print(f"ERROR: The file {file} does not exist, there may be others.")
-                errorcode = 1
-                break
+    existing_files = [glob.glob(file) for file in files_in]
+    if len(existing_files) > 0:
+        if isinstance(existing_files[0], list):
+            existing_files = [file for sublist in existing_files for file in sublist]
 
-    if len(files_in) == 0:
-        files_in = [""]        
+    if len(existing_files) == 0:
+        print("ERROR: No input files found")
+        errorcode = 1
 
-    return files_in, errorcode
+    return existing_files, errorcode
 
 
 # #############################################################################
