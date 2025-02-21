@@ -99,7 +99,6 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
 
     keyall = []
     cubeall = iris.cube.CubeList([])
-    imodel_dict = imodel_dict_cmip5
     try:
         if "imogen" in MIP_INFO["model"][MIPNAME].lower():
             imodel_dict = imodel_dict_cmip6
