@@ -161,16 +161,35 @@ def load(
     Returns:
     - xarray.Dataset or iris.cube.CubeList: The loaded dataset or extracted cube(s) based on the provided constraints.
     """
+    def is_valid_file(filename):
+        try:
+            ds = xr.open_dataset(filename, chunks={}, use_cftime=True)
+            for dim in ds.dims:
+                if ds.dims[dim] == 0:
+                    return False
+            return True
+        except:
+            return False
+
     if isinstance(filenames, list):
+        filenames = [f for f in filenames if is_valid_file(f)]
+        if not filenames:
+            raise ValueError("No valid files to open.")
         if len(filenames) > 1:
-            xrdatasets = xr.open_mfdataset(filenames, chunks={}, use_cftime=True)
+            try:
+                xrdatasets = xr.open_mfdataset(filenames, chunks={}, use_cftime=True)
+            except:
+                raise ValueError(f"something wrong with one of the netcdf files")
         else:
-            xrdatasets = xr.open_dataset(filenames[0], chunks={})
+            try:
+                xrdatasets = xr.open_dataset(filenames[0], chunks={})
+            except:
+                raise ValueError(f"something wrong with: {filenames[0]}")
     else:
         try:
             xrdatasets = xr.open_dataset(filenames, chunks={}, use_cftime=True)
         except:
-            raise ValueError(f"something wrong with one of the files: {filenames}")
+            raise ValueError(f"something wrong with: {filenames}")
 
     # xrdatasets = xrdatasets.fillna(-999)
     for var_name, dataarray in xrdatasets.data_vars.items():

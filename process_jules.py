@@ -731,7 +731,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
         if eyr_data != eyr:
             print("INFO: end years  (data, filename)", eyr_data, eyr)
             print("ERROR: end years in data and filenames are incompatible")
-            raise ValueError("ERROR: end years in data and filenames are incompatible")
+            print("INFO: changing end years in filenames and continuing")
+            eyr = eyr_data
         cube.remove_coord("year")
         fill_value = np.float32(
             1.0e20

@@ -162,6 +162,7 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
     if "longitude" in coord_names:
         cubeall.coord("longitude").guess_bounds()
         cubeall.coord("longitude").long_name = "longitude"
+    cubeall.coord('time').points = cube.coord('time').points.astype(np.int32)
 
     return cubeall
 
