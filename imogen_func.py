@@ -29,23 +29,32 @@ elif not L_JULES_ROSE:
 imodel_dict_cmip6 = {
     "ACCESS-CM2": 1,
     "ACCESS-ESM1-5": 2,
-    "CNRM-CM6-1-HR": 3,
-    "CNRM-CM6-1": 4,
-    "CNRM-ESM2-1": 5,
-    "CanESM5": 6,
-    "EC-Earth3-Veg": 7,
-    "FGOALS-g3": 8,
-    "HadGEM3-GC31-LL": 9,
-    "HadGEM3-GC31-MM": 10,
-    "INM-CM4-8": 11,
-    "IPSL-CM6A-LR": 12,
-    "MIROC-ES2L": 13,
-    "MIROC6": 14,
-    "MPI-ESM1-2-HR": 15,
-    "MPI-ESM1-2-LR": 16,
-    "MRI-ESM2-0": 17,
-    "UKESM1-0-LL": 18,
+    "CAS-ESM2-0": 3,
+    "CMCC-ESM2": 4,
+    "CNRM-CM6-1-HR": 5,
+    "CNRM-CM6-1": 6,
+    "CNRM-ESM2-1": 7,
+    "CanESM5": 8,
+    "E3SM-1-0": 9,
+    "EC-Earth3-Veg": 10,
+    "EC-Earth3": 11,
+    "FGOALS-g3": 12,
+    "GFDL-ESM4": 13,
+    "GISS-E2-1-G": 14,
+    "HadGEM3-GC31-LL": 15,
+    "HadGEM3-GC31-MM": 16,
+    "INM-CM4-8": 17,
+    "INM-CM5-0": 18,
+    "IPSL-CM6A-LR": 19,
+    "MIROC-ES2L": 20,
+    "MIROC6": 21,
+    "MPI-ESM1-2-HR": 22,
+    "MPI-ESM1-2-LR": 23,
+    "MRI-ESM2-0": 24,
+    "NorESM2-MM": 25,
+    "UKESM1-0-LL": 26,
 }
+
 
 def add_ensemble(imodel_dict, drive_model, cube):
     """
@@ -64,7 +73,7 @@ def add_ensemble(imodel_dict, drive_model, cube):
         del cube.attributes[key]
     return cube
 
-    
+
 # #############################################################################
 def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
     """
@@ -111,7 +120,7 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
         print("INFO: ensembles - reading files made using patterns from:", key)
         files_read = list()
         if len(drive_model) == 0:
-            files_tmp = [f.replace("*", key) if '*' in f else f for f in files_in]
+            files_tmp = [f.replace("*", key) if "*" in f else f for f in files_in]
         else:
             files_tmp = [f.replace(drive_model, key) for f in files_in]
         files_tmp = [glob.glob(f) for f in files_tmp]
@@ -131,10 +140,12 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
                 )
                 for ijk, icube in enumerate(cube):
                     if ijk > 0:
-                        cube[ijk].coord("time").convert_units(cube[0].coord("time").units)
+                        cube[ijk].coord("time").convert_units(
+                            cube[0].coord("time").units
+                        )
                 cube = cube.concatenate_cube()
             else:
-                cube = jules_xarray.load(files_read,variable_cons & time_cons)
+                cube = jules_xarray.load(files_read, variable_cons & time_cons)
             coord_names = [coord.name() for coord in cube.coords()]
             if "scpool" in coord_names:
                 cube = cube.collapsed("scpool", iris.analysis.SUM)
@@ -152,7 +163,9 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
             cube = add_ensemble(imodel_dict, key, cube)
             keyall.append(key)
             cubeall.append(cube)
-    sel_dict = {"model: " + key: imodel_dict[key] for key in keyall if key in imodel_dict}
+    sel_dict = {
+        "model: " + key: imodel_dict[key] for key in keyall if key in imodel_dict
+    }
     cubeall = cubeall.merge_cube()
     cubeall.attributes = sel_dict
     coord_names = [coord.name() for coord in cubeall.coords()]
@@ -162,7 +175,7 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
     if "longitude" in coord_names:
         cubeall.coord("longitude").guess_bounds()
         cubeall.coord("longitude").long_name = "longitude"
-    cubeall.coord('time').points = cube.coord('time').points.astype(np.int32)
+    cubeall.coord("time").points = cube.coord("time").points.astype(np.int32)
 
     return cubeall
 
@@ -180,12 +193,12 @@ def make_outfilename_imogen(out_dir, outprofile, var, syr, eyr, diag_dic):
 
     if outprofile not in ["monthly"]:
         key = f"{var}_{outprofile}"
-        outprofile = outprofile+"_"
+        outprofile = outprofile + "_"
     else:
         key = var
 
-    # remove timestep of data from output filename        
-    outprofile=""
+    # remove timestep of data from output filename
+    outprofile = ""
 
     if not key in diag_dic.keys():
         print(f"ERROR: {key} not in diag_dic")
