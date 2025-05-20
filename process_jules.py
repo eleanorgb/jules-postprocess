@@ -788,11 +788,9 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                 if READ_JSON:  # get pre-processing function
                     process_func = diag_dic.get(var, {}).get("process_func", {})
                     func_name = process_func.get("func")
-                    func = globals()[func_name] if func_name is not None else None
                 else:
                     if diag_dic[var][5] is not None:
                         func_name = diag_dic[var][5]
-                        func = globals()[diag_dic[var][5]]
                 if func_name == "layered_soilbgc_func":
                     divide_files = True  # divide into separate files
 

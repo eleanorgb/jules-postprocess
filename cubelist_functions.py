@@ -190,6 +190,8 @@ def nbp_func(cubelist, var, fire=True):
     for i, cube in enumerate(cubelist):
         if "sclayer" in [coord.name() for coord in cube.coords()]:
             cube = cube.collapsed("sclayer", iris.analysis.SUM)
+            cube = iris.util.squeeze(cube)
+            cube.remove_coord("sclayer")
 
         # check right variables
         if cube.var_name in [
@@ -238,6 +240,8 @@ def neefire_func(cubelist, var):
     for i, cube in enumerate(cubelist):
         if "sclayer" in [coord.name() for coord in cube.coords()]:
             cube = cube.collapsed("sclayer", iris.analysis.SUM)
+            cube = iris.util.squeeze(cube)
+            cube.remove_coord("sclayer")
 
         if cube.var_name in [
             "resp_s_to_atmos_gb",
@@ -276,6 +280,8 @@ def nee_func(cubelist, var):
     for i, cube in enumerate(cubelist):
         if "sclayer" in [coord.name() for coord in cube.coords()]:
             cube = cube.collapsed("sclayer", iris.analysis.SUM)
+            cube = iris.util.squeeze(cube)
+            cube.remove_coord("sclayer")
 
         if cube.var_name in ["resp_s_to_atmos_gb", "npp_n_gb"]:
             cubelist_used.append(cube)
@@ -428,6 +434,8 @@ def soilbgc_pool_func(cube, var):
 
     if "sclayer" in [coord.name() for coord in cube.coords()]:
         cube = cube.collapsed("sclayer", iris.analysis.SUM)
+        cube = iris.util.squeeze(cube)
+        cube.remove_coord("sclayer")
     return cube, errorcode
 
 
@@ -515,7 +523,9 @@ def sum_func(cubelist, var, collapse_sclayer=True):
     if collapse_sclayer:
         for i, cube in enumerate(cubelist):
             if "sclayer" in [coord.name() for coord in cube.coords()]:
-                cubelist[i] = cube.collapsed("sclayer", iris.analysis.SUM)
+                cube = cube.collapsed("sclayer", iris.analysis.SUM)
+                cubelist[i] = iris.util.squeeze(cube)
+                cubelist[i].remove_coord("sclayer")
 
     cubelist, errorcode = conv_360days_to_sec(cubelist, var)
 
