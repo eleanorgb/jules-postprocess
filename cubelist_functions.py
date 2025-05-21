@@ -255,7 +255,7 @@ def neefire_func(cubelist, var):
     if len(cubelist_used) != 5:
         raise ValueError("check neefire function - wrong number of cubes")
 
-    out_cube, errorcode = minus_func(cubelist, var)
+    out_cube, errorcode = minus_func(cubelist_used, var)
 
     return out_cube, errorcode
 
@@ -289,7 +289,7 @@ def nee_func(cubelist, var):
     if len(cubelist_used) != 2:
         raise ValueError("check nee function - wrong number of cubes")
 
-    out_cube, errorcode = minus_func(cubelist, var)
+    out_cube, errorcode = minus_func(cubelist_used, var)
 
     return out_cube, errorcode
 
