@@ -70,6 +70,8 @@ if "imogen" in MIPNAME.lower():
     READ_JSON = True
 if "isimip" in MIPNAME.lower():
     READ_JSON = True
+if "cmip" in MIPNAME.lower():
+    READ_JSON = True
 
 if not L_JULES_ROSE:
     if not READ_JSON:
@@ -109,13 +111,7 @@ def define_inout_paths():
         out_dir = CONFIG_ARGS["MODEL_INFO"]["output_dir"]
         mip = CONFIG_ARGS["MODEL_INFO"]["mipname"]
         if "CMIP" in MIPNAME.upper():
-            out_dir = (
-                out_dir
-                + "/"
-                + CONFIG_ARGS["MODEL_INFO"]["suite_id"]
-                + "_"
-                + CONFIG_ARGS["MODEL_INFO"]["climate_scenario"]
-            )
+            out_dir = f"{out_dir}/{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}"
     else:  # not L_JULES_ROSE:
         global MIP_INFO
         mip = MIPNAME.split("_")[0]
@@ -123,12 +119,7 @@ def define_inout_paths():
         src_dir = MIP_INFO["src_dir"][MIPNAME] + MIP_INFO["suite_id"][MIPNAME] + "/"
         out_dir = OUT_BASEDIR + MIP_INFO["suite_id"][MIPNAME]
         if "CMIP" in MIPNAME.upper():
-            out_dir = (
-                OUT_BASEDIR
-                + MIP_INFO["suite_id"][MIPNAME]
-                + "_"
-                + MIP_INFO["out_scenario"][MIPNAME]
-            )
+            out_dir = f"{OUT_BASEDIR}/{MIP_INFO['out_scenario'][MIPNAME]}"
 
     # make directory
     try:
@@ -374,7 +365,7 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         drive_model = CONFIG_ARGS["MODEL_INFO"]["driving_model"]
     else:
         print(f"INFO: {var} -- scenario: {MIP_INFO['in_scenario'][MIPNAME]}")
-        drive_model = ''
+        drive_model = ""
 
     # get input filenames and check they exist
     files_in, errorcode = make_infilename(src_dir, jules_profname, syr, eyr)
@@ -390,7 +381,7 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         if isinstance(diag_dic[var], str):
             print("INFO: " + diag_dic[var])
         else:
-            print("INFO: " + ', '.join(map(str, diag_dic[var])))
+            print("INFO: " + ", ".join(map(str, diag_dic[var])))
         if diag_dic[var][5] is not None:
             func = globals()[diag_dic[var][5]]
 
@@ -538,7 +529,7 @@ def make_infilename(src_dir, jules_profname, syr, eyr):
     """
     # only files between start_year and end_year
     # CONFIG_ARGS = config_parse_args(MIPNAME)
-    
+
     errorcode = 0
     files_in = []
 

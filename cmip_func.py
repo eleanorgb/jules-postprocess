@@ -8,11 +8,14 @@ import subprocess
 from iris.coords import DimCoord
 import numpy as np
 from read_input import parse_args
+from read_input import config_parse_args
 from read_input import read_mip_info_no_rose
 
 MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
 
-if not L_JULES_ROSE:
+if L_JULES_ROSE:
+    CONFIG_ARGS = config_parse_args(MIPNAME)
+elif not L_JULES_ROSE:
     MIP_INFO = read_mip_info_no_rose(MIPNAME)
 
 
@@ -49,28 +52,23 @@ def make_outfilename_cmip(out_dir, outprofile, var, syr, eyr):
     if retcode != 0:
         print("mkdir -p " + out_dir_time)
         sys.exit("mkdir broken")
-    try:
-        if not L_JULES_ROSE:
-            outfilename = (
-                out_dir_time
-                + "/"
-                + var
-                + "_"
-                + outprofile
-                + "_"
-                + MIP_INFO["model"][MIPNAME]
-                + "_"
-                + MIP_INFO["out_scenario"][MIPNAME]
-                + "_r1i1p1f1_"
-                + str(syr)
-                + "01-"
-                + str(eyr)
-                + "12.nc"
-            )
-    except:
-        print("broken " + var + ": check make_outfilename_cmip")
-        raise
 
+    if not L_JULES_ROSE:
+        outfilename = (
+            f"{out_dir_time}/"
+            f"{var}_{outprofile}_"
+            f"{MIP_INFO['model'][MIPNAME]}_"
+            f"{MIP_INFO['out_scenario'][MIPNAME]}_r1i1p1f1_"
+            f"{syr}01-{eyr}12.nc"
+        )
+    else:
+        outfilename = (
+            f"{out_dir_time}/"
+            f"{var}_{outprofile}_"
+            f"{CONFIG_ARGS['MODEL_INFO']['model_name']}_"
+            f"{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}_r1i1p1f1_"
+            f"{syr}01-{eyr}12.nc"
+        )
     return outfilename
 
 

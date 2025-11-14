@@ -133,6 +133,8 @@ def ds_to_sparse_grid(ds):
                 mindex_coords = xr.DataArray(multi_index, dims=["x"])
             elif "land" in ds.dims:
                 mindex_coords = xr.DataArray(multi_index, dims=["land"])
+            elif "y" in ds.dims:
+                mindex_coords = xr.DataArray(multi_index, dims=["y"])
             ds = ds.assign_coords(new=mindex_coords)
             ds = ds.unstack()
             ds = ds.drop_vars("new")
@@ -161,11 +163,12 @@ def load(
     Returns:
     - xarray.Dataset or iris.cube.CubeList: The loaded dataset or extracted cube(s) based on the provided constraints.
     """
+
     def is_valid_file(filename):
         try:
             ds = xr.open_dataset(filename, chunks={}, use_cftime=True)
             for dim in ds.dims:
-                if ds.dims[dim] == 0:
+                if ds.sizes[dim] == 0:
                     return False
             return True
         except:
@@ -236,6 +239,8 @@ def load(
         values = xrdatasets_grid[coord].values
         if values.shape == ():
             # If there's only one lat or lon value, skip the rest of the loop
+            continue
+        elif len(values) < 2:
             continue
 
         # Calculate differences between subsequent coordinates

@@ -312,7 +312,7 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
     cubeout.var_name = var_minus_pft + cubeout.coord("frac_name").points[0]
     cubeout.var_name = cubeout.var_name.lower()
     outfilename = outfilename.replace(varout, cubeout.var_name.lower())
-    #print("outfilename: " + os.path.basename(outfilename))
+    # print("outfilename: " + os.path.basename(outfilename))
     wrong_name = varout.replace("-pft", "_") + cubeout.coord("frac_name").points[0]
     wrong_name = wrong_name.lower()
 
@@ -327,7 +327,7 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
         del cubeout.attributes["vegtype"]
     # end remove some stuff
 
-    #print("cube should still have lazy data ", cubeout.has_lazy_data())
+    # print("cube should still have lazy data ", cubeout.has_lazy_data())
     cubeout.data.mask[np.isnan(cubeout.data)] = True  # breaks lazy data
     # cubeout.data = da.where(da.isnan(cubeout.data), True, cubeout.data)  # think fixes above issue
     chunksizes = [1, cubeout.shape[1], cubeout.shape[2]]

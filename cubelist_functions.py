@@ -440,6 +440,31 @@ def soilbgc_pool_func(cube, var):
 
 
 # #############################################################################
+
+
+# #############################################################################
+def sum_sclayer_func(cube, var):
+    """
+    used for outputting cs/ns/rh but adding vertical layers together
+    """
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
+    if "sclayer" in [coord.name() for coord in cube.coords()]:
+        cube = cube.collapsed("sclayer", iris.analysis.SUM)
+        cube = iris.util.squeeze(cube)
+        cube.remove_coord("sclayer")
+
+    if "depth" in [coord.name() for coord in cube.coords()]:
+        cube = cube.collapsed("depth", iris.analysis.SUM)
+        cube = iris.util.squeeze(cube)
+        cube.remove_coord("depth")
+
+    return cube, errorcode
+
+
+# #############################################################################
 # #############################################################################
 def rhums_func(cubelist, var):
     """
