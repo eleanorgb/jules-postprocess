@@ -822,12 +822,15 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                         outfilenametmp = (
                             outfilename[:-3] + "_separate" + str(cube_count) + ".nc"
                         )
+                        netcdf_format= "NETCDF4_CLASSIC"
+                        if "cmip" in MIPNAME.lower():
+                            netcdf_format= "NETCDF4"
                         iris.save(
                             cubeout,
                             outfilenametmp,
                             fill_value=fill_value,
                             zlib=True,
-                            netcdf_format="NETCDF4_CLASSIC",
+                            netcdf_format=netcdf_format,
                             chunksizes=chunksizes,
                             contiguous=False,
                             complevel=9,
@@ -835,12 +838,15 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                 else:
                     if "latitude" in coord_names or "lat" in coord_names:
                         cube.data.mask[np.isnan(cube.data)] = True  # breaks lazy data
+                    netcdf_format= "NETCDF4_CLASSIC"
+                    if "cmip" in MIPNAME.lower():
+                        netcdf_format= "NETCDF4"
                     iris.save(
                         cube,
                         outfilename,
                         fill_value=fill_value,
                         zlib=True,
-                        netcdf_format="NETCDF4_CLASSIC",
+                        netcdf_format=netcdf_format,
                         chunksizes=chunksizes,
                         contiguous=False,
                         complevel=9,
