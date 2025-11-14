@@ -278,7 +278,7 @@ def main():
                 print("INFO: file exists: " + os.path.basename(outfilename))
                 continue
             elif len(outfilename) == 0:
-                print("ERROR: outfilename is empty  look for previous error")
+                print("ERROR: outfilename is empty look for previous error")
                 continue
             else:
                 print("INFO: outfilename: " + os.path.basename(outfilename))
@@ -355,13 +355,13 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
             jules_profname = jules_profname[0]
     else:
         jules_profname = diag_dic[var][4]
-
-    print(
-        f"INFO: {var} -- jules variable: {str(inputdiags)} -- jules_profile: {', '.join(jules_profname) if isinstance(jules_profname, list) else jules_profname}"
-    )
+ 
+ 
+    profname_print = ', '.join(jules_profname) if isinstance(jules_profname, list) else jules_profname
+    print(f"INFO: {var} -- jules variable: {str(inputdiags)} -- jules_profile: {profname_print}")
 
     if L_JULES_ROSE:
-        print(f"INFO: {var} -- {CONFIG_ARGS['MODEL_INFO']['climate_scenario']}")
+        print(f"INFO: {var} -- scenario: {CONFIG_ARGS['MODEL_INFO']['climate_scenario']}")
         drive_model = CONFIG_ARGS["MODEL_INFO"]["driving_model"]
     else:
         print(f"INFO: {var} -- scenario: {MIP_INFO['in_scenario'][MIPNAME]}")

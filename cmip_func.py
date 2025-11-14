@@ -42,33 +42,38 @@ def make_outfilename_cmip(out_dir, outprofile, var, syr, eyr):
     """
     make outfilename as required by mip convert
     """
-    if "day" in outprofile:
-        out_dir_time = out_dir + "/lnd"
-    elif "yr" in outprofile:
-        out_dir_time = out_dir + "/lna"
-    else:
-        out_dir_time = out_dir + "/lnm"
-    retcode = subprocess.call("mkdir -p " + out_dir_time, shell=True)
-    if retcode != 0:
-        print("mkdir -p " + out_dir_time)
-        sys.exit("mkdir broken")
+    if outprofile is not None:
+        if "day" in outprofile:
+            out_dir_time = out_dir + "/lnd"
+        elif "yr" in outprofile:
+            out_dir_time = out_dir + "/lna"
+        else:
+            out_dir_time = out_dir + "/lnm"
+        retcode = subprocess.call("mkdir -p " + out_dir_time, shell=True)
+        if retcode != 0:
+            print("mkdir -p " + out_dir_time)
+            sys.exit("mkdir broken")
 
-    if not L_JULES_ROSE:
-        outfilename = (
-            f"{out_dir_time}/"
-            f"{var}_{outprofile}_"
-            f"{MIP_INFO['model'][MIPNAME]}_"
-            f"{MIP_INFO['out_scenario'][MIPNAME]}_r1i1p1f1_"
-            f"{syr}01-{eyr}12.nc"
-        )
+        if not L_JULES_ROSE:
+            outfilename = (
+                f"{out_dir_time}/"
+                f"{var}_{outprofile}_"
+                f"{MIP_INFO['model'][MIPNAME]}_"
+                f"{MIP_INFO['out_scenario'][MIPNAME]}_r1i1p1f1_"
+                f"{syr}01-{eyr}12.nc"
+            )
+        else:
+            outfilename = (
+                f"{out_dir_time}/"
+                f"{var}_{outprofile}_"
+                f"{CONFIG_ARGS['OUT_INFO']['model_out_id']}-{CONFIG_ARGS['MODEL_INFO']['configname']}_"
+                f"{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}_r1i1p1f1_"
+                f"{syr}01-{eyr}12.nc"
+            )
     else:
-        outfilename = (
-            f"{out_dir_time}/"
-            f"{var}_{outprofile}_"
-            f"{CONFIG_ARGS['MODEL_INFO']['model_name']}_"
-            f"{CONFIG_ARGS['MODEL_INFO']['climate_scenario']}_r1i1p1f1_"
-            f"{syr}01-{eyr}12.nc"
-        )
+        print(f"ERROR: no outprofile defined for {var}")
+        print(f"ERROR: no outfilename defined for {var}")
+        outfilename = ""
     return outfilename
 
 
