@@ -634,9 +634,8 @@ def make_outfilename(out_dir, outprofile, var, syr, eyr, diag_dic):
     """
     errorcode = 0
     if "CMIP" in MIPNAME.upper() and "IMOGEN" not in MIPNAME.upper():
-        varcmip = diag_dic[var]["cmip_varname"]
         outfilename = cmip_func.make_outfilename_cmip(
-            out_dir, outprofile, varcmip, syr, eyr
+            out_dir, outprofile, var, syr, eyr
         )
     elif "TRENDY" in MIPNAME.upper():
         if not L_JULES_ROSE:
@@ -734,6 +733,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
         if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
             cube = isimip_func.sort_isimip_cube(cube, outprofile)
 
+    if "cmip" in MIPNAME.lower():
+        varout = diag_dic[var]["cmip_varname"]
     outfilename, errorcode = make_outfilename(
         out_dir, outprofile, varout, syr, eyr, diag_dic
     )
