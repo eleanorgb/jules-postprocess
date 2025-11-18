@@ -634,8 +634,9 @@ def make_outfilename(out_dir, outprofile, var, syr, eyr, diag_dic):
     """
     errorcode = 0
     if "CMIP" in MIPNAME.upper() and "IMOGEN" not in MIPNAME.upper():
+        varcmip = diag_dic[var]["cmip_varname"]
         outfilename = cmip_func.make_outfilename_cmip(
-            out_dir, outprofile, var, syr, eyr
+            out_dir, outprofile, varcmip, syr, eyr
         )
     elif "TRENDY" in MIPNAME.upper():
         if not L_JULES_ROSE:
