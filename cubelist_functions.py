@@ -651,3 +651,26 @@ def pf_deepsoilt_func(cube, var):
     cube.long_name = var
     cube.units = Unit("1e6 km2")
     return cube, errorcode
+
+
+# #############################################################################
+# #############################################################################
+def select_toplayer_soilmois(cube, var):
+    """
+    select top layer of soil moisture
+    """
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
+    try:
+        if (
+            cube.coord("depth").bounds[0, 1] == 0.1
+            and cube.coord("depth").points[0] == 0.05
+        ):
+            cube = cube.extract(iris.Constraint(depth=lambda cell: cell == 0.05))
+        else:
+            raise ValueError("Need to sort top layer soil moisture variables")
+    except iris.exceptions.CoordinateNotFoundError:
+        raise ValueError("The 'depth' coordinate was not found in the cube.")
+    return cube, errorcode  
