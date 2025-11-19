@@ -55,6 +55,7 @@ from cubelist_functions import (
     layered_soilbgc_func,
     conv_360days_to_sec,
     neefire_func,
+    select_toplayer_soilmois,
 )
 
 warnings.filterwarnings("ignore")
