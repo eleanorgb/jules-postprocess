@@ -356,13 +356,20 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
             jules_profname = jules_profname[0]
     else:
         jules_profname = diag_dic[var][4]
- 
- 
-    profname_print = ', '.join(jules_profname) if isinstance(jules_profname, list) else jules_profname
-    print(f"INFO: {var} -- jules variable: {str(inputdiags)} -- jules_profile: {profname_print}")
+
+    profname_print = (
+        ", ".join(jules_profname)
+        if isinstance(jules_profname, list)
+        else jules_profname
+    )
+    print(
+        f"INFO: {var} -- jules variable: {str(inputdiags)} -- jules_profile: {profname_print}"
+    )
 
     if L_JULES_ROSE:
-        print(f"INFO: {var} -- scenario: {CONFIG_ARGS['MODEL_INFO']['climate_scenario']}")
+        print(
+            f"INFO: {var} -- scenario: {CONFIG_ARGS['MODEL_INFO']['climate_scenario']}"
+        )
         drive_model = CONFIG_ARGS["MODEL_INFO"]["driving_model"]
     else:
         print(f"INFO: {var} -- scenario: {MIP_INFO['in_scenario'][MIPNAME]}")
@@ -825,9 +832,9 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                         outfilenametmp = (
                             outfilename[:-3] + "_separate" + str(cube_count) + ".nc"
                         )
-                        netcdf_format= "NETCDF4_CLASSIC"
+                        netcdf_format = "NETCDF4_CLASSIC"
                         if "cmip" in MIPNAME.lower():
-                            netcdf_format= "NETCDF4"
+                            netcdf_format = "NETCDF4"
                         iris.save(
                             cubeout,
                             outfilenametmp,
@@ -841,9 +848,9 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                 else:
                     if "latitude" in coord_names or "lat" in coord_names:
                         cube.data.mask[np.isnan(cube.data)] = True  # breaks lazy data
-                    netcdf_format= "NETCDF4_CLASSIC"
+                    netcdf_format = "NETCDF4_CLASSIC"
                     if "cmip" in MIPNAME.lower():
-                        netcdf_format= "NETCDF4"
+                        netcdf_format = "NETCDF4"
                     iris.save(
                         cube,
                         outfilename,
@@ -945,6 +952,8 @@ def add_soil_info(cube):
             0.61081623,
             0.63803647,
         )
+    elif len(soil_coord.points) == 10:
+        dzsoil_io = [0.1, 0.15, 0.22, 0.33, 0.5, 0.74, 1.1, 1.64, 2.45, 3.66]
     else:
         raise ValueError("need depth coordinates to be set properly")
 
