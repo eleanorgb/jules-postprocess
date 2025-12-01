@@ -38,6 +38,23 @@ def make_global_grid_n96e():
 
 # #############################################################################
 # #############################################################################
+def make_global_grid_0p5():
+    """
+    0p5 degrees global grid
+    """
+    nlat = 360
+    latitude = DimCoord(
+        np.linspace(-89.75, 89.75, nlat), standard_name="latitude", units="degrees"
+    )
+    nlon = 720
+    longitude = DimCoord(
+        np.linspace(-179.75, 179.75, nlon), standard_name="longitude", units="degrees"
+    )
+    return latitude, longitude, nlat, nlon
+
+
+# #############################################################################
+# #############################################################################
 def make_outfilename_cmip(out_dir, outprofile, var, syr, eyr):
     """
     make outfilename as required by mip convert
