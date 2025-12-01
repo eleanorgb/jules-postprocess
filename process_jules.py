@@ -882,12 +882,22 @@ def expand_to_global(cube, mip_name):
     """
     Define new cube with global grid for output
     """
+    # Check difference between subsequent points and if around 0.5, make a switch to True
+    lat_diff = np.abs(np.diff(cube.coord("latitude").points))
+    lon_diff = np.abs(np.diff(cube.coord("longitude").points))
+    is_half_degree_grid = (
+        np.allclose(lat_diff, 0.5, atol=0.1) and np.allclose(lon_diff, 0.5, atol=0.1)
+    )
+    
     mip_name = mip_name.upper()
     if "IMOGEN" not in mip_name:
         if "ISIMIP" in mip_name or "CRUJRA" in mip_name:
             latitude, longitude, nlat, nlon = isimip_func.make_global_grid_0p5()
         elif "CMIP" in mip_name or "TRENDY" in mip_name:
-            latitude, longitude, nlat, nlon = cmip_func.make_global_grid_n96e()
+            if is_half_degree_grid:
+                latitude, longitude, nlat, nlon = cmip_func.make_global_grid_0p5()
+            else:
+                latitude, longitude, nlat, nlon = cmip_func.make_global_grid_n96e()
         else:
             raise ValueError(
                 "add definition of the full global grid in expand_to_global"
