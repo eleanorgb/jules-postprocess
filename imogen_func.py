@@ -15,7 +15,7 @@ from read_input import read_mip_info_no_rose
 import jules_xarray
 from process_jules import USE_JULES_PY
 
-sys.path.append("/home/h03/hadea/bin")
+sys.path.append("/home/users/eleanor.burke/bin")
 import jules
 
 MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()

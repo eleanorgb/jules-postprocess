@@ -73,6 +73,8 @@ if "isimip" in MIPNAME.lower():
     READ_JSON = True
 if "cmip" in MIPNAME.lower():
     READ_JSON = True
+if "crujra" in MIPNAME.lower():
+    READ_JSON = True
 
 if not L_JULES_ROSE:
     if not READ_JSON:
@@ -87,18 +89,19 @@ if not L_JULES_ROSE:
 
 if L_JULES_ROSE:
     if not READ_JSON:
+        print("WARNING: reading suite_postprocessed_variables.py and not JSON file")
+        print("WARNING: this option is superceeded by READ_JSON = True: here it is False")
         import suite_postprocessed_variables
-
         diag_dic = suite_postprocessed_variables.get_var_dict()
 
 if not L_JULES_ROSE:
-    CONTACT_EMAIL = "eleanor.burke@metoffice.gov.uk"  # dont use my email!
-    OUT_BASEDIR = "/scratch/" + getpass.getuser() + "/jules_postprocess/"  # out dir
+    CONTACT_EMAIL = f"{getpass.getuser()}@metoffice.gov.uk"  # dont use my email!
+    OUT_BASEDIR = "/data/scratch/" + getpass.getuser() + "/jules_postprocess/"  # out dir
     INSTITUTION = "Met Office"
     COMMENT = ""
 
 if USE_JULES_PY:
-    sys.path.append("/home/h03/hadea/bin")
+    sys.path.append("/home/users/eleanor.burke/bin")
     import jules  # https://code.metoffice.gov.uk/svn/utils/smstress_jpeg/trunk/jules.py
 
 
@@ -140,6 +143,8 @@ def get_diag_for_output(mip):
     if READ_JSON:  # newer version
         if "ISIMIP3" in MIPNAME.upper():
             json_file = "ISIMIP3_variables.json"
+        if "CRUJRA" in MIPNAME.upper():
+            json_file = "CRUJRA_variables.json"
         elif "imogen" in MIPNAME.lower():
             json_file = "imogen6_variables.json"
         else:
@@ -503,7 +508,8 @@ def define_syr_eyr_output(var, mip_name):
             syrall, eyrall = cmip_func.define_years_daily_cmip(syrall, eyrall)
         elif "ISIMIP2" in mip_name:
             syrall, eyrall = isimip_func.define_years_daily_isimip2b()
-        elif "CRUJRA" in mip_name:
+        elif "CRUJRA" in mip_name.upper():
+            print("WARNING: CRUJRA daily output data postprocessed from wrpmip protocol not isimip")
             syrall, eyrall = isimip_func.define_years_daily_wrpmip()
         else:
             syrall = [-1]
@@ -891,9 +897,9 @@ def expand_to_global(cube, mip_name):
     
     mip_name = mip_name.upper()
     if "IMOGEN" not in mip_name:
-        if "ISIMIP" in mip_name or "CRUJRA" in mip_name:
+        if "ISIMIP" in mip_name or "CRUJRA" in mip_name.upper():
             latitude, longitude, nlat, nlon = isimip_func.make_global_grid_0p5()
-        elif "CMIP" in mip_name or "TRENDY" in mip_name:
+        elif "CMIP" in mip_name or "TRENDY" in mip_name.upper():
             if is_half_degree_grid:
                 latitude, longitude, nlat, nlon = cmip_func.make_global_grid_0p5()
             else:

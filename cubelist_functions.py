@@ -32,6 +32,7 @@ def annmax_func(cube, var):
     """
     errorcode = 0
     if not isinstance(cube, iris.cube.Cube):
+        errorcode = 1
         raise ValueError("cube must be an instance of iris.cube.Cube")
 
     if "year" not in [coord.name() for coord in cube.coords()]:
@@ -50,6 +51,7 @@ def burntarea_func(cube, var):
     """
     errorcode = 0
     if not isinstance(cube, iris.cube.Cube):
+        errorcode = 1
         raise ValueError("cube must be an instance of iris.cube.Cube")
 
     cube.data = cube.core_data() * 30.0 * 86400.0 * 100.0
@@ -84,6 +86,7 @@ def fracweight_func(cubelist, var):
     """
     errorcode = 0
     if not isinstance(cubelist, iris.cube.CubeList):
+        errorcode = 1
         raise ValueError("cubelist must be an instance of iris.cube.CubeList")
 
     # find out how many pfts
@@ -101,6 +104,7 @@ def fracweight_func(cubelist, var):
     try:
         weights = cubelist[idx[0]]
     except:
+        errorcode = 1
         raise ValueError("name of landcover fraction is not recognised")
     weights = weights.extract(
         iris.Constraint(vegtype=lambda cell: cell.point < npft + 0.5)
@@ -131,6 +135,7 @@ def minus_func(cubelist, var):
 
     errorcode = 0
     if not isinstance(cubelist, iris.cube.CubeList):
+        errorcode = 1
         raise ValueError("cubelist must be an instance of iris.cube.CubeList")
 
     cubelist, errorcode = conv_360days_to_sec(cubelist, var)
@@ -270,11 +275,8 @@ def nee_func(cubelist, var):
 
     errorcode = 0
     if not isinstance(cubelist, iris.cube.CubeList):
+        errorcode = 1
         raise ValueError("cubelist must be an instance of iris.cube.CubeList")
-
-    if cubelist[0].var_name != "npp_n_gb":
-        if cubelist[0].var_name != "npp_gb":
-            raise ValueError("check nee function - cubes in wrong order")
 
     cubelist_used = iris.cube.CubeList([])
     for i, cube in enumerate(cubelist):
@@ -287,7 +289,13 @@ def nee_func(cubelist, var):
             cubelist_used.append(cube)
 
     if len(cubelist_used) != 2:
+        errorcode = 1
         raise ValueError("check nee function - wrong number of cubes")
+
+    if cubelist_used[0].var_name != "npp_n_gb":
+        if cubelist_used[0].var_name != "npp_gb":
+            errorcode = 1
+            raise ValueError("check nee function - cubes in wrong order")
 
     out_cube, errorcode = minus_func(cubelist_used, var)
 
