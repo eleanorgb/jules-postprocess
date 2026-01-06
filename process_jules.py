@@ -143,7 +143,7 @@ def get_diag_for_output(mip):
     if READ_JSON:  # newer version
         if "ISIMIP3" in MIPNAME.upper():
             json_file = "ISIMIP3_variables.json"
-        if "CRUJRA" in MIPNAME.upper():
+        elif "CRUJRA" in MIPNAME.upper():
             json_file = "CRUJRA_variables.json"
         elif "imogen" in MIPNAME.lower():
             json_file = "imogen6_variables.json"
