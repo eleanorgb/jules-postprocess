@@ -5,7 +5,7 @@ get name for output
 from re import sub
 from read_input import parse_args
 
-MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
+MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE, JSONMAPFILE = parse_args()
 
 
 def sort_varout_outprofile_name(var):
