@@ -137,6 +137,20 @@
             "rootC"
         ]
     },
+    "csoil_label": {
+        "cmip_longname": "labelled carbon mass in model soil pool",
+        "cmip_profile": "Emon",
+        "cmip_varname": "cSoil_label",
+        "isimip_varname": "csoil_label",
+        "jules_profile": ["ilamb","Decadal"],
+        "long_name": "Carbon Mass in Soil Pool",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "cs_label_gb"
+    },
     "csoil": {
         "cmip_longname": "Carbon Mass in Model Soil Pool",
         "cmip_profile": "Emon",
@@ -1968,6 +1982,20 @@
             "resp_s_to_atmos_gb"
         ]
     },
+    "rh-total_label": {
+        "cmip_longname": "Labelled Heterotrophic Respiration on Land as Carbon Mass Flux",
+        "cmip_profile": "Lmon",
+        "cmip_varname": "rh_label",
+        "isimip_varname": "rh-total_label",
+        "jules_profile": ["ilamb","Decadal"],
+        "long_name": "Labelled carbon Mass Flux into Atmosphere due to Heterotrophic Respiration on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "resp_label_cs_gb"
+    },
     "rh-total": {
         "cmip_longname": "Total Heterotrophic Respiration on Land as Carbon Mass Flux",
         "cmip_profile": "Lmon",
@@ -2498,7 +2526,7 @@
         "var_name": "t1p5m_gb"
     },
     "tas_daily": {
-        "cmip_longname": "Near-Surface Air Temperature",
+        "cmip_longname": "Daily Near-Surface Air Temperature",
         "cmip_profile": "day",
         "cmip_standardname": "air_temperature",
         "cmip_varname": "tas",

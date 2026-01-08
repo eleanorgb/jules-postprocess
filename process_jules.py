@@ -57,8 +57,8 @@ warnings.filterwarnings("ignore")
 # #############################################################################
 # #########################################################################
 # read command line arguments and finsh imports
-global MIPNAME, L_TESTING, L_JULES_ROSE
-MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
+global MIPNAME, L_TESTING, L_JULES_ROSE, JSONMAPFILE
+MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE, JSONMAPFILE = parse_args()
 # #########################################################################
 
 if not L_JULES_ROSE:
@@ -102,7 +102,10 @@ def define_inout_paths():
 # #########################################################################
 def get_diag_for_output(mip):
     # get diagnostics for processing
-    json_file = "variable_mapping.json"
+    if JSONMAPFILE is None:
+        json_file = "variable_mapping.json"
+    else:
+        json_file = JSONMAPFILE
     try:
         with open(json_file, "r") as json_file:
             diag_dic = json.load(json_file)

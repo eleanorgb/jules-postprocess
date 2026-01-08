@@ -9,9 +9,29 @@ import pandas
 
 # #############################################################################
 def parse_args():
-    """
-    command line parser
-    """
+    '''
+    Parses command line arguments for the JULES postprocessing script.
+
+    Returns
+    -------
+    tuple
+        A tuple containing:
+        - MIPNAME (str): The MIPNAME for model definitions (required positional argument).
+        - L_TESTING (bool): If True, time is shortened and no output is written (set with --l_testing).
+        - L_BACKFILL_MISSING_FILES (bool): If True, only process files which do not exist (set with --l_backfill_missing_files).
+        - L_JULES_ROSE (bool): If True, code reads an MIPNAME.ini file generated automatically by a rose suite (set with --l_jules_rose).
+        - JSONMAPFILE (str or None): Optional input JSON mapping file if provided, else None.
+
+    Command Line Usage
+    ------------------
+    python read_input.py MIPNAME [--l_testing] [--l_backfill_missing_files] [--l_jules_rose] [--jsonmapfile JSONMAPFILE]
+    Examples
+    --------
+    python read_input.py my_mipname
+    python read_input.py my_mipname --l_testing
+    python read_input.py my_mipname --l_backfill_missing_files --jsonmapfile input.json
+    ''' 
+
     description = "Postprocessing jules files"
     formatter_class = argparse.ArgumentDefaultsHelpFormatter
     parser = argparse.ArgumentParser(
@@ -37,12 +57,21 @@ def parse_args():
         help="If true: code reads an MIPNAME.ini"
         + "file generated automatically by a rose suite",
     )
-    MIPNAME = parser.parse_args().MIPNAME
-    L_TESTING = parser.parse_args().l_testing
-    L_BACKFILL_MISSING_FILES = parser.parse_args().l_backfill_missing_files
-    L_JULES_ROSE = parser.parse_args().l_jules_rose
+    parser.add_argument(
+        "--jsonmapfile",
+        default=None,
+        help="Optional input json mapping file. If not provided,"
+        + "the default mapping file will be used. (variable_mapping.json)",
+    )
 
-    return MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE
+    args = parser.parse_args()
+    MIPNAME = args.MIPNAME
+    L_TESTING = args.l_testing
+    L_BACKFILL_MISSING_FILES = args.l_backfill_missing_files
+    L_JULES_ROSE = args.l_jules_rose
+    JSONMAPFILE = args.jsonmapfile
+
+    return MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE, JSONMAPFILE
 
 
 # #############################################################################
