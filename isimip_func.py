@@ -19,7 +19,7 @@ from read_input import parse_args
 from read_input import config_parse_args
 from read_input import read_mip_info_no_rose
 
-MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
+MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE, JSONMAPFILE = parse_args()
 
 if L_JULES_ROSE:
     CONFIG_ARGS = config_parse_args(MIPNAME)

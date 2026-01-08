@@ -13,12 +13,8 @@ from read_input import parse_args
 from read_input import config_parse_args
 from read_input import read_mip_info_no_rose
 import jules_xarray
-from process_jules import USE_JULES_PY
 
-sys.path.append("/home/users/eleanor.burke/bin")
-import jules
-
-MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
+MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE, JSONMAPFILE = parse_args()
 
 if L_JULES_ROSE:
     CONFIG_ARGS = config_parse_args(MIPNAME)
@@ -131,21 +127,7 @@ def read_ensemble(files_in, variable_cons, time_cons, diag_in, drive_model):
             files_read = [f for f in files_read if key in f]
 
         if len(files_read) > 0:
-            if USE_JULES_PY:
-                cube = jules.load(
-                    files_read,
-                    variable_cons & time_cons,
-                    missingdata=np.ma.masked,
-                    callback=model_ensemble_callback,
-                )
-                for ijk, icube in enumerate(cube):
-                    if ijk > 0:
-                        cube[ijk].coord("time").convert_units(
-                            cube[0].coord("time").units
-                        )
-                cube = cube.concatenate_cube()
-            else:
-                cube = jules_xarray.load(files_read, variable_cons & time_cons)
+            cube = jules_xarray.load(files_read, variable_cons & time_cons)
             coord_names = [coord.name() for coord in cube.coords()]
             if "scpool" in coord_names:
                 cube = cube.collapsed("scpool", iris.analysis.SUM)
