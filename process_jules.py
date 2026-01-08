@@ -4,10 +4,6 @@ suitable for ISIMIP, TRENDY, ILAMB, IMOGEN, CMIP
 BE CAREFUL with nitrogen on and off and npp and nlim
 sometimes needs lots of memory - run on spice
 """
-
-USE_JULES_PY = False  # false - trying a quicker way of reading data
-READ_JSON = False  # true - trying to read from json file
-
 import time
 import os
 import sys
@@ -34,9 +30,7 @@ import isimip_func  # isimip runs only
 import imogen_func  # imogen runs only
 import cmip_func  # cmip runs only
 import json
-
-if not USE_JULES_PY:
-    import jules_xarray
+import jules_xarray
 
 from cubelist_functions import (
     burntarea_func,
@@ -67,43 +61,11 @@ global MIPNAME, L_TESTING, L_JULES_ROSE
 MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE = parse_args()
 # #########################################################################
 
-if "imogen" in MIPNAME.lower():
-    READ_JSON = True
-if "isimip" in MIPNAME.lower():
-    READ_JSON = True
-if "cmip" in MIPNAME.lower():
-    READ_JSON = True
-if "crujra" in MIPNAME.lower():
-    READ_JSON = True
-
-if not L_JULES_ROSE:
-    if not READ_JSON:
-        import ISIMIP2_variables
-        import ISIMIP3_variables
-        import CMIP_variables
-        import TRENDY_variables
-
-        # import IMOGEN_variables
-        # import IMOGENvariant_variables
-        # import IMOGEN6_variables
-
-if L_JULES_ROSE:
-    if not READ_JSON:
-        print("WARNING: reading suite_postprocessed_variables.py and not JSON file")
-        print("WARNING: this option is superceeded by READ_JSON = True: here it is False")
-        import suite_postprocessed_variables
-        diag_dic = suite_postprocessed_variables.get_var_dict()
-
 if not L_JULES_ROSE:
     CONTACT_EMAIL = f"{getpass.getuser()}@metoffice.gov.uk"  # dont use my email!
     OUT_BASEDIR = "/data/scratch/" + getpass.getuser() + "/jules_postprocess/"  # out dir
     INSTITUTION = "Met Office"
     COMMENT = ""
-
-if USE_JULES_PY:
-    sys.path.append("/home/users/eleanor.burke/bin")
-    import jules  # https://code.metoffice.gov.uk/svn/utils/smstress_jpeg/trunk/jules.py
-
 
 # #############################################################################
 # #############################################################################
@@ -140,53 +102,23 @@ def define_inout_paths():
 # #########################################################################
 def get_diag_for_output(mip):
     # get diagnostics for processing
-    if READ_JSON:  # newer version
-        if "ISIMIP3" in MIPNAME.upper():
-            json_file = "ISIMIP3_variables.json"
-        elif "CRUJRA" in MIPNAME.upper():
-            json_file = "CRUJRA_variables.json"
-        elif "imogen" in MIPNAME.lower():
-            json_file = "imogen6_variables.json"
-        else:
-            json_file = mip + "_variables.json"
-        try:
-            with open(json_file, "r") as json_file:
-                diag_dic = json.load(json_file)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"ERROR: File {json_file} not found.")
-        except json.JSONDecodeError:
-            raise json.JSONDecodeError(
-                f"ERROR: problem decoding JSON from file {json_file}."
-            )
-    else:  # older version
-        if L_JULES_ROSE:
-            diag_dic = suite_postprocessed_variables.get_var_dict()
-        elif not L_JULES_ROSE:
-            if "ISIMIP2" in mip:
-                diag_dic = ISIMIP2_variables.get_var_dict()
-            if "ISIMIP3" in mip or "ISIMIP3".lower() in mip:
-                diag_dic = ISIMIP3_variables.get_var_dict()
-            elif "CMIP" in mip:
-                diag_dic = CMIP_variables.get_var_dict()
-            # elif "IMOGEN5variant" in mip:
-            #     diag_dic = IMOGENvariant_variables.get_var_dict()
-            # elif "IMOGEN5" in mip:
-            #     diag_dic = IMOGEN_variables.get_var_dict()
-            # elif "IMOGEN6" in mip:
-            #     diag_dic = IMOGEN6_variables.get_var_dict()
-            elif "TRENDY" in mip:
-                diag_dic = TRENDY_variables.get_var_dict()
-            else:
-                raise ValueError("ERROR: need to define dictionary for mip")
+    json_file = "variable_mapping.json"
+    try:
+        with open(json_file, "r") as json_file:
+            diag_dic = json.load(json_file)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"ERROR: File {json_file} not found.")
+    except json.JSONDecodeError:
+        raise json.JSONDecodeError(
+            f"ERROR: problem decoding JSON from file {json_file}."
+        )
 
     # define all prognistics
     diags = diag_dic.keys()  ## all diagnostics
 
-    if READ_JSON:
-        # select required prognostics
-        # REMOVE ALL DAILY DATA POSTPROCESSING
-        diags = [s for s in diags if "daily" not in s]
-        # REMOVE ALL DAILY DATA POSTPROCESSING
+    # REMOVE ALL DAILY DATA POSTPROCESSING
+    diags = [s for s in diags if "daily" not in s]
+    # REMOVE ALL DAILY DATA POSTPROCESSING
 
     # select specific ones here for testing (L_TESTING=True)
     if L_TESTING:
@@ -344,23 +276,17 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
 
     # get input diagnostics
     try:
-        if READ_JSON:
-            inputdiags = diag_dic[var]["var_name"]
-        else:
-            inputdiags = diag_dic[var][0]
+        inputdiags = diag_dic[var]["var_name"]
     except:
         print("ERROR: check variable translations (either diag_dic or json file)")
         print("ERROR:" + var + " is not linked to a specified jules output variable")
         errorcode = 1  # problem with variable name
         return None, errorcode
 
-    if READ_JSON:
-        jules_profname = diag_dic[var]["jules_profile"]
-        # jules_profname should be a list here
-        if len(jules_profname) == 1:
-            jules_profname = jules_profname[0]
-    else:
-        jules_profname = diag_dic[var][4]
+    jules_profname = diag_dic[var]["jules_profile"]
+    # jules_profname should be a list here
+    if len(jules_profname) == 1:
+        jules_profname = jules_profname[0]
 
     profname_print = (
         ", ".join(jules_profname)
@@ -386,17 +312,9 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
         return None, errorcode
 
     func = None
-    if READ_JSON:  # get pre-processing function
-        process_func = diag_dic.get(var, {}).get("process_func", {})
-        func_name = process_func.get("func")
-        func = globals()[func_name] if func_name is not None else None
-    else:
-        if isinstance(diag_dic[var], str):
-            print("INFO: " + diag_dic[var])
-        else:
-            print("INFO: " + ", ".join(map(str, diag_dic[var])))
-        if diag_dic[var][5] is not None:
-            func = globals()[diag_dic[var][5]]
+    process_func = diag_dic.get(var, {}).get("process_func", {})
+    func_name = process_func.get("func")
+    func = globals()[func_name] if func_name is not None else None
 
     if func is not None:
         print(f"INFO: function for pre-processing {func}")
@@ -436,10 +354,7 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
                 return None, errorcode
 
     # sort out units for cube
-    if READ_JSON:
-        units_for_cube = Unit(diag_dic[var]["units"])
-    else:
-        units_for_cube = Unit(diag_dic[var][3])
+    units_for_cube = Unit(diag_dic[var]["units"])
 
     if cube.units != units_for_cube:
         cube, _ = conv_360days_to_sec(cube, cube.var_name)
@@ -452,19 +367,13 @@ def make_gridded_files(src_dir, diag_dic, time_cons, var, syr, eyr):
             return None, errorcode
 
     # change variable long name
-    if READ_JSON:
-        longname_for_cube = diag_dic[var]["long_name"]
-    else:
-        longname_for_cube = diag_dic[var][1]
+    longname_for_cube = diag_dic[var]["long_name"]
 
     if longname_for_cube is not None:
         cube.long_name = longname_for_cube
 
     # sort out vegetation fractions when need to separate them
-    if READ_JSON:
-        fracname = diag_dic[var]["var_name"]
-    else:
-        fracname = diag_dic[var][0]
+    fracname = diag_dic[var]["var_name"]
 
     if fracname == "frac" and var not in [
         "landCoverFrac",
@@ -706,10 +615,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
     # sort out varout and outprofile
     varout, outprofile = sort_varout_outprofile_name(var)
     if "cmip" in MIPNAME.lower() and not "imogen" in MIPNAME.lower():
-        if READ_JSON:
-            outprofile = diag_dic[var]["cmip_profile"]
-        else:
-            outprofile = diag_dic[var][6]
+        outprofile = diag_dic[var]["cmip_profile"]
 
     if not l_onlymakefname:
         iris.coord_categorisation.add_year(cube, "time")
@@ -757,13 +663,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
 
     if not l_onlymakefname:
         if "imogen" in MIPNAME.lower():
-            if READ_JSON:
-                cube.var_name = diag_dic[var]["cmip_varname"]
-        else:
-            cube.var_name = varout
-        # might have to do some work ISIMIP2 output files
-        # https://www.isimip.org/protocol/preparing-simulation-files/
-        # quality-check-of-your-simulation-data
+            cube.var_name = diag_dic[var]["cmip_varname"]
+
         if "pft" in var and (
             "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower()
         ):
@@ -792,12 +693,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
 
             if "sclayer" in coord_names and len(cube.coord("sclayer").points) > 10:
                 print("INFO: >10 soil bgc levels which means files can be very big")
-                if READ_JSON:  # get pre-processing function
-                    process_func = diag_dic.get(var, {}).get("process_func", {})
-                    func_name = process_func.get("func")
-                else:
-                    if diag_dic[var][5] is not None:
-                        func_name = diag_dic[var][5]
+                process_func = diag_dic.get(var, {}).get("process_func", {})
+                func_name = process_func.get("func")
                 if func_name == "layered_soilbgc_func":
                     divide_files = True  # divide into separate files
 
@@ -994,7 +891,7 @@ def get_jules_cube(diag_in, files_in, mip_name, drive_model, time_cons=None):
     """
     errorcode = 0
 
-    load_method = "jules load" if USE_JULES_PY else "jules_xarray load"
+    load_method = "jules_xarray load"
     print(f"INFO: load cube using {load_method} for {diag_in}")
 
     variable_cons = iris.Constraint(cube_func=(lambda c: c.var_name == diag_in))
@@ -1012,15 +909,7 @@ def get_jules_cube(diag_in, files_in, mip_name, drive_model, time_cons=None):
     else:
         # any mips which are not imogen ensembles
         try:
-            if USE_JULES_PY:
-                cube = jules.load(
-                    files_in,
-                    variable_cons & time_cons,
-                    missingdata=ma.masked,
-                    callback=add_time_middle,
-                )
-            else:
-                cube = jules_xarray.load(files_in, variable_cons & time_cons)
+            cube = jules_xarray.load(files_in, variable_cons & time_cons)
         except:
             errorcode = 1
             return None, errorcode
