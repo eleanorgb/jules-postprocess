@@ -667,6 +667,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
     if not l_onlymakefname:
         if "imogen" in MIPNAME.lower():
             cube.var_name = diag_dic[var]["cmip_varname"]
+        elif "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():  
+            cube.var_name = diag_dic[var]["isimip_varname"]
 
         if "pft" in var and (
             "ISIMIP" in MIPNAME.upper() or "crujra" in MIPNAME.lower()
