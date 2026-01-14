@@ -80,6 +80,8 @@ def add_tile_info(cube, typename):
     """
     sort out tile information depending on pfts available
     """
+    errorcode = 0
+    
     cube.coord(typename).long_name = "vegtype"
     # cube.coord(typename).var_name = "vegtype"
     lengthoftype = len(cube.coord("vegtype").points)
