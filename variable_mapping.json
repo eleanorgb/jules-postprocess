@@ -1018,6 +1018,23 @@
         "units": "kg m-2 s-1",
         "var_name": "lit_c_mean"
     },
+    "gpp-pft": {
+        "cmip_longname": null,
+        "cmip_profile": "Lmon",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "gpp-pft",
+        "jules_profile": [
+            "gen_mon_pft"
+        ],
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "gpp"
+    },
     "gpp-pft_annual": {
         "cmip_longname": "Not known",
         "cmip_profile": "Annual",
@@ -1558,6 +1575,57 @@
         },
         "units": "kg m-2",
         "var_name": "n_inorg_gb"
+    },
+    "npp-pft": {
+        "cmip_longname": null,
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "npp-pft",
+        "jules_profile": [
+            "gen_mon_pft"
+        ],
+        "long_name": "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp"
+    },
+    "npp-pft_annual": {
+        "cmip_longname": null,
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "npp-pft",
+        "jules_profile": [
+            "gen_ann_pftlayer"
+        ],
+        "long_name": "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp"
+    },
+    "npp-pft_nlim": {
+        "cmip_longname": null,
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "npp-pft_nlim",
+        "jules_profile": [
+            "c_mon_pftlayer"
+        ],
+        "long_name": "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_n"
     },
     "npp-pft_nlim_annual": {
         "cmip_longname": "Not known",
