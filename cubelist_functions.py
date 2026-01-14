@@ -535,11 +535,15 @@ def get_vegtype_frac(cube, var):
 
     errorcode = 0
     if not isinstance(cube, iris.cube.Cube):
-        raise ValueError("cube must be an instance of iris.cube.Cube")
+        print("[ERROR]: cube must be an instance of iris.cube.Cube")
+        errorcode = 1
+        return cube, errorcode
 
     if "vegtype" not in [coord.name() for coord in cube.coords()]:
-        cube = add_tile_info(cube, "type")
-    cube = select_vegfrac(cube, var)
+        cube, errorcode = add_tile_info(cube, "type")
+        if errorcode != 0:
+            return cube, errorcode
+    cube, errorcode = select_vegfrac(cube, var)
     return cube, errorcode
 
 

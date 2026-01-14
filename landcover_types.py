@@ -109,13 +109,15 @@ def add_tile_info(cube, typename):
             ]
         )
     else:
-        print("look in add_tile_info - make sure the relevant info is coded")
-        sys.exit("coordinate " + typename + " not defined for this configuration")
+        print("[ERROR]: look in add_tile_info - make sure the relevant info is coded")
+        print("[ERROR]: coordinate " + typename + " not defined for this configuration")
+        errorcode = 1
+        return cube, errorcode
 
     idxtile = [i for i, t in enumerate(cube.core_data().shape) if t == lengthoftype]
     cube.add_aux_coord(tilecoord, idxtile)
 
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
