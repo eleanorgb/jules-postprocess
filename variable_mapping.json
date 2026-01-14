@@ -805,12 +805,12 @@
         "units": "kg m-2 s-1",
         "var_name": "deposition_n"
     },
-    "fnetmin": {
+    "fnnetmin": {
         "cmip_longname": "Net Nitrogen Release from Soil and Litter as the Outcome of Nitrogen Immobilisation and Gross Mineralisation",
         "cmip_profile": "Emon",
         "cmip_standardname": "mass_flux_of_nitrogen_compounds_expressed_as_nitrogen_out_of_litter_and_soil_due_to_immobilisation_and_remineralization",
         "cmip_varname": "fNnetmin",
-        "isimip_varname": "fnetmin",
+        "isimip_varname": "fnnetmin",
         "jules_profile": [
             "cn_mon_gb"
         ],
@@ -825,12 +825,12 @@
             "minl_n_gb"
         ]
     },
-    "fnetmin_annual": {
+    "fnnetmin_annual": {
         "cmip_longname": "Net Nitrogen Release from Soil and Litter as the Outcome of Nitrogen Immobilisation and Gross Mineralisation",
         "cmip_profile": "Annual",
         "cmip_standardname": "mass_flux_of_nitrogen_compounds_expressed_as_nitrogen_out_of_litter_and_soil_due_to_immobilisation_and_remineralization",
         "cmip_varname": "fNnetmin",
-        "isimip_varname": "fnetmin",
+        "isimip_varname": "fnnetmin",
         "jules_profile": [
             "n_ann_gb"
         ],
