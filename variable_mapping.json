@@ -1644,11 +1644,11 @@
         "units": "kg m-2 s-1",
         "var_name": "npp_n"
     },
-    "npp-total_nlim": {
-        "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
+    "npp-total": {
+        "cmip_longname": null,
         "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": "npp-exudates",
+        "cmip_varname": null,
         "isimip_varname": "npp-total",
         "jules_profile": [
             "ilamb"
@@ -1659,26 +1659,9 @@
             "func": null
         },
         "units": "kg m-2 s-1",
-        "var_name": "npp_n_gb"
+        "var_name": "npp_gb"
     },
-    "npp_daily": {
-        "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
-        "cmip_profile": "day",
-        "cmip_standardname": null,
-        "cmip_varname": "npp",
-        "isimip_varname": "npp",
-        "jules_profile": [
-            "cn_day_nbp"
-        ],
-        "long_name": "TOTAL Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
-        "process_func": {
-            "args": {},
-            "func": null
-        },
-        "units": "kg m-2 s-1",
-        "var_name": "npp_n_gb"
-    },
-    "npp_nlim_annual": {
+    "npp-total_annual": {
         "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
@@ -1688,6 +1671,57 @@
             "gen_ann_gb"
         ],
         "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_gb"
+    },
+    "npp-total_nlim": {
+        "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": "npp-exudates",
+        "isimip_varname": "npp-total_nlim",
+        "jules_profile": [
+            "ilamb"
+        ],
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_n_gb"
+    },
+    "npp-total_nlim_annual": {
+        "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": "npp",
+        "isimip_varname": "npp-total_nlim",
+        "jules_profile": [
+            "c_ann_gb"
+        ],
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_n_gb"
+    },
+    "npp-total_nlim_daily": {
+        "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
+        "cmip_profile": "day",
+        "cmip_standardname": null,
+        "cmip_varname": "npp",
+        "isimip_varname": "npp-total_nlim",
+        "jules_profile": [
+            "cn_day_nbp"
+        ],
+        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
         "process_func": {
             "args": {},
             "func": null
