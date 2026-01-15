@@ -55,6 +55,23 @@
             "fwetl"
         ]
     },
+    "cleaf-pft_annual": {
+        "cmip_longname": null,
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "cleaf-pft",
+        "jules_profile": [
+            "c_ann_pftlayer"
+        ],
+        "long_name": "Carbon Mass in Leaves",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "leafC"
+    },
     "cleaf-total_annual": {
         "cmip_longname": "Carbon Mass in Leaves",
         "cmip_profile": "Annual",
@@ -116,6 +133,23 @@
             "wood_prod_med",
             "wood_prod_slow"
         ]
+    },
+    "croot-pft_annual": {
+        "cmip_longname": null,
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "croot-pft",
+        "jules_profile": [
+            "c_ann_pftlayer"
+        ],
+        "long_name": "Carbon Mass in Roots",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "rootC"
     },
     "croot-total_annual": {
         "cmip_longname": "Carbon Mass in Roots",
@@ -387,6 +421,23 @@
             "rootC"
         ]
     },
+    "cwood-pft_annual": {
+        "cmip_longname": null,
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "cwood-pft",
+        "jules_profile": [
+            "c_ann_pftlayer"
+        ],
+        "long_name": "Carbon Mass in Wood",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "woodC"
+    },
     "cwood-total_annual": {
         "cmip_longname": "cStem",
         "cmip_profile": "Annual",
@@ -409,7 +460,7 @@
     },
     "cwood-total": {
         "cmip_longname": "cStem",
-        "cmip_profile": "Annual",
+        "cmip_profile": "Monthly",
         "cmip_standardname": "stem_mass_content_of_carbon",
         "cmip_varname": "Carbon Mass in Stem",
         "isimip_varname": "cwood-total",
@@ -1500,6 +1551,80 @@
         "units": "kg m-2 s-1",
         "var_name": "npp_gb"
     },
+    "nleaf-pft": {
+        "cmip_longname": null,
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nleaf-pft",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in leaves",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_leaf"
+    },
+    "nleaf-pft_annual": {
+        "cmip_longname": null,
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nleaf-pft",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in leaves",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_leaf"
+    },
+    "nleaf-total": {
+        "cmip_longname": null,
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nleaf-total",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in leaves",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_leaf"
+        ]
+    },
+    "nleaf-total_annual": {
+        "cmip_longname": null,
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nleaf-total",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in leaves",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_leaf"
+        ]
+    },
     "nloss": {
         "cmip_longname": null,
         "cmip_profile": null,
@@ -1729,6 +1854,80 @@
         "units": "kg m-2 s-1",
         "var_name": "npp_n_gb"
     },
+    "nroot-pft": {
+        "cmip_longname": null,
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nroot-pft",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in roots",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_root"
+    },
+    "nroot-pft_annual": {
+        "cmip_longname": null,
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nroot-pft",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in roots",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_root"
+    },
+    "nroot-total": {
+        "cmip_longname": null,
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nroot-total",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in roots",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_root"
+        ]
+    },
+    "nroot-total_annual": {
+        "cmip_longname": null,
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nroot-total",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in roots",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_root"
+        ]
+    },
     "nsoil-total_annual": {
         "cmip_longname": "Nitrogen Mass in Soil Pool",
         "cmip_profile": "Annual",
@@ -1781,6 +1980,80 @@
         },
         "units": "kg m-2",
         "var_name": "n_veg_gb"
+    },
+    "nwood-pft": {
+        "cmip_longname": null,
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nwood-pft",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in wood",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_wood"
+    },
+    "nwood-pft_annual": {
+        "cmip_longname": null,
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nwood-pft",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in wood",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_wood"
+    },
+    "nwood-total": {
+        "cmip_longname": null,
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nwood-total",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in wood",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_wood"
+        ]
+    },
+    "nwood-total_annual": {
+        "cmip_longname": null,
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": null,
+        "isimip_varname": "nwood-total",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen mass in wood",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_wood"
+        ]
     },
     "pft-pft": {
         "cmip_longname": "vegetation fractional coverage by plant functional type",
