@@ -931,11 +931,13 @@ def get_jules_cube(diag_in, files_in, mip_name, drive_model, time_cons=None):
     # sort out coordinates
     for coord_name in ["type", "tile", "pft", "soil"]:
         if coord_name in [coord.name() for coord in cube.coords()]:
-            cube = (
+            cube, errorcode = (
                 add_tile_info(cube, coord_name)
                 if coord_name != "soil"
                 else add_soil_info(cube)
             )
+            if errorcode != 0:
+                return cube, errorcode
 
     # might need these for TRENDY
     # if var == "tsl":

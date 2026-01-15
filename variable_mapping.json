@@ -1,9 +1,9 @@
 {
     "burntarea-pft": {
-        "cmip_longname": null,
-        "cmip_profile": null,
-        "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_longname": "PFT specific burnt area fraction",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": "burntarea-pft",
+        "cmip_varname": "burntarea-pft",
         "isimip_varname": "burntarea-pft",
         "jules_profile": [
             "c_mon_pftlayer"
@@ -309,10 +309,10 @@
         "var_name": "cv"
     },
     "cveg-pft_annual": {
-        "cmip_longname": null,
-        "cmip_profile": null,
-        "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_longname": "PFT Carbon Mass in Vegetation",
+        "cmip_profile": "Annual",
+        "cmip_standardname": "pft_vegetation_carbon_content",
+        "cmip_varname": "cveg-pft",
         "isimip_varname": "cveg-pft",
         "jules_profile": [
             "c_ann_pftlayer"
@@ -344,10 +344,10 @@
         "var_name": "cv"
     },
     "cvegag-pft_annual": {
-        "cmip_longname": null,
-        "cmip_profile": null,
-        "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_longname": "PFT Above Ground Vegetation Carbon Mass",
+        "cmip_profile": "Annual",
+        "cmip_standardname": "pft_above_ground_vegetation_carbon_content",
+        "cmip_varname": "cvegag-pft",
         "isimip_varname": "cvegag-pft",
         "jules_profile": [
             "c_ann_pftlayer"
@@ -364,10 +364,10 @@
         ]
     },
     "cvegag-total_annual": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "cvegag",
         "isimip_varname": "cvegag-total",
         "jules_profile": [
             "c_ann_pftlayer"
@@ -385,10 +385,10 @@
         ]
     },
     "cvegbg-pft_annual": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "cvegbg-pft",
         "isimip_varname": "cvegbg-pft",
         "jules_profile": [
             "c_ann_pftlayer"
@@ -402,10 +402,10 @@
         "var_name": "rootC"
     },
     "cvegbg-total_annual": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "cvegbg-total",
         "isimip_varname": "cvegbg-total",
         "jules_profile": [
             "c_ann_pftlayer"
@@ -513,10 +513,10 @@
         "var_name": "rflow"
     },
     "esoil-pft": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "esoil-pft",
         "isimip_varname": "esoil-pft",
         "jules_profile": [
             "gen_mon_pft"
@@ -553,10 +553,10 @@
         ]
     },
     "evap-pft": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "evap-pft",
         "isimip_varname": "evap-pft",
         "jules_profile": [
             "gen_mon_pft"
@@ -570,10 +570,10 @@
         "var_name": "fqw"
     },
     "evap-pft_daily": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "evap-pft",
         "isimip_varname": "evap-pft",
         "jules_profile": [
             "gen_day_pft"
@@ -662,10 +662,10 @@
         ]
     },
     "fapar-pft": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "fapar-pft",
         "isimip_varname": "fapar-pft",
         "jules_profile": [
             "ilamb"
@@ -1036,10 +1036,10 @@
         "var_name": "harvest_n_gb"
     },
     "fvegsoil-pft": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "fvegsoil-pft",
         "isimip_varname": "fvegsoil-pft",
         "jules_profile": [
             "c_mon_pftlayer"
@@ -1087,10 +1087,10 @@
         "var_name": "gpp"
     },
     "gpp-pft_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "gpp-pft",
         "isimip_varname": "gpp-pft",
         "jules_profile": [
             "gen_ann_pftlayer"
@@ -1143,7 +1143,7 @@
     },
     "gpp-total_daily": {
         "cmip_longname": "Carbon mass flux out of the atmosphere due to gross primary production",
-        "cmip_profile": null,
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
         "cmip_varname": "gpp",
         "isimip_varname": "gpp-total",
@@ -1210,10 +1210,10 @@
         "var_name": "ftl_gb"
     },
     "intercep-pft": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "intercep-pft",
         "isimip_varname": "intercep-pft",
         "jules_profile": [
             "gen_mon_pft"
@@ -1227,10 +1227,10 @@
         "var_name": "ecan"
     },
     "intercep-pft_daily": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "intercep-pft",
         "isimip_varname": "intercep-pft",
         "jules_profile": [
             "gen_day_pft"
@@ -1247,7 +1247,7 @@
         "cmip_longname": "evaporation from the canopy",
         "cmip_profile": "Lmon",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "intercep-total",
         "isimip_varname": "intercep-total",
         "jules_profile": [
             "gen_mon_gb"
@@ -1261,10 +1261,10 @@
         "var_name": "ecan_gb"
     },
     "intercep_daily": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "intercep",
         "isimip_varname": "intercep",
         "jules_profile": [
             "gen_day_gb"
@@ -1296,10 +1296,10 @@
         "var_name": "lai_gb"
     },
     "lai-pft_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "lai-pft",
         "isimip_varname": "lai-pft",
         "jules_profile": [
             "gen_ann_pftlayer",
@@ -1315,7 +1315,7 @@
     },
     "lai_daily": {
         "cmip_longname": "leaf area index",
-        "cmip_profile": null,
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
         "cmip_varname": "lai",
         "isimip_varname": "lai",
@@ -1407,10 +1407,10 @@
         "var_name": "smcl"
     },
     "mrso_daily": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "mrso",
         "isimip_varname": "mrso",
         "jules_profile": [
             "gen_day_gb",
@@ -1488,7 +1488,7 @@
             "ilamb",
             "Decadal"
         ],
-        "long_name": "Net Ecosysten Exchange",
+        "long_name": "Net Ecosystem Exchange",
         "process_func": {
             "args": {},
             "func": "nee_func"
@@ -1626,10 +1626,10 @@
         ]
     },
     "nloss": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "nloss",
         "isimip_varname": "nloss",
         "jules_profile": [
             "cn_mon_gb"
@@ -1647,10 +1647,10 @@
         ]
     },
     "nloss_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "nloss",
         "isimip_varname": "nloss",
         "jules_profile": [
             "n_ann_gb"
@@ -1753,10 +1753,10 @@
         "var_name": "npp_n"
     },
     "npp-pft_nlim_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "npp-pft_nlim",
         "isimip_varname": "npp-pft_nlim",
         "jules_profile": [
             "n_ann_pftlayer"
@@ -1948,10 +1948,10 @@
         "var_name": "ns_gb"
     },
     "nsoillayer-total_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "nsoillayer-total",
         "isimip_varname": "nsoillayer-total",
         "jules_profile": [
             "n_ann_pftlayer"
@@ -1965,10 +1965,10 @@
         "var_name": "ns"
     },
     "nveg_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "nveg",
         "isimip_varname": "nveg",
         "jules_profile": [
             "n_ann_gb"
@@ -2075,10 +2075,10 @@
         "var_name": "frac"
     },
     "pft-pft_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "pft-pft",
         "isimip_varname": "pft-pft",
         "jules_profile": [
             "gen_ann_pftlayer"
@@ -2163,7 +2163,7 @@
     },
     "qs_daily": {
         "cmip_longname": "surface runoff",
-        "cmip_profile": null,
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
         "cmip_varname": "mrros",
         "isimip_varname": "qs",
@@ -2179,7 +2179,7 @@
         "var_name": "surf_roff"
     },
     "qsb": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Lmon",
         "cmip_standardname": null,
         "cmip_varname": "mrrob",
@@ -2196,7 +2196,7 @@
         "var_name": "sub_surf_roff"
     },
     "qsb_daily": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "day",
         "cmip_standardname": null,
         "cmip_varname": "mrrob",
@@ -2270,10 +2270,10 @@
         ]
     },
     "ra-pft": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "ra-pft",
         "isimip_varname": "ra-pft",
         "jules_profile": [
             "gen_mon_pft"
@@ -2305,7 +2305,7 @@
     },
     "ra-total_daily": {
         "cmip_longname": "Carbon mass flux out of the atmosphere due to autotrophic respiration",
-        "cmip_profile": null,
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
         "cmip_varname": "ra",
         "isimip_varname": "ra-total",
@@ -2346,7 +2346,7 @@
         "jules_profile": [
             "ilamb"
         ],
-        "long_name": "Ecosysten respiration",
+        "long_name": "Ecosystem respiration",
         "process_func": {
             "args": {},
             "func": "sum_func"
@@ -2442,10 +2442,10 @@
         "var_name": "resp_label_cs_gb"
     },
     "rhlayer-total": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "rhlayer-total",
         "isimip_varname": "rhlayer-total",
         "jules_profile": [
             "c_mon_pftlayer"
@@ -2710,7 +2710,7 @@
     },
     "soilmoist_daily": {
         "cmip_longname": "average layer soil moisture",
-        "cmip_profile": null,
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
         "cmip_varname": "mrsol",
         "isimip_varname": "soilmoist",
@@ -2726,10 +2726,10 @@
         "var_name": "smcl"
     },
     "soilmoistfroz": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "soilmoistfroz",
         "isimip_varname": "soilmoistfroz",
         "jules_profile": [
             "gen_mon_layer"
@@ -2746,10 +2746,10 @@
         ]
     },
     "sublim": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "sublim",
         "isimip_varname": "sublim",
         "jules_profile": [
             "gen_mon_gb"
@@ -2763,10 +2763,10 @@
         "var_name": "ei_gb"
     },
     "sublim-pft": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "sublim-pft",
         "isimip_varname": "sublim-pft",
         "jules_profile": [
             "gen_mon_pft"
@@ -2780,10 +2780,10 @@
         "var_name": "ei"
     },
     "sublim-pft_daily": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "sublim-pft",
         "isimip_varname": "sublim-pft",
         "jules_profile": [
             "gen_day_pft"
@@ -2800,7 +2800,7 @@
         "cmip_longname": "Sublimation",
         "cmip_profile": "LImon",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "sublim",
         "isimip_varname": "sublim",
         "jules_profile": [
             "gen_day_gb"
@@ -2988,10 +2988,10 @@
         "var_name": "depth_unfrozen"
     },
     "thawdepth_daily": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "thawdepth",
         "isimip_varname": "thawdepth",
         "jules_profile": [
             "gen_day_layer",
@@ -3006,10 +3006,10 @@
         "var_name": "t_soil"
     },
     "trans-pft": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "trans-pft",
         "isimip_varname": "trans-pft",
         "jules_profile": [
             "gen_mon_pft"
@@ -3023,10 +3023,10 @@
         "var_name": "et_stom"
     },
     "trans-pft_daily": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "trans-pft",
         "isimip_varname": "trans-pft",
         "jules_profile": [
             "gen_day_pft"
@@ -3043,7 +3043,7 @@
         "cmip_longname": "vegetation transpiration",
         "cmip_profile": "Lmon",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "trans-total",
         "isimip_varname": "trans-total",
         "jules_profile": [
             "gen_mon_gb"
@@ -3057,10 +3057,10 @@
         "var_name": "et_stom_gb"
     },
     "trans_daily": {
-        "cmip_longname": null,
-        "cmip_profile": null,
+        "cmip_longname": "Not known",
+        "cmip_profile": "Daily",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "trans",
         "isimip_varname": "trans",
         "jules_profile": [
             "gen_day_gb"
@@ -3109,7 +3109,7 @@
         "var_name": "t_soil"
     },
     "tsl_daily": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Eday",
         "cmip_standardname": null,
         "cmip_varname": "tsl",
