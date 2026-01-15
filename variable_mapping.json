@@ -1560,7 +1560,7 @@
         "jules_profile": [
             "n_mon_pftlayer"
         ],
-        "long_name": "Nitrogen mass in leaves",
+        "long_name": "Nitrogen Mass in Leaves",
         "process_func": {
             "args": {},
             "func": null
@@ -1577,7 +1577,7 @@
         "jules_profile": [
             "n_ann_pftlayer"
         ],
-        "long_name": "Nitrogen mass in leaves",
+        "long_name": "Nitrogen Mass in Leaves",
         "process_func": {
             "args": {},
             "func": null
@@ -1586,15 +1586,15 @@
         "var_name": "n_leaf"
     },
     "nleaf-total": {
-        "cmip_longname": null,
+        "cmip_longname": "Nitrogen Mass in Leaves",
         "cmip_profile": "Monthly",
-        "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_standardname": "leaf_mass_content_of_nitrogen",
+        "cmip_varname": "nLeaf",
         "isimip_varname": "nleaf-total",
         "jules_profile": [
             "n_mon_pftlayer"
         ],
-        "long_name": "Nitrogen mass in leaves",
+        "long_name": "Nitrogen Mass in Leaves",
         "process_func": {
             "args": {},
             "func": "fracweight_func"
@@ -1606,15 +1606,15 @@
         ]
     },
     "nleaf-total_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Nitrogen Mass in Leaves",
         "cmip_profile": "Annual",
-        "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_standardname": "leaf_mass_content_of_nitrogen",
+        "cmip_varname": "nLeaf",
         "isimip_varname": "nleaf-total",
         "jules_profile": [
             "n_ann_pftlayer"
         ],
-        "long_name": "Nitrogen mass in leaves",
+        "long_name": "Nitrogen Mass in Leaves",
         "process_func": {
             "args": {},
             "func": "fracweight_func"
@@ -1863,7 +1863,7 @@
         "jules_profile": [
             "n_mon_pftlayer"
         ],
-        "long_name": "Nitrogen mass in roots",
+        "long_name": "Nitrogen Mass in Roots",
         "process_func": {
             "args": {},
             "func": null
@@ -1880,7 +1880,7 @@
         "jules_profile": [
             "n_ann_pftlayer"
         ],
-        "long_name": "Nitrogen mass in roots",
+        "long_name": "Nitrogen Mass in Roots",
         "process_func": {
             "args": {},
             "func": null
@@ -1889,15 +1889,15 @@
         "var_name": "n_root"
     },
     "nroot-total": {
-        "cmip_longname": null,
+        "cmip_longname": "Nitrogen Mass in Roots",
         "cmip_profile": "Monthly",
-        "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_standardname": "root_mass_content_of_nitrogen",
+        "cmip_varname": "nRoot",
         "isimip_varname": "nroot-total",
         "jules_profile": [
             "n_mon_pftlayer"
         ],
-        "long_name": "Nitrogen mass in roots",
+        "long_name": "Nitrogen Mass in Roots",
         "process_func": {
             "args": {},
             "func": "fracweight_func"
@@ -1909,15 +1909,15 @@
         ]
     },
     "nroot-total_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Nitrogen Mass in Roots",
         "cmip_profile": "Annual",
-        "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_standardname": "root_mass_content_of_nitrogen",
+        "cmip_varname": "nRoot",
         "isimip_varname": "nroot-total",
         "jules_profile": [
             "n_ann_pftlayer"
         ],
-        "long_name": "Nitrogen mass in roots",
+        "long_name": "Nitrogen Mass in Roots",
         "process_func": {
             "args": {},
             "func": "fracweight_func"
@@ -1990,7 +1990,7 @@
         "jules_profile": [
             "n_mon_pftlayer"
         ],
-        "long_name": "Nitrogen mass in wood",
+        "long_name": "Nitrogen Mass in Wood",
         "process_func": {
             "args": {},
             "func": null
@@ -2007,7 +2007,7 @@
         "jules_profile": [
             "n_ann_pftlayer"
         ],
-        "long_name": "Nitrogen mass in wood",
+        "long_name": "Nitrogen Mass in Wood",
         "process_func": {
             "args": {},
             "func": null
@@ -2016,15 +2016,15 @@
         "var_name": "n_wood"
     },
     "nwood-total": {
-        "cmip_longname": null,
+        "cmip_longname": "Nitrogen Mass in Stem",
         "cmip_profile": "Monthly",
-        "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_standardname": "stem_mass_content_of_nitrogen",
+        "cmip_varname": "nStem",
         "isimip_varname": "nwood-total",
         "jules_profile": [
             "n_mon_pftlayer"
         ],
-        "long_name": "Nitrogen mass in wood",
+        "long_name": "Nitrogen Mass in Wood",
         "process_func": {
             "args": {},
             "func": "fracweight_func"
@@ -2036,15 +2036,15 @@
         ]
     },
     "nwood-total_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Nitrogen Mass in Stem",
         "cmip_profile": "Annual",
-        "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_standardname": "stem_mass_content_of_nitrogen",
+        "cmip_varname": "nStem",
         "isimip_varname": "nwood-total",
         "jules_profile": [
             "n_ann_pftlayer"
         ],
-        "long_name": "Nitrogen mass in wood",
+        "long_name": "Nitrogen Mass in Wood",
         "process_func": {
             "args": {},
             "func": "fracweight_func"
