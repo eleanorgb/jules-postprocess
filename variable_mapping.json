@@ -1585,7 +1585,7 @@
         "jules_profile": [
             "gen_mon_pft"
         ],
-        "long_name": "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
+        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
         "process_func": {
             "args": {},
             "func": null
@@ -1602,7 +1602,7 @@
         "jules_profile": [
             "gen_ann_pftlayer"
         ],
-        "long_name": "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
+        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
         "process_func": {
             "args": {},
             "func": null
@@ -1619,7 +1619,7 @@
         "jules_profile": [
             "c_mon_pftlayer"
         ],
-        "long_name": "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
         "process_func": {
             "args": {},
             "func": null
@@ -1636,7 +1636,7 @@
         "jules_profile": [
             "n_ann_pftlayer"
         ],
-        "long_name": "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
         "process_func": {
             "args": {},
             "func": null
