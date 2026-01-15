@@ -55,6 +55,23 @@
             "fwetl"
         ]
     },
+    "cleaf-pft_annual": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": "cLeaf-pft",
+        "isimip_varname": "cleaf-pft",
+        "jules_profile": [
+            "c_ann_pftlayer"
+        ],
+        "long_name": "Carbon Mass in Leaves",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "leafC"
+    },
     "cleaf-total_annual": {
         "cmip_longname": "Carbon Mass in Leaves",
         "cmip_profile": "Annual",
@@ -116,6 +133,23 @@
             "wood_prod_med",
             "wood_prod_slow"
         ]
+    },
+    "croot-pft_annual": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": "cRoot-pft",
+        "isimip_varname": "croot-pft",
+        "jules_profile": [
+            "c_ann_pftlayer"
+        ],
+        "long_name": "Carbon Mass in Roots",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "rootC"
     },
     "croot-total_annual": {
         "cmip_longname": "Carbon Mass in Roots",
@@ -387,11 +421,28 @@
             "rootC"
         ]
     },
+    "cwood-pft_annual": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": "cStem-pft",
+        "isimip_varname": "cwood-pft",
+        "jules_profile": [
+            "c_ann_pftlayer"
+        ],
+        "long_name": "Carbon Mass in Wood",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "woodC"
+    },
     "cwood-total_annual": {
-        "cmip_longname": "cStem",
+        "cmip_longname": "Carbon Mass in Stem",
         "cmip_profile": "Annual",
         "cmip_standardname": "stem_mass_content_of_carbon",
-        "cmip_varname": "Carbon Mass in Stem",
+        "cmip_varname": "cStem",
         "isimip_varname": "cwood-total",
         "jules_profile": [
             "c_ann_pftlayer"
@@ -408,10 +459,10 @@
         ]
     },
     "cwood-total": {
-        "cmip_longname": "cStem",
-        "cmip_profile": "Annual",
+        "cmip_longname": "Carbon Mass in Stem",
+        "cmip_profile": "Monthly",
         "cmip_standardname": "stem_mass_content_of_carbon",
-        "cmip_varname": "Carbon Mass in Stem",
+        "cmip_varname": "cStem",
         "isimip_varname": "cwood-total",
         "jules_profile": [
             "c_mon_pftlayer"
@@ -805,12 +856,12 @@
         "units": "kg m-2 s-1",
         "var_name": "deposition_n"
     },
-    "fnetmin": {
+    "fnnetmin": {
         "cmip_longname": "Net Nitrogen Release from Soil and Litter as the Outcome of Nitrogen Immobilisation and Gross Mineralisation",
         "cmip_profile": "Emon",
         "cmip_standardname": "mass_flux_of_nitrogen_compounds_expressed_as_nitrogen_out_of_litter_and_soil_due_to_immobilisation_and_remineralization",
         "cmip_varname": "fNnetmin",
-        "isimip_varname": "fnetmin",
+        "isimip_varname": "fnnetmin",
         "jules_profile": [
             "cn_mon_gb"
         ],
@@ -825,12 +876,12 @@
             "minl_n_gb"
         ]
     },
-    "fnetmin_annual": {
+    "fnnetmin_annual": {
         "cmip_longname": "Net Nitrogen Release from Soil and Litter as the Outcome of Nitrogen Immobilisation and Gross Mineralisation",
         "cmip_profile": "Annual",
         "cmip_standardname": "mass_flux_of_nitrogen_compounds_expressed_as_nitrogen_out_of_litter_and_soil_due_to_immobilisation_and_remineralization",
         "cmip_varname": "fNnetmin",
-        "isimip_varname": "fnetmin",
+        "isimip_varname": "fnnetmin",
         "jules_profile": [
             "n_ann_gb"
         ],
@@ -1017,6 +1068,23 @@
         },
         "units": "kg m-2 s-1",
         "var_name": "lit_c_mean"
+    },
+    "gpp-pft": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": "gpp-pft",
+        "isimip_varname": "gpp-pft",
+        "jules_profile": [
+            "gen_mon_pft"
+        ],
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Gross Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "gpp"
     },
     "gpp-pft_annual": {
         "cmip_longname": "Not known",
@@ -1483,6 +1551,80 @@
         "units": "kg m-2 s-1",
         "var_name": "npp_gb"
     },
+    "nleaf-pft": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": "nLeaf-pft",
+        "isimip_varname": "nleaf-pft",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Leaves",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_leaf"
+    },
+    "nleaf-pft_annual": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": "nLeaf-pft",
+        "isimip_varname": "nleaf-pft",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Leaves",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_leaf"
+    },
+    "nleaf-total": {
+        "cmip_longname": "Nitrogen Mass in Leaves",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": "leaf_mass_content_of_nitrogen",
+        "cmip_varname": "nLeaf",
+        "isimip_varname": "nleaf-total",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Leaves",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_leaf"
+        ]
+    },
+    "nleaf-total_annual": {
+        "cmip_longname": "Nitrogen Mass in Leaves",
+        "cmip_profile": "Annual",
+        "cmip_standardname": "leaf_mass_content_of_nitrogen",
+        "cmip_varname": "nLeaf",
+        "isimip_varname": "nleaf-total",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Leaves",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_leaf"
+        ]
+    },
     "nloss": {
         "cmip_longname": "Not known",
         "cmip_profile": "Monthly",
@@ -1559,6 +1701,57 @@
         "units": "kg m-2",
         "var_name": "n_inorg_gb"
     },
+    "npp-pft": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": "npp-pft",
+        "isimip_varname": "npp-pft",
+        "jules_profile": [
+            "gen_mon_pft"
+        ],
+        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp"
+    },
+    "npp-pft_annual": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": "npp-pft",
+        "isimip_varname": "npp-pft",
+        "jules_profile": [
+            "gen_ann_pftlayer"
+        ],
+        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp"
+    },
+    "npp-pft_nlim": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": "npp-pft_nlim",
+        "isimip_varname": "npp-pft_nlim",
+        "jules_profile": [
+            "c_mon_pftlayer"
+        ],
+        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_n"
+    },
     "npp-pft_nlim_annual": {
         "cmip_longname": "Not known",
         "cmip_profile": "Annual",
@@ -1568,7 +1761,7 @@
         "jules_profile": [
             "n_ann_pftlayer"
         ],
-        "long_name": "PFT Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
         "process_func": {
             "args": {},
             "func": null
@@ -1576,11 +1769,11 @@
         "units": "kg m-2 s-1",
         "var_name": "npp_n"
     },
-    "npp-total_nlim": {
+    "npp-total": {
         "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
         "cmip_profile": "Monthly",
-        "cmip_standardname": null,
-        "cmip_varname": "npp-exudates",
+        "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
+        "cmip_varname": "npp",
         "isimip_varname": "npp-total",
         "jules_profile": [
             "ilamb"
@@ -1591,29 +1784,12 @@
             "func": null
         },
         "units": "kg m-2 s-1",
-        "var_name": "npp_n_gb"
+        "var_name": "npp_gb"
     },
-    "npp_daily": {
-        "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
-        "cmip_profile": "day",
-        "cmip_standardname": null,
-        "cmip_varname": "npp",
-        "isimip_varname": "npp",
-        "jules_profile": [
-            "cn_day_nbp"
-        ],
-        "long_name": "TOTAL Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
-        "process_func": {
-            "args": {},
-            "func": null
-        },
-        "units": "kg m-2 s-1",
-        "var_name": "npp_n_gb"
-    },
-    "npp_nlim_annual": {
+    "npp-total_annual": {
         "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
         "cmip_profile": "Annual",
-        "cmip_standardname": null,
+        "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
         "cmip_varname": "npp",
         "isimip_varname": "npp-total",
         "jules_profile": [
@@ -1625,7 +1801,132 @@
             "func": null
         },
         "units": "kg m-2 s-1",
+        "var_name": "npp_gb"
+    },
+    "npp-total_nlim": {
+        "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
+        "cmip_varname": "npp-exudates",
+        "isimip_varname": "npp-total_nlim",
+        "jules_profile": [
+            "ilamb"
+        ],
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
         "var_name": "npp_n_gb"
+    },
+    "npp-total_nlim_annual": {
+        "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
+        "cmip_profile": "Annual",
+        "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
+        "cmip_varname": "npp-exudates",
+        "isimip_varname": "npp-total_nlim",
+        "jules_profile": [
+            "c_ann_gb"
+        ],
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_n_gb"
+    },
+    "npp-total_nlim_daily": {
+        "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
+        "cmip_profile": "day",
+        "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
+        "cmip_varname": "npp-exudates",
+        "isimip_varname": "npp-total_nlim",
+        "jules_profile": [
+            "cn_day_nbp"
+        ],
+        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2 s-1",
+        "var_name": "npp_n_gb"
+    },
+    "nroot-pft": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": "nRoot-pft",
+        "isimip_varname": "nroot-pft",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Roots",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_root"
+    },
+    "nroot-pft_annual": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": "nRoot-pft",
+        "isimip_varname": "nroot-pft",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Roots",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_root"
+    },
+    "nroot-total": {
+        "cmip_longname": "Nitrogen Mass in Roots",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": "root_mass_content_of_nitrogen",
+        "cmip_varname": "nRoot",
+        "isimip_varname": "nroot-total",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Roots",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_root"
+        ]
+    },
+    "nroot-total_annual": {
+        "cmip_longname": "Nitrogen Mass in Roots",
+        "cmip_profile": "Annual",
+        "cmip_standardname": "root_mass_content_of_nitrogen",
+        "cmip_varname": "nRoot",
+        "isimip_varname": "nroot-total",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Roots",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_root"
+        ]
     },
     "nsoil-total_annual": {
         "cmip_longname": "Nitrogen Mass in Soil Pool",
@@ -1679,6 +1980,80 @@
         },
         "units": "kg m-2",
         "var_name": "n_veg_gb"
+    },
+    "nwood-pft": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": null,
+        "cmip_varname": "nStem-pft",
+        "isimip_varname": "nwood-pft",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Wood",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_wood"
+    },
+    "nwood-pft_annual": {
+        "cmip_longname": "Not known",
+        "cmip_profile": "Annual",
+        "cmip_standardname": null,
+        "cmip_varname": "nStem-pft",
+        "isimip_varname": "nwood-pft",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Wood",
+        "process_func": {
+            "args": {},
+            "func": null
+        },
+        "units": "kg m-2",
+        "var_name": "n_wood"
+    },
+    "nwood-total": {
+        "cmip_longname": "Nitrogen Mass in Stem",
+        "cmip_profile": "Monthly",
+        "cmip_standardname": "stem_mass_content_of_nitrogen",
+        "cmip_varname": "nStem",
+        "isimip_varname": "nwood-total",
+        "jules_profile": [
+            "n_mon_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Wood",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_wood"
+        ]
+    },
+    "nwood-total_annual": {
+        "cmip_longname": "Nitrogen Mass in Stem",
+        "cmip_profile": "Annual",
+        "cmip_standardname": "stem_mass_content_of_nitrogen",
+        "cmip_varname": "nStem",
+        "isimip_varname": "nwood-total",
+        "jules_profile": [
+            "n_ann_pftlayer"
+        ],
+        "long_name": "Nitrogen Mass in Wood",
+        "process_func": {
+            "args": {},
+            "func": "fracweight_func"
+        },
+        "units": "kg m-2",
+        "var_name": [
+            "frac",
+            "n_wood"
+        ]
     },
     "pft-pft": {
         "cmip_longname": "vegetation fractional coverage by plant functional type",
