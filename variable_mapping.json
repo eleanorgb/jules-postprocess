@@ -56,10 +56,10 @@
         ]
     },
     "cleaf-pft_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "cLeaf-pft",
         "isimip_varname": "cleaf-pft",
         "jules_profile": [
             "c_ann_pftlayer"
@@ -135,10 +135,10 @@
         ]
     },
     "croot-pft_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "cRoot-pft",
         "isimip_varname": "croot-pft",
         "jules_profile": [
             "c_ann_pftlayer"
@@ -422,10 +422,10 @@
         ]
     },
     "cwood-pft_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "cStem-pft",
         "isimip_varname": "cwood-pft",
         "jules_profile": [
             "c_ann_pftlayer"
@@ -1070,10 +1070,10 @@
         "var_name": "lit_c_mean"
     },
     "gpp-pft": {
-        "cmip_longname": null,
-        "cmip_profile": "Lmon",
+        "cmip_longname": "Not known",
+        "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "gpp-pft",
         "isimip_varname": "gpp-pft",
         "jules_profile": [
             "gen_mon_pft"
@@ -1552,10 +1552,10 @@
         "var_name": "npp_gb"
     },
     "nleaf-pft": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "nLeaf-pft",
         "isimip_varname": "nleaf-pft",
         "jules_profile": [
             "n_mon_pftlayer"
@@ -1569,10 +1569,10 @@
         "var_name": "n_leaf"
     },
     "nleaf-pft_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "nLeaf-pft",
         "isimip_varname": "nleaf-pft",
         "jules_profile": [
             "n_ann_pftlayer"
@@ -1702,10 +1702,10 @@
         "var_name": "n_inorg_gb"
     },
     "npp-pft": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "npp-pft",
         "isimip_varname": "npp-pft",
         "jules_profile": [
             "gen_mon_pft"
@@ -1719,10 +1719,10 @@
         "var_name": "npp"
     },
     "npp-pft_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "npp-pft",
         "isimip_varname": "npp-pft",
         "jules_profile": [
             "gen_ann_pftlayer"
@@ -1736,10 +1736,10 @@
         "var_name": "npp"
     },
     "npp-pft_nlim": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "npp-pft_nlim",
         "isimip_varname": "npp-pft_nlim",
         "jules_profile": [
             "c_mon_pftlayer"
@@ -1770,10 +1770,10 @@
         "var_name": "npp_n"
     },
     "npp-total": {
-        "cmip_longname": null,
+        "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
         "cmip_profile": "Monthly",
-        "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
+        "cmip_varname": "npp",
         "isimip_varname": "npp-total",
         "jules_profile": [
             "ilamb"
@@ -1789,7 +1789,7 @@
     "npp-total_annual": {
         "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
         "cmip_profile": "Annual",
-        "cmip_standardname": null,
+        "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
         "cmip_varname": "npp",
         "isimip_varname": "npp-total",
         "jules_profile": [
@@ -1806,7 +1806,7 @@
     "npp-total_nlim": {
         "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
         "cmip_profile": "Monthly",
-        "cmip_standardname": null,
+        "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
         "cmip_varname": "npp-exudates",
         "isimip_varname": "npp-total_nlim",
         "jules_profile": [
@@ -1823,8 +1823,8 @@
     "npp-total_nlim_annual": {
         "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
         "cmip_profile": "Annual",
-        "cmip_standardname": null,
-        "cmip_varname": "npp",
+        "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
+        "cmip_varname": "npp-exudates",
         "isimip_varname": "npp-total_nlim",
         "jules_profile": [
             "c_ann_gb"
@@ -1840,8 +1840,8 @@
     "npp-total_nlim_daily": {
         "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
         "cmip_profile": "day",
-        "cmip_standardname": null,
-        "cmip_varname": "npp",
+        "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
+        "cmip_varname": "npp-exudates",
         "isimip_varname": "npp-total_nlim",
         "jules_profile": [
             "cn_day_nbp"
@@ -1855,10 +1855,10 @@
         "var_name": "npp_n_gb"
     },
     "nroot-pft": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "nRoot-pft",
         "isimip_varname": "nroot-pft",
         "jules_profile": [
             "n_mon_pftlayer"
@@ -1872,10 +1872,10 @@
         "var_name": "n_root"
     },
     "nroot-pft_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "nRoot-pft",
         "isimip_varname": "nroot-pft",
         "jules_profile": [
             "n_ann_pftlayer"
@@ -1982,10 +1982,10 @@
         "var_name": "n_veg_gb"
     },
     "nwood-pft": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Monthly",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "nStem-pft",
         "isimip_varname": "nwood-pft",
         "jules_profile": [
             "n_mon_pftlayer"
@@ -1999,10 +1999,10 @@
         "var_name": "n_wood"
     },
     "nwood-pft_annual": {
-        "cmip_longname": null,
+        "cmip_longname": "Not known",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
-        "cmip_varname": null,
+        "cmip_varname": "nStem-pft",
         "isimip_varname": "nwood-pft",
         "jules_profile": [
             "n_ann_pftlayer"
