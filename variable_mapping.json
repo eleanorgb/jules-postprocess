@@ -439,10 +439,10 @@
         "var_name": "woodC"
     },
     "cwood-total_annual": {
-        "cmip_longname": "cStem",
+        "cmip_longname": "Carbon Mass in Stem",
         "cmip_profile": "Annual",
         "cmip_standardname": "stem_mass_content_of_carbon",
-        "cmip_varname": "Carbon Mass in Stem",
+        "cmip_varname": "cStem",
         "isimip_varname": "cwood-total",
         "jules_profile": [
             "c_ann_pftlayer"
@@ -459,10 +459,10 @@
         ]
     },
     "cwood-total": {
-        "cmip_longname": "cStem",
+        "cmip_longname": "Carbon Mass in Stem",
         "cmip_profile": "Monthly",
         "cmip_standardname": "stem_mass_content_of_carbon",
-        "cmip_varname": "Carbon Mass in Stem",
+        "cmip_varname": "cStem",
         "isimip_varname": "cwood-total",
         "jules_profile": [
             "c_mon_pftlayer"
