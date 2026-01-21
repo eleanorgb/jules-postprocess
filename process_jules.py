@@ -827,6 +827,7 @@ def add_soil_info(cube):
     """
     add soil depth information
     """
+    errorcode = 0
     soil_coord = cube.coord("soil")
     if len(soil_coord.points) == 4:  # standard jules
         dzsoil_io = [0.1, 0.25, 0.65, 2.0]
@@ -873,7 +874,9 @@ def add_soil_info(cube):
     elif len(soil_coord.points) == 10:
         dzsoil_io = [0.1, 0.15, 0.22, 0.33, 0.5, 0.74, 1.1, 1.64, 2.45, 3.66]
     else:
-        raise ValueError("need depth coordinates to be set properly")
+        errorcode = 1
+        print("[ERROR]: need soil depth coordinates to be set properly")
+        return cube, errorcode  
 
     bottom_of_layer = np.cumsum(dzsoil_io)
     top_of_layer = np.append([0.0], bottom_of_layer[:-1])
@@ -885,7 +888,7 @@ def add_soil_info(cube):
     soil_coord.rename("depth")
     cube.coord("depth").long_name = "depth of middle of soil layer"
 
-    return cube
+    return cube, errorcode
 
 
 # #############################################################################
