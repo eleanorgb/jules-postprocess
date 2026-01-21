@@ -233,9 +233,9 @@ def main():
                 continue
 
             if L_JULES_ROSE:
-                cube.attributes["contact"] = CONFIG_ARGS["OUT_INFO"]["contact_email"]
-                cube.attributes["institution"] = CONFIG_ARGS["OUT_INFO"]["institution"]
-                comment = CONFIG_ARGS["OUT_INFO"]["comment"]
+                cube.attributes["contact"] = CONFIG_ARGS["OUT_INFO"]["contact_email"].replace("'","")
+                cube.attributes["institution"] = CONFIG_ARGS["OUT_INFO"]["institution"].replace("'","")
+                comment = CONFIG_ARGS["OUT_INFO"]["comment"].replace("'","")
                 cube.attributes["comment"] = (
                     comment + "rose-suite is " + CONFIG_ARGS["MODEL_INFO"]["suite_id"]
                 )

@@ -178,7 +178,7 @@ def make_outfilename_isimip(out_dir, outprofile, var, syr, eyr):
     if L_JULES_ROSE:
         outfilename = (
             out_dir
-            + CONFIG_ARGS["OUT_INFO"]["model_out_id"].lower()
+            + CONFIG_ARGS["OUT_INFO"]["model_out_id"].lower().replace("'","")
             + "_"
             + CONFIG_ARGS["MODEL_INFO"]["driving_model"].lower()
             + CONFIG_ARGS["MODEL_INFO"]["bias_correction"].lower()
