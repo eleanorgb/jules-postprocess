@@ -330,6 +330,8 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
     # print("cube should still have lazy data ", cubeout.has_lazy_data())
     cubeout.data.mask[np.isnan(cubeout.data)] = True  # breaks lazy data
     # cubeout.data = da.where(da.isnan(cubeout.data), True, cubeout.data)  # think fixes above issue
+    # masking sometimes promotes dtype to float64
+    cubeout.data = cubeout.core_data().astype("float32")
     chunksizes = [1, cubeout.shape[1], cubeout.shape[2]]
     if not L_TESTING:
         iris.save(
