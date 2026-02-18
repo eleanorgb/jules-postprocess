@@ -1424,7 +1424,7 @@
         "units": "kg m-2",
         "var_name": "smc_tot"
     },
-    "nbp-total": {
+    "nbp-total_nlim": {
         "cmip_longname": "Carbon Mass Flux out of Atmosphere Due to Net Biospheric Production on Land [kgC m-2 s-1]",
         "cmip_profile": "Lmon",
         "cmip_standardname": "surface_net_downward_mass_flux_of_carbon_dioxide_expressed_as_carbon_due_to_all_land_processes",
@@ -1451,7 +1451,7 @@
             "WP_slow_out"
         ]
     },
-    "nbp-total_daily": {
+    "nbp-total_nlim_daily": {
         "cmip_longname": "Net Carbon Mass Flux out of Atmosphere Due to Net Ecosystem Productivity on Land",
         "cmip_profile": "day",
         "cmip_standardname": null,
