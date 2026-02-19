@@ -1689,7 +1689,7 @@
         "cmip_varname": "nMineral",
         "isimip_varname": "nmineral",
         "jules_profile": [
-            "n_ann_pftlayer",
+            "n_ann_gb",
             "Annual",
             "Decadal"
         ],
@@ -1996,7 +1996,7 @@
             "func": null
         },
         "units": "kg m-2",
-        "var_name": "n_wood"
+        "var_name": "n_stem"
     },
     "nwood-pft_annual": {
         "cmip_longname": "Not known",
@@ -2013,7 +2013,7 @@
             "func": null
         },
         "units": "kg m-2",
-        "var_name": "n_wood"
+        "var_name": "n_stem"
     },
     "nwood-total": {
         "cmip_longname": "Nitrogen Mass in Stem",
@@ -2032,7 +2032,7 @@
         "units": "kg m-2",
         "var_name": [
             "frac",
-            "n_wood"
+            "n_stem"
         ]
     },
     "nwood-total_annual": {
@@ -2052,7 +2052,7 @@
         "units": "kg m-2",
         "var_name": [
             "frac",
-            "n_wood"
+            "n_stem"
         ]
     },
     "pft-pft": {
