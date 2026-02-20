@@ -387,6 +387,8 @@ def sort_and_write_pool_cube(varout, cube, outfilename, ipool, fill_value):
 
     print("cube should still have lazy data ", cubeout.has_lazy_data())
     cubeout.data.mask[np.isnan(cubeout.data)] = True  # breaks lazy data
+    # masking sometimes promotes dtype to float64
+    cubeout.data = cubeout.core_data().astype("float32")
     chunksizes = [1, cubeout.shape[1], cubeout.shape[2]]
     if not L_TESTING:
         iris.save(

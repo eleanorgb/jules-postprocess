@@ -737,6 +737,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                             cubeout.data.mask[np.isnan(cubeout.data)] = (
                                 True  # breaks lazy data
                             )
+                            # masking sometimes promotes dtype to float64
+                            cubeout.data = cubeout.core_data().astype("float32")
                         outfilenametmp = (
                             outfilename[:-3] + "_separate" + str(cube_count) + ".nc"
                         )
@@ -756,6 +758,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                 else:
                     if "latitude" in coord_names or "lat" in coord_names:
                         cube.data.mask[np.isnan(cube.data)] = True  # breaks lazy data
+                        # masking sometimes promotes dtype to float64
+                        cube.data = cube.core_data().astype("float32")
                     netcdf_format = "NETCDF4_CLASSIC"
                     if "cmip" in MIPNAME.lower():
                         netcdf_format = "NETCDF4"
