@@ -768,7 +768,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                     if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
                         # sort _nlim notation in var_name, as done in
                         # isimip_func.sort_and_write_pft/pool_cube for pft/pool cases
-                        cubeout.var_name = varout
+                        cube.var_name = varout
                     netcdf_format = "NETCDF4_CLASSIC"
                     if "cmip" in MIPNAME.lower():
                         netcdf_format = "NETCDF4"
