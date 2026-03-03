@@ -741,7 +741,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                             # masking sometimes promotes dtype to float64
                             cubeout.data = cubeout.core_data().astype("float32")
                         if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
-                            # sorting _nlim notation in var_name, as done in
+                            # sort _nlim notation in var_name, as done in
                             # isimip_func.sort_and_write_pft/pool_cube for pft/pool cases
                             cubeout.var_name = varout
                         outfilenametmp = (
@@ -766,7 +766,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                         # masking sometimes promotes dtype to float64
                         cube.data = cube.core_data().astype("float32")
                     if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
-                        # sorting _nlim notation in var_name, as done in
+                        # sort _nlim notation in var_name, as done in
                         # isimip_func.sort_and_write_pft/pool_cube for pft/pool cases
                         cubeout.var_name = varout
                     netcdf_format = "NETCDF4_CLASSIC"

@@ -256,23 +256,6 @@
         "units": "kg m-2",
         "var_name": "cs_label_gb"
     },
-    "csoillayer-total": {
-        "cmip_longname": "Carbon Mass in Each Model Soil Level (Summed over All Soil Carbon Pools in That Level)",
-        "cmip_profile": "Emon",
-        "cmip_standardname": "carbon_mass_content_of_soil_layer",
-        "cmip_varname": "cSoilLevels",
-        "isimip_varname": "csoillayer-total",
-        "jules_profile": [
-            "c_ann_pftlayer"
-        ],
-        "long_name": "Carbon Mass in Soil Pool in each layer",
-        "process_func": {
-            "args": {},
-            "func": "layered_soilbgc_func"
-        },
-        "units": "kg m-2",
-        "var_name": "cs"
-    },
     "csoillayer-total_annual": {
         "cmip_longname": "Carbon Mass in Each Model Soil Level (Summed over All Soil Carbon Pools in That Level)",
         "cmip_profile": "Annual",

@@ -50,6 +50,7 @@ def rename_cfcompliant_to_isimip(outfilename, cube, divide_files=False):
     """
     annoyingly iris save changes some variable and dimension names
     -total is automatically changed to _total
+    any other variables with "-" in var_name also get changed to "_"
     """
     if divide_files:
         try:
@@ -58,8 +59,8 @@ def rename_cfcompliant_to_isimip(outfilename, cube, divide_files=False):
         except:
             pass
 
-    # changes from _total to -total
-    if "-total" in outfilename:
+    # changes from _total to -total, or generally "_" back to "-"
+    if "-total" in outfilename or "-" in cube.var_name:
         var_old = cube.var_name.split("-")
         if len(var_old) == 2:
             var_old = "".join([var_old[0], "_", var_old[1]])
