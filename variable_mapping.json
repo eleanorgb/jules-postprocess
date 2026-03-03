@@ -839,9 +839,9 @@
             "harvest_gb"
         ]
     },
-    "fndep": {
+    "fndep_annual": {
         "cmip_longname": "Dry and Wet Deposition of Reactive Nitrogen onto Land",
-        "cmip_profile": "Emon",
+        "cmip_profile": "Annual",
         "cmip_standardname": "minus_tendency_of_atmosphere_mass_content_of_nitrogen_compounds_expressed_as_nitrogen_due_to_deposition",
         "cmip_varname": "fNdep",
         "isimip_varname": "fndep",
@@ -1668,21 +1668,6 @@
         ]
     },
     "nmineral_annual": {
-        "cmip_longname": "Mineral nitrogen in the soil",
-        "cmip_profile": "Annual",
-        "cmip_standardname": null,
-        "cmip_varname": "nMineral",
-        "isimip_varname": "nmineral",
-        "jules_profile": "n_ann_pftlayer",
-        "long_name": "Mineral Nitrogen in the soil",
-        "process_func": {
-            "args": {},
-            "func": null
-        },
-        "units": "kg m-2",
-        "var_name": "n_inorg"
-    },
-    "nmineralgb_annual": {
         "cmip_longname": "Mineral nitrogen in the soil",
         "cmip_profile": "Annual",
         "cmip_standardname": null,
@@ -2666,7 +2651,7 @@
             "gen_mon_gb",
             "ilamb"
         ],
-        "long_name": "Snow depth",
+        "long_name": "Snow Depth",
         "process_func": {
             "args": {},
             "func": null
@@ -2683,7 +2668,7 @@
         "jules_profile": [
             "gen_day_gb"
         ],
-        "long_name": "Snow depth",
+        "long_name": "Snow Depth",
         "process_func": {
             "args": {},
             "func": null

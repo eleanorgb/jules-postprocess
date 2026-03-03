@@ -287,7 +287,9 @@ def sort_isimip_cube(cube, outprofile):
     # depth coordinate
     for coord in cube.coords():
         if coord.name() == "depth":
-            coord.long_name = "Depth of vertical layer center below land"
+            coord.name = "depth_below_surface"
+            coord.axis = "Z"
+            coord.long_name = "Depth of Vertical Layer Center Below Surface"
         if coord.name() == "vegtype":
             if len(cube.coord("vegtype").points) == 1:
                 cube.remove_coord("vegtype")
@@ -344,7 +346,7 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
             contiguous=False,
             complevel=9,
         )
-        # dont really understand why this below happens
+        # "-" is not CF compliant so gets automatically replaced by "_" in iris
         retcode = subprocess.call(
             "ncrename -h -v " + wrong_name + "," + cubeout.var_name + " " + outfilename,
             shell=True,
