@@ -288,7 +288,6 @@ def sort_isimip_cube(cube, outprofile):
     # depth coordinate
     for coord in cube.coords():
         if coord.name() == "depth":
-            coord.name = "depth_below_surface"
             coord.axis = "Z"
             coord.long_name = "Depth of Vertical Layer Center Below Surface"
         if coord.name() == "vegtype":

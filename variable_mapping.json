@@ -212,7 +212,7 @@
         "jules_profile": [
             "c_ann_pftlayer"
         ],
-        "long_name": "Carbon Mass in each soil pool",
+        "long_name": "Carbon Mass in Soil Pool",
         "process_func": {
             "args": {},
             "func": null
@@ -283,7 +283,7 @@
             "ilamb",
             "Decadal"
         ],
-        "long_name": "carbon mass in vegetation",
+        "long_name": "Carbon Mass in Vegetation",
         "process_func": {
             "args": {},
             "func": null
@@ -706,7 +706,7 @@
             "ilamb",
             "watercrop"
         ],
-        "long_name": "CO2 Flux to Atmosphere from Crop Harvesting",
+        "long_name": "Carbon Mass Flux into Atmosphere from Crop Harvesting",
         "process_func": {
             "args": {},
             "func": null
@@ -809,7 +809,7 @@
         "jules_profile": [
             "ilamb"
         ],
-        "long_name": "CO2 Flux to Atmosphere from Land Use Change",
+        "long_name": "Carbon Mass Flux into Atmosphere from Land Use Change",
         "process_func": {
             "args": {},
             "func": "sum_func"
