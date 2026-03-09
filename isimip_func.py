@@ -50,6 +50,7 @@ def rename_cfcompliant_to_isimip(outfilename, cube, divide_files=False):
     """
     annoyingly iris save changes some variable and dimension names
     -total is automatically changed to _total
+    any other variables with "-" in var_name also get changed to "_"
     """
     if divide_files:
         try:
@@ -58,8 +59,8 @@ def rename_cfcompliant_to_isimip(outfilename, cube, divide_files=False):
         except:
             pass
 
-    # changes from _total to -total
-    if "-total" in outfilename:
+    # changes from _total to -total, or generally "_" back to "-"
+    if "-total" in outfilename or "-" in cube.var_name:
         var_old = cube.var_name.split("-")
         if len(var_old) == 2:
             var_old = "".join([var_old[0], "_", var_old[1]])
@@ -287,7 +288,8 @@ def sort_isimip_cube(cube, outprofile):
     # depth coordinate
     for coord in cube.coords():
         if coord.name() == "depth":
-            coord.long_name = "Depth of vertical layer center below land"
+            coord.axis = "Z"
+            coord.long_name = "Depth of Vertical Layer Center Below Surface"
         if coord.name() == "vegtype":
             if len(cube.coord("vegtype").points) == 1:
                 cube.remove_coord("vegtype")
@@ -330,6 +332,8 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
     # print("cube should still have lazy data ", cubeout.has_lazy_data())
     cubeout.data.mask[np.isnan(cubeout.data)] = True  # breaks lazy data
     # cubeout.data = da.where(da.isnan(cubeout.data), True, cubeout.data)  # think fixes above issue
+    # masking sometimes promotes dtype to float64
+    cubeout.data = cubeout.core_data().astype("float32")
     chunksizes = [1, cubeout.shape[1], cubeout.shape[2]]
     if not L_TESTING:
         iris.save(
@@ -342,7 +346,7 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
             contiguous=False,
             complevel=9,
         )
-        # dont really understand why this below happens
+        # "-" is not CF compliant so gets automatically replaced by "_" in iris
         retcode = subprocess.call(
             "ncrename -h -v " + wrong_name + "," + cubeout.var_name + " " + outfilename,
             shell=True,
@@ -385,6 +389,8 @@ def sort_and_write_pool_cube(varout, cube, outfilename, ipool, fill_value):
 
     print("cube should still have lazy data ", cubeout.has_lazy_data())
     cubeout.data.mask[np.isnan(cubeout.data)] = True  # breaks lazy data
+    # masking sometimes promotes dtype to float64
+    cubeout.data = cubeout.core_data().astype("float32")
     chunksizes = [1, cubeout.shape[1], cubeout.shape[2]]
     if not L_TESTING:
         iris.save(

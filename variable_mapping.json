@@ -212,7 +212,7 @@
         "jules_profile": [
             "c_ann_pftlayer"
         ],
-        "long_name": "Carbon Mass in each soil pool",
+        "long_name": "Carbon Mass in Soil Pool",
         "process_func": {
             "args": {},
             "func": null
@@ -256,23 +256,6 @@
         "units": "kg m-2",
         "var_name": "cs_label_gb"
     },
-    "csoillayer-total": {
-        "cmip_longname": "Carbon Mass in Each Model Soil Level (Summed over All Soil Carbon Pools in That Level)",
-        "cmip_profile": "Emon",
-        "cmip_standardname": "carbon_mass_content_of_soil_layer",
-        "cmip_varname": "cSoilLevels",
-        "isimip_varname": "csoillayer-total",
-        "jules_profile": [
-            "c_ann_pftlayer"
-        ],
-        "long_name": "Carbon Mass in Soil Pool in each layer",
-        "process_func": {
-            "args": {},
-            "func": "layered_soilbgc_func"
-        },
-        "units": "kg m-2",
-        "var_name": "cs"
-    },
     "csoillayer-total_annual": {
         "cmip_longname": "Carbon Mass in Each Model Soil Level (Summed over All Soil Carbon Pools in That Level)",
         "cmip_profile": "Annual",
@@ -300,7 +283,7 @@
             "ilamb",
             "Decadal"
         ],
-        "long_name": "carbon mass in vegetation",
+        "long_name": "Carbon Mass in Vegetation",
         "process_func": {
             "args": {},
             "func": null
@@ -723,7 +706,7 @@
             "ilamb",
             "watercrop"
         ],
-        "long_name": "CO2 Flux to Atmosphere from Crop Harvesting",
+        "long_name": "Carbon Mass Flux into Atmosphere from Crop Harvesting",
         "process_func": {
             "args": {},
             "func": null
@@ -826,7 +809,7 @@
         "jules_profile": [
             "ilamb"
         ],
-        "long_name": "CO2 Flux to Atmosphere from Land Use Change",
+        "long_name": "Carbon Mass Flux into Atmosphere from Land Use Change",
         "process_func": {
             "args": {},
             "func": "sum_func"
@@ -839,9 +822,9 @@
             "harvest_gb"
         ]
     },
-    "fndep": {
+    "fndep_annual": {
         "cmip_longname": "Dry and Wet Deposition of Reactive Nitrogen onto Land",
-        "cmip_profile": "Emon",
+        "cmip_profile": "Annual",
         "cmip_standardname": "minus_tendency_of_atmosphere_mass_content_of_nitrogen_compounds_expressed_as_nitrogen_due_to_deposition",
         "cmip_varname": "fNdep",
         "isimip_varname": "fndep",
@@ -1424,7 +1407,7 @@
         "units": "kg m-2",
         "var_name": "smc_tot"
     },
-    "nbp-total": {
+    "nbp-total_nlim": {
         "cmip_longname": "Carbon Mass Flux out of Atmosphere Due to Net Biospheric Production on Land [kgC m-2 s-1]",
         "cmip_profile": "Lmon",
         "cmip_standardname": "surface_net_downward_mass_flux_of_carbon_dioxide_expressed_as_carbon_due_to_all_land_processes",
@@ -1433,7 +1416,7 @@
         "jules_profile": [
             "ilamb"
         ],
-        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Biospheric Production on Land Nitrogen limited",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Biospheric Production on Land",
         "process_func": {
             "args": {},
             "func": "nbp_func"
@@ -1451,7 +1434,7 @@
             "WP_slow_out"
         ]
     },
-    "nbp-total_daily": {
+    "nbp-total_nlim_daily": {
         "cmip_longname": "Net Carbon Mass Flux out of Atmosphere Due to Net Ecosystem Productivity on Land",
         "cmip_profile": "day",
         "cmip_standardname": null,
@@ -1673,23 +1656,8 @@
         "cmip_standardname": null,
         "cmip_varname": "nMineral",
         "isimip_varname": "nmineral",
-        "jules_profile": "n_ann_pftlayer",
-        "long_name": "Mineral Nitrogen in the soil",
-        "process_func": {
-            "args": {},
-            "func": null
-        },
-        "units": "kg m-2",
-        "var_name": "n_inorg"
-    },
-    "nmineralgb_annual": {
-        "cmip_longname": "Mineral nitrogen in the soil",
-        "cmip_profile": "Annual",
-        "cmip_standardname": null,
-        "cmip_varname": "nMineral",
-        "isimip_varname": "nmineral",
         "jules_profile": [
-            "n_ann_pftlayer",
+            "n_ann_gb",
             "Annual",
             "Decadal"
         ],
@@ -1710,7 +1678,7 @@
         "jules_profile": [
             "gen_mon_pft"
         ],
-        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land not nitrogen limited",
         "process_func": {
             "args": {},
             "func": null
@@ -1727,7 +1695,7 @@
         "jules_profile": [
             "gen_ann_pftlayer"
         ],
-        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land not nitrogen limited",
         "process_func": {
             "args": {},
             "func": null
@@ -1744,7 +1712,7 @@
         "jules_profile": [
             "c_mon_pftlayer"
         ],
-        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
         "process_func": {
             "args": {},
             "func": null
@@ -1761,7 +1729,7 @@
         "jules_profile": [
             "n_ann_pftlayer"
         ],
-        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
         "process_func": {
             "args": {},
             "func": null
@@ -1778,7 +1746,7 @@
         "jules_profile": [
             "ilamb"
         ],
-        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land not nitrogen limited",
         "process_func": {
             "args": {},
             "func": null
@@ -1795,7 +1763,7 @@
         "jules_profile": [
             "gen_ann_gb"
         ],
-        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land not nitrogen limited",
         "process_func": {
             "args": {},
             "func": null
@@ -1812,7 +1780,7 @@
         "jules_profile": [
             "ilamb"
         ],
-        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
         "process_func": {
             "args": {},
             "func": null
@@ -1829,7 +1797,7 @@
         "jules_profile": [
             "c_ann_gb"
         ],
-        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
         "process_func": {
             "args": {},
             "func": null
@@ -1846,7 +1814,7 @@
         "jules_profile": [
             "cn_day_nbp"
         ],
-        "long_name": "Carbon Mass flux out of Atmosphere due to Net Primary Production on Land nitrogen limited",
+        "long_name": "Carbon Mass Flux out of Atmosphere due to Net Primary Production on Land",
         "process_func": {
             "args": {},
             "func": null
@@ -1996,7 +1964,7 @@
             "func": null
         },
         "units": "kg m-2",
-        "var_name": "n_wood"
+        "var_name": "n_stem"
     },
     "nwood-pft_annual": {
         "cmip_longname": "Not known",
@@ -2013,7 +1981,7 @@
             "func": null
         },
         "units": "kg m-2",
-        "var_name": "n_wood"
+        "var_name": "n_stem"
     },
     "nwood-total": {
         "cmip_longname": "Nitrogen Mass in Stem",
@@ -2032,7 +2000,7 @@
         "units": "kg m-2",
         "var_name": [
             "frac",
-            "n_wood"
+            "n_stem"
         ]
     },
     "nwood-total_annual": {
@@ -2052,7 +2020,7 @@
         "units": "kg m-2",
         "var_name": [
             "frac",
-            "n_wood"
+            "n_stem"
         ]
     },
     "pft-pft": {
@@ -2666,7 +2634,7 @@
             "gen_mon_gb",
             "ilamb"
         ],
-        "long_name": "Snow depth",
+        "long_name": "Snow Depth",
         "process_func": {
             "args": {},
             "func": null
@@ -2683,7 +2651,7 @@
         "jules_profile": [
             "gen_day_gb"
         ],
-        "long_name": "Snow depth",
+        "long_name": "Snow Depth",
         "process_func": {
             "args": {},
             "func": null

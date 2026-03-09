@@ -658,6 +658,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
 
     if "cmip" in MIPNAME.lower():
         varout = diag_dic[var]["cmip_varname"]
+
     outfilename, errorcode = make_outfilename(
         out_dir, outprofile, varout, syr, eyr, diag_dic
     )
@@ -737,6 +738,12 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                             cubeout.data.mask[np.isnan(cubeout.data)] = (
                                 True  # breaks lazy data
                             )
+                            # masking sometimes promotes dtype to float64
+                            cubeout.data = cubeout.core_data().astype("float32")
+                        if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
+                            # sort _nlim notation in var_name, as done in
+                            # isimip_func.sort_and_write_pft/pool_cube for pft/pool cases
+                            cubeout.var_name = varout
                         outfilenametmp = (
                             outfilename[:-3] + "_separate" + str(cube_count) + ".nc"
                         )
@@ -756,6 +763,12 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                 else:
                     if "latitude" in coord_names or "lat" in coord_names:
                         cube.data.mask[np.isnan(cube.data)] = True  # breaks lazy data
+                        # masking sometimes promotes dtype to float64
+                        cube.data = cube.core_data().astype("float32")
+                    if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
+                        # sort _nlim notation in var_name, as done in
+                        # isimip_func.sort_and_write_pft/pool_cube for pft/pool cases
+                        cube.var_name = varout
                     netcdf_format = "NETCDF4_CLASSIC"
                     if "cmip" in MIPNAME.lower():
                         netcdf_format = "NETCDF4"
