@@ -1773,7 +1773,7 @@
         "cmip_longname": "Net Primary Production on Land as Carbon Mass Flux",
         "cmip_profile": "Monthly",
         "cmip_standardname": "net_primary_productivity_of_biomass_expressed_as_carbon",
-        "cmip_varname": "npp",
+        "cmip_varname": "npp-total",
         "isimip_varname": "npp-total",
         "jules_profile": [
             "ilamb"
@@ -2700,7 +2700,7 @@
         "jules_profile": [
             "gen_mon_layer"
         ],
-        "long_name": "Total Soil Moisture Content",
+        "long_name": "Layered Soil Moisture Content",
         "process_func": {
             "args": {},
             "func": null
@@ -2717,7 +2717,7 @@
         "jules_profile": [
             "gen_day_layer"
         ],
-        "long_name": "Total Soil Moisture Content",
+        "long_name": "Layered Soil Moisture Content",
         "process_func": {
             "args": {},
             "func": null
