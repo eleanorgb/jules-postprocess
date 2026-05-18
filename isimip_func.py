@@ -346,13 +346,18 @@ def sort_and_write_pft_cube(varout, cube, outfilename, ipft, fill_value):
             contiguous=False,
             complevel=9,
         )
-        # "-" is not CF compliant so gets automatically replaced by "_" in iris
-        retcode = subprocess.call(
-            "ncrename -h -v " + wrong_name + "," + cubeout.var_name + " " + outfilename,
-            shell=True,
-        )
-        if retcode != 0:
-            raise ValueError("ERROR: ncrename variable broken " + outfilename)
+        # Check if wrong_name exists in the file before running ncrename
+        dataset = netCDF4.Dataset(outfilename, "r")
+        if wrong_name in dataset.variables:
+            dataset.close()
+            retcode = subprocess.call(
+                "ncrename -h -v " + wrong_name + "," + cubeout.var_name + " " + outfilename,
+                shell=True,
+            )
+            if retcode != 0:
+                raise ValueError("ERROR: ncrename variable broken " + outfilename)
+        else:
+            dataset.close()
 
         if "ISIMIP2B" in MIPNAME.upper():
             retcode = subprocess.call(
@@ -403,13 +408,18 @@ def sort_and_write_pool_cube(varout, cube, outfilename, ipool, fill_value):
             contiguous=False,
             complevel=9,
         )
-        # dont really understand why this below happens
-        retcode = subprocess.call(
-            "ncrename -h -v " + wrong_name + "," + cubeout.var_name + " " + outfilename,
-            shell=True,
-        )
-        if retcode != 0:
-            raise ValueError("ERROR: ncrename variable broken " + outfilename)
+        # Check if wrong_name exists in the file before running ncrename
+        dataset = netCDF4.Dataset(outfilename, "r")
+        if wrong_name in dataset.variables:
+            dataset.close()
+            retcode = subprocess.call(
+                "ncrename -h -v " + wrong_name + "," + cubeout.var_name + " " + outfilename,
+                shell=True,
+            )
+            if retcode != 0:
+                raise ValueError("ERROR: ncrename variable broken " + outfilename)
+        else:
+            dataset.close()
         if "isimip2b" in MIPNAME:
             retcode = subprocess.call(
                 "mv " + outfilename + " " + outfilename + "4", shell=True
