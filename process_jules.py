@@ -809,9 +809,14 @@ def expand_to_global(cube, mip_name):
     is_half_degree_grid = (
         np.allclose(lat_diff, 0.5, atol=0.1) and np.allclose(lon_diff, 0.5, atol=0.1)
     )
+    is_imogen_lowres_grid = ("IMOGEN" in mip_name.upper()) or (
+        (lat_diff > 2.4).all() and (lon_diff > 3.7).all()
+    )
     
     mip_name = mip_name.upper()
-    if "IMOGEN" not in mip_name:
+    if is_imogen_lowres_grid:
+        latitude, longitude, nlat, nlon = imogen_func.make_global_grid_imogen_lowres()
+    elif "IMOGEN" not in mip_name:
         if "ISIMIP" in mip_name or "CRUJRA" in mip_name.upper():
             latitude, longitude, nlat, nlon = isimip_func.make_global_grid_0p5()
         elif "CMIP" in mip_name or "TRENDY" in mip_name.upper():

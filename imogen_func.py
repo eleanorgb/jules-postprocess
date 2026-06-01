@@ -13,6 +13,7 @@ from read_input import parse_args
 from read_input import config_parse_args
 from read_input import read_mip_info_no_rose
 import jules_xarray
+from iris.coords import DimCoord
 
 MIPNAME, L_TESTING, L_BACKFILL_MISSING_FILES, L_JULES_ROSE, JSONMAPFILE = parse_args()
 
@@ -323,3 +324,18 @@ def make_infilename_imogen(src_dir, jules_profname, years):
         errorcode = 1
 
     return existing_files, errorcode
+
+
+def make_global_grid_imogen_lowres():
+    """
+    Make global grid for imogen lowres data
+    """
+    nlat = 72
+    latitude = DimCoord(
+        np.linspace(-88.75, 88.75, nlat), standard_name="latitude", units="degrees"
+    )
+    nlon = 96
+    longitude = DimCoord(
+        np.linspace(-180, 176.25, nlon), standard_name="longitude", units="degrees"
+    )
+    return latitude, longitude, nlat, nlon
