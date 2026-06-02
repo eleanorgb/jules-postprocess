@@ -250,6 +250,11 @@ def main():
             outfilename, varout, errorcode = write_out_final_cube(
                 diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname=False
             )
+            if errorcode == 1:
+                var_error = f"{var_error} ERROR: {var}\n"
+                outfile_error = outfile_error + outfilename + "\n"
+                print(f"ERROR: failed to write {var} to {outfilename}")
+                continue
             print(f"SUCCESS: {var} written to {outfilename}")
 
         end_time = time.time()
@@ -735,11 +740,15 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                         cube_count = cube_count + 1
                         print("INFO: lazy data still? ", cubeout.has_lazy_data())
                         if "latitude" in coord_names or "lat" in coord_names:
-                            cubeout.data.mask[np.isnan(cubeout.data)] = (
-                                True  # breaks lazy data
-                            )
-                            # masking sometimes promotes dtype to float64
-                            cubeout.data = cubeout.core_data().astype("float32")
+                            try:
+                                # Avoid in-place mask edits; handle ndarray/masked/lazy data safely.
+                                cubeout.data = ma.masked_invalid(
+                                    cubeout.core_data()
+                                ).astype("float32")
+                            except Exception as e:
+                                print(f"ERROR: failed to mask invalid values for {var}: {e}")
+                                errorcode = 1
+                                return outfilename, varout, errorcode
                         if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
                             # sort _nlim notation in var_name, as done in
                             # isimip_func.sort_and_write_pft/pool_cube for pft/pool cases
@@ -762,9 +771,15 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                         )
                 else:
                     if "latitude" in coord_names or "lat" in coord_names:
-                        cube.data.mask[np.isnan(cube.data)] = True  # breaks lazy data
-                        # masking sometimes promotes dtype to float64
-                        cube.data = cube.core_data().astype("float32")
+                        try:
+                            # Avoid in-place mask edits; handle ndarray/masked/lazy data safely.
+                            cube.data = ma.masked_invalid(cube.core_data()).astype(
+                                "float32"
+                            )
+                        except Exception as e:
+                            print(f"ERROR: failed to mask invalid values for {var}: {e}")
+                            errorcode = 1
+                            return outfilename, varout, errorcode
                     if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
                         # sort _nlim notation in var_name, as done in
                         # isimip_func.sort_and_write_pft/pool_cube for pft/pool cases
