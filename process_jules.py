@@ -741,10 +741,9 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                         print("INFO: lazy data still? ", cubeout.has_lazy_data())
                         if "latitude" in coord_names or "lat" in coord_names:
                             try:
-                                # Avoid in-place mask edits; handle ndarray/masked/lazy data safely.
-                                cubeout.data = ma.masked_invalid(
-                                    cubeout.core_data()
-                                ).astype("float32")
+                                cubeout.data.mask[np.isnan(cubeout.data)] = True  # breaks lazy data
+                                # masking sometimes promotes dtype to float64
+                                cubeout.data = cubeout.core_data().astype("float32")
                             except Exception as e:
                                 print(f"ERROR: failed to mask invalid values for {var}: {e}")
                                 errorcode = 1
