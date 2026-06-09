@@ -758,6 +758,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                         netcdf_format = "NETCDF4_CLASSIC"
                         if "cmip" in MIPNAME.lower():
                             netcdf_format = "NETCDF4"
+                            fill_value = None  # for cmip we want to use _FillValue in the file rather than a global attribute
                         iris.save(
                             cubeout,
                             outfilenametmp,
@@ -786,6 +787,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                     netcdf_format = "NETCDF4_CLASSIC"
                     if "cmip" in MIPNAME.lower():
                         netcdf_format = "NETCDF4"
+                        fill_value = None  # for cmip we want to use _FillValue in the file rather than a global attribute
                     iris.save(
                         cube,
                         outfilename,
