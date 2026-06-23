@@ -149,6 +149,47 @@ def print_run_information(src_dir, out_dir):
     print("")
 
 
+# #########################################################################
+# #########################################################################
+def resolve_fill_value(cube_in, cmip_case, default_fill=np.float32(1.0e20)):
+    """Return fill value to pass to iris.save.
+
+    ISIMIP keeps an explicit fixed fill value.
+    CMIP uses an explicit fill value aligned with the masked array fill value,
+    so downstream readers can reliably identify missing data.
+    """
+    if not cmip_case:
+        return default_fill
+
+    cmip_missing_sentinel = np.float32(-999.0)
+
+    # If data already uses -999.0 as a sentinel, keep that as the file fill value
+    # so downstream tools (e.g. CDO) interpret those points as missing.
+    try:
+        data_check = np.ma.array(cube_in.core_data(), copy=False)
+        if np.any(np.isclose(np.ma.filled(data_check, np.nan), cmip_missing_sentinel)):
+            return cmip_missing_sentinel.item()
+    except Exception:
+        pass
+
+    if "_FillValue" in cube_in.attributes:
+        try:
+            return np.array(cube_in.attributes["_FillValue"], dtype="float32").item()
+        except Exception:
+            pass
+
+    data = np.ma.array(cube_in.core_data(), copy=False)
+    if np.ma.isMaskedArray(data):
+        try:
+            fv = np.array(data.fill_value, dtype="float32").item()
+            if np.isfinite(fv):
+                return fv
+        except Exception:
+            pass
+
+    return cmip_missing_sentinel.item()
+
+
 # #############################################################################
 # #############################################################################
 def main():
@@ -626,6 +667,8 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
         outprofile = diag_dic[var]["cmip_profile"]
 
     if not l_onlymakefname:
+        is_cmip = "cmip" in MIPNAME.lower()
+
         iris.coord_categorisation.add_year(cube, "time")
         syr_data = int(np.min(cube.coord("year").points))
         if (cube.coord("year").points[1] - cube.coord("year").points[0]) / 2.0 > 0.9:
@@ -653,9 +696,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
             print("INFO: changing end years in filenames and continuing")
             eyr = eyr_data
         cube.remove_coord("year")
-        fill_value = np.float32(
-            1.0e20
-        )  # this might need to change with different mips?
+        fill_value = resolve_fill_value(cube, is_cmip)
 
         # sort out formatting of ISIMIP output
         if "isimip" in MIPNAME.lower() or "crujra" in MIPNAME.lower():
@@ -756,9 +797,13 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                             outfilename[:-3] + "_separate" + str(cube_count) + ".nc"
                         )
                         netcdf_format = "NETCDF4_CLASSIC"
-                        if "cmip" in MIPNAME.lower():
+                        fill_value = resolve_fill_value(cubeout, is_cmip)
+                        if is_cmip:
                             netcdf_format = "NETCDF4"
-                            fill_value = None  # for cmip we want to use _FillValue in the file rather than a global attribute
+                            cubeout_data = np.ma.array(cubeout.core_data(), copy=False)
+                            cubeout_data = np.ma.masked_invalid(cubeout_data)
+                            cubeout_data = np.ma.masked_equal(cubeout_data, fill_value)
+                            cubeout.data = cubeout_data.astype("float32")
                         iris.save(
                             cubeout,
                             outfilenametmp,
@@ -773,9 +818,12 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                     if "latitude" in coord_names or "lat" in coord_names:
                         try:
                             # Avoid in-place mask edits; handle ndarray/masked/lazy data safely.
-                            cube.data = ma.masked_invalid(cube.core_data()).astype(
-                                "float32"
-                            )
+                            #cube.data = ma.masked_invalid(cube.core_data()).astype(
+                           #)
+                            cube.data.mask[np.isnan(cube.data)] = True  # breaks lazy data
+                            # masking sometimes promotes dtype to float64
+                            cube.data = cube.core_data().astype("float32")
+
                         except Exception as e:
                             print(f"ERROR: failed to mask invalid values for {var}: {e}")
                             errorcode = 1
@@ -785,9 +833,13 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
                         # isimip_func.sort_and_write_pft/pool_cube for pft/pool cases
                         cube.var_name = varout
                     netcdf_format = "NETCDF4_CLASSIC"
-                    if "cmip" in MIPNAME.lower():
+                    fill_value = resolve_fill_value(cube, is_cmip)
+                    if is_cmip:
                         netcdf_format = "NETCDF4"
-                        fill_value = None  # for cmip we want to use _FillValue in the file rather than a global attribute
+                        cube_data = np.ma.array(cube.core_data(), copy=False)
+                        cube_data = np.ma.masked_invalid(cube_data)
+                        cube_data = np.ma.masked_equal(cube_data, fill_value)
+                        cube.data = cube_data.astype("float32")
                     iris.save(
                         cube,
                         outfilename,
