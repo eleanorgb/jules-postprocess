@@ -759,7 +759,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
 
             if not L_TESTING:
                 if divide_files:
-                    subtimes = 4  # change this in anger
+                    subtimes = 120  # 10 years for monthly data
                     cube_count = -1
                     iris.coord_categorisation.add_year(cube, "time")
                     for i in range(0, len(cube.coord("time").points), subtimes):
