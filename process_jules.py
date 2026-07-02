@@ -739,11 +739,15 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
 
             coord_names = [coord.name() for coord in cube.coords()]
 
-            if "depth" in coord_names and len(cube.coord("depth").points) > 10:
+            if "depth" in coord_names and len(cube.coord("depth").points) >= 10:
                 print("INFO: >10 soil levels which means files are very big")
                 divide_files = True  # divide into separate files
 
-            if "sclayer" in coord_names and len(cube.coord("sclayer").points) > 10:
+            if "ch4subgrid" in coord_names and len(cube.coord("ch4subgrid").points) >= 10:
+                print("INFO: >10 ch4subgrid which means files are very big")
+                divide_files = True  # divide into separate files
+
+            if "sclayer" in coord_names and len(cube.coord("sclayer").points) >= 10:
                 print("INFO: >10 soil bgc levels which means files can be very big")
                 process_func = diag_dic.get(var, {}).get("process_func", {})
                 func_name = process_func.get("func")
@@ -755,7 +759,7 @@ def write_out_final_cube(diag_dic, cube, var, out_dir, syr, eyr, l_onlymakefname
 
             if not L_TESTING:
                 if divide_files:
-                    subtimes = 10  # change this in anger
+                    subtimes = 4  # change this in anger
                     cube_count = -1
                     iris.coord_categorisation.add_year(cube, "time")
                     for i in range(0, len(cube.coord("time").points), subtimes):
