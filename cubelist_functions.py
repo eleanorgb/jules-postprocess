@@ -16,6 +16,8 @@ def conv_360days_to_sec(cube, var):
     if isinstance(cube, iris.cube.Cube):
         if "360" in cube.units.__str__():
             cube = conv360(cube)
+        if "kgC/m2/s" in cube.units.__str__():
+            cube.units = "kg m-2 s-1"
     elif isinstance(cube, iris.cube.CubeList):
         for i, c in enumerate(cube):
             if "360" in c.units.__str__():
