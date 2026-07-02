@@ -13,11 +13,18 @@ def conv_360days_to_sec(cube, var):
         cube.units = "kg m-2 s-1"
         return cube
 
+    def normalize_invalid_units(cube):
+        invalid_units = str(cube.attributes.get("invalid_units", ""))
+        if "kgC/m2/s" in str(cube.units) or "kgC/m2/s" in invalid_units:
+            cube.units = "kg m-2 s-1"
+            if "invalid_units" in cube.attributes:
+                del cube.attributes["invalid_units"]
+        return cube
+
     if isinstance(cube, iris.cube.Cube):
         if "360" in cube.units.__str__():
             cube = conv360(cube)
-        if "kgC/m2/s" in cube.units.__str__():
-            cube.units = "kg m-2 s-1"
+        cube = normalize_invalid_units(cube)
     elif isinstance(cube, iris.cube.CubeList):
         for i, c in enumerate(cube):
             if "360" in c.units.__str__():

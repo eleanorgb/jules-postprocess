@@ -21,6 +21,7 @@ DIMS_IN_JULES = [
     "ch4layer",
     "bedrock",
     "seed",
+    "ch4subgrid",
 ]
 # these are the dimension names in the jules file
 # need to add more dims if they are not defined here
@@ -56,7 +57,7 @@ def shift_time_to_middle_of_bounds(ds, method):
 
 
 # ####################################################
-def check_cell_methods(ds):
+def check_cell_methods(ds, cell_method_sel="mean"):
     """
     Check the cell_methods attribute of each variable in the dataset and ensure that there is only one unique cell_methods value.
 
@@ -89,11 +90,11 @@ def check_cell_methods(ds):
         print(f"WARNING: Different cell_methods in one netcdf file:")
         for cell_methods in cell_methods_set:
             print(f"Cell methods available: {cell_methods}")
-        if "mean" in cell_methods_set:
-            print("WARNING: Loading variables with mean cell_methods only.")
+        if cell_method_sel in cell_methods_set:
+            print(f"WARNING: Loading variables with {cell_method_sel} cell_methods only.")
         else:
             raise ValueError(
-                "ERROR: different cell methods in file, and no mean present."
+                f"ERROR: different cell methods in file, and no {cell_method_sel} present."
             )
     return cell_methods_set
 
@@ -133,6 +134,8 @@ def ds_to_sparse_grid(ds):
                 mindex_coords = xr.DataArray(multi_index, dims=["x"])
             elif "land" in ds.dims:
                 mindex_coords = xr.DataArray(multi_index, dims=["land"])
+            elif "points" in ds.dims:
+                mindex_coords = xr.DataArray(multi_index, dims=["points"])
             elif "y" in ds.dims:
                 mindex_coords = xr.DataArray(multi_index, dims=["y"])
             ds = ds.assign_coords(new=mindex_coords)
@@ -148,8 +151,121 @@ def ds_to_sparse_grid(ds):
 
 
 # ####################################################
+def grid_to_land_points(ds, lsmask=None, land_dim_name="land", fill_value=-999.0):
+    """
+    Convert a lat/lon grid xarray Dataset back to JULES land-points format.
+
+    This is the inverse of ds_to_sparse_grid.  The output has a single 'land'
+    dimension indexed by an integer, with MultiIndex coordinates 'latitude' and
+    'longitude' matching the original land-point layout.
+
+    Parameters
+    ----------
+    ds : xarray.Dataset
+        Dataset on a regular lat/lon grid.  Latitude and longitude must be
+        present as dimensions or coordinates named 'latitude'/'longitude' (or
+        'lat'/'lon', which are renamed automatically).
+    lsmask : xarray.DataArray or numpy.ndarray, optional
+        Boolean land mask on the same lat/lon grid (True = land).  If None,
+        any grid point where *all* variables are finite and not equal to
+        fill_value is treated as land.
+    land_dim_name : str
+        Name to give the output land-point dimension.  Default 'land'.
+    fill_value : float
+        Value used to mark missing/ocean points (default -999).
+
+    Returns
+    -------
+    xarray.Dataset
+        Dataset with a single land-point dimension instead of lat/lon.
+    """
+    # ---- normalise coordinate names ----------------------------------------
+    rename_map = {}
+    if "lat" in ds.dims and "latitude" not in ds.dims:
+        rename_map["lat"] = "latitude"
+    if "lon" in ds.dims and "longitude" not in ds.dims:
+        rename_map["lon"] = "longitude"
+    if rename_map:
+        ds = ds.rename(rename_map)
+
+    if "latitude" not in ds.dims or "longitude" not in ds.dims:
+        raise ValueError(
+            "Dataset must have 'latitude' and 'longitude' as dimensions."
+        )
+
+    # ---- build land mask ----------------------------------------------------
+    if lsmask is not None:
+        if isinstance(lsmask, np.ndarray):
+            mask_da = xr.DataArray(
+                lsmask.astype(bool),
+                dims=["latitude", "longitude"],
+                coords={"latitude": ds["latitude"], "longitude": ds["longitude"]},
+            )
+        else:
+            mask_da = lsmask.astype(bool)
+            # align mask to dataset grid just in case
+            mask_da = mask_da.reindex_like(
+                ds[["latitude", "longitude"]], method="nearest"
+            )
+    else:
+        # derive mask from first numeric variable that spans lat/lon
+        mask_da = None
+        for var in ds.data_vars:
+            da_var = ds[var]
+            if "latitude" in da_var.dims and "longitude" in da_var.dims:
+                # reduce any extra dims to get a 2-D (lat, lon) mask
+                extra_dims = [d for d in da_var.dims
+                              if d not in ("latitude", "longitude")]
+                data_2d = da_var.isel({d: 0 for d in extra_dims})
+                valid = np.isfinite(data_2d.values) & (
+                    data_2d.values != fill_value
+                )
+                mask_da = xr.DataArray(
+                    valid,
+                    dims=["latitude", "longitude"],
+                    coords={
+                        "latitude": ds["latitude"],
+                        "longitude": ds["longitude"],
+                    },
+                )
+                break
+        if mask_da is None:
+            raise ValueError(
+                "Could not infer a land mask; please supply one via lsmask."
+            )
+
+    # ---- stack to land points -----------------------------------------------
+    # Stack lat/lon into a single MultiIndex dimension.
+    ds_stacked = ds.stack({land_dim_name: ("latitude", "longitude")})
+
+    # Build the mask aligned to the stacked dimension.
+    mask_stacked = mask_da.stack({land_dim_name: ("latitude", "longitude")})
+    land_idx = np.where(mask_stacked.values)[0]
+
+    if land_idx.size == 0:
+        raise ValueError("Land mask contains no True points.")
+
+    ds_land = ds_stacked.isel({land_dim_name: land_idx})
+
+    # Reset to integer index, preserving lat/lon as plain coordinates.
+    lats = ds_land["latitude"].values
+    lons = ds_land["longitude"].values
+
+    ds_land = ds_land.drop_vars(["latitude", "longitude", land_dim_name])
+    ds_land = ds_land.assign_coords(
+        {
+            land_dim_name: np.arange(len(land_idx)),
+            "latitude": (land_dim_name, lats),
+            "longitude": (land_dim_name, lons),
+        }
+    )
+
+    return ds_land
+
+
+# ####################################################
 def load(
-    filenames, cons=None, shift_time=True, l_check_cell_methods=True, conv_to_cube=True
+    filenames, cons=None, shift_time=True, l_check_cell_methods=True, cell_method_sel = "mean", conv_to_cube=True
 ):
     """
     Load data from one or multiple NetCDF files into an xarray dataset.
@@ -163,7 +279,6 @@ def load(
     Returns:
     - xarray.Dataset or iris.cube.CubeList: The loaded dataset or extracted cube(s) based on the provided constraints.
     """
-
     def is_valid_file(filename):
         try:
             ds = xr.open_dataset(filename, chunks={}, use_cftime=True)
@@ -201,11 +316,11 @@ def load(
 
     # check cell methods are all the same
     if l_check_cell_methods:
-        cell_methods_set = check_cell_methods(xrdatasets)
+        cell_methods_set = check_cell_methods(xrdatasets, cell_method_sel=cell_method_sel)
         if len(cell_methods_set) > 1:
             for var in list(xrdatasets.variables):
                 if "cell_methods" in xrdatasets[var].attrs:
-                    if "mean" not in xrdatasets[var].attrs["cell_methods"]:
+                    if cell_method_sel not in xrdatasets[var].attrs["cell_methods"]:
                         # If it is, add the variable to the dictionary
                         del xrdatasets[var]
     else:
