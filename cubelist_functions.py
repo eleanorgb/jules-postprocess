@@ -430,7 +430,8 @@ def layered_soilbgc_func(cube, var):
 
     all_coord_names = [coord.name() for coord in cube.coords()]
     if "sclayer" in all_coord_names and "scpool" in all_coord_names:
-        cube = cube.collapsed("scpool", iris.analysis.SUM)
+        if len(cube.coord("scpool").points) > 1:
+            cube = cube.collapsed("scpool", iris.analysis.SUM)
     # raise ValueError("Need to sort out layered soilbgc function")
     # cube.coord("sclayer").rename("depth")
     # add depth coordinate
