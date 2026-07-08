@@ -71,6 +71,51 @@ def burntarea_func(cube, var):
 
 # #############################################################################
 # #############################################################################
+def fch4_local_func(cube, var):
+
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        errorcode = 1
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
+    if "ch4subgrid" in [coord.name() for coord in cube.coords()]:
+        cube = cube.collapsed("ch4subgrid", iris.analysis.MEAN)
+    else:
+        errorcode = 1
+        raise ValueError("cube must have a ch4subgrid coordinate")
+
+    # covnert units to Ch4
+    ## cube.data = cube.core_data * 16.05 / 12.01
+    ### cube.units = "kg CH4/m2/s"
+
+    return cube, errorcode
+
+
+# #############################################################################
+# #############################################################################
+def zw_local_func(cube, var):
+
+    errorcode = 0
+    if not isinstance(cube, iris.cube.Cube):
+        errorcode = 1
+        raise ValueError("cube must be an instance of iris.cube.Cube")
+
+    if "ch4subgrid" in [coord.name() for coord in cube.coords()]:
+        n_subgrid = len(cube.coord("ch4subgrid").points)
+        true_mask = (cube.core_data() <= 0.0).astype(np.int8)
+        cube = cube.copy(data=true_mask).collapsed("ch4subgrid", iris.analysis.SUM)
+        cube = cube / n_subgrid * 100.0
+        cube.units = Unit("%")
+        cube.long_name = var
+    else:
+        errorcode = 1
+        raise ValueError("cube must have a ch4subgrid coordinate")
+
+    return cube, errorcode
+
+
+# #############################################################################
+# #############################################################################
 def burntarea_pftfunc(cube, var):
     """
     converts units from "fraction of pft per second"
@@ -695,4 +740,4 @@ def select_toplayer_soilmois(cube, var):
             raise ValueError("Need to sort top layer soil moisture variables")
     except iris.exceptions.CoordinateNotFoundError:
         raise ValueError("The 'depth' coordinate was not found in the cube.")
-    return cube, errorcode  
+    return cube, errorcode
