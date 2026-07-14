@@ -50,6 +50,8 @@ from cubelist_functions import (
     conv_360days_to_sec,
     neefire_func,
     select_toplayer_soilmois,
+    fch4_local_func,
+    zw_local_func
 )
 
 warnings.filterwarnings("ignore")
